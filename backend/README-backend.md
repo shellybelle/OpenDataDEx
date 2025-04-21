@@ -1,0 +1,3 @@
+Components:
+    - Brain
+    - Web Server
