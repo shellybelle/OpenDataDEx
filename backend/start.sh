@@ -1,2 +1,2 @@
-source ~/Projects/TAGOLOGY/tagology/venv-pytag/bin/activate
+source ./pytag-venv/bin/activate
 echo "Python virtual environment activated. Let's get working!"
