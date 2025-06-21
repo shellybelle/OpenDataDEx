@@ -1,0 +1,13 @@
+Python
+-------------------
+Setup:
+	Create virtual environment:
+		python3 -m venv pytag-venv
+	Dependencies:
+		(venv active) pip install -r py-requirements.txt
+
+Working:
+	Activate:
+		source start.sh
+	Save new dependency:
+		pip freeze > py-requirements.txt
