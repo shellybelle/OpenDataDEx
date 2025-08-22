@@ -11,7 +11,7 @@ sparqlWiki.setQuery("""
         ?obj wdt:P31 wd:Q146 .  # Instances of housecats
         ?obj ?prop ?value .
     }
-    LIMIT 100000
+    LIMIT 100
 """)
 
 try:
