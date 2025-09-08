@@ -1,7 +1,7 @@
 from SPARQLWrapper import SPARQLWrapper
 from rdflib import Graph
 
-def getTriples() -> Graph:
+def get_all_triples() -> Graph:
     endpoint = "https://query.wikidata.org/sparql"
     query = """
         PREFIX wd:     <http://www.wikidata.org/entity/>

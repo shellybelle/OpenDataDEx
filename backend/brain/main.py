@@ -2,12 +2,8 @@ from sparql import *
 from conceptLattice import *
 
 def main():
-    triples = getTriples()
-    
-    ### TEST ###
-    print(triples.serialize())
-
-    lattice = createConceptLattice(triples)
+    all_triples = get_all_triples()
+    lattice = create_concept_lattice(all_triples)
 
     ### TODO: send triples and lattice to front end ###
 
