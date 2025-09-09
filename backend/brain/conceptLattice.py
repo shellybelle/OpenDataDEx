@@ -1,43 +1,56 @@
 from rdflib import Graph
-import concepts
-import pandas
+from concepts import Context, lattices
+from pandas import DataFrame
 
-def create_concept_lattice(all_triples: Graph) -> Graph:
-    g = Graph()
+def get_obj_context(obj_graph: Graph) -> Context:
+    """
+    Returns a concepts Formal Concept from which a concept lattice can be constructed
+    """
 
-    c = create_formal_context(all_triples)
-    l = c.lattice
-
-    ### DEBUG ###
-    print("Number of concepts:", len(c.lattice))
-
-    return g
-
-def create_formal_context(all_triples: Graph) -> concepts.Context:
-    props = sorted(all_triples.predicates(unique=True))
-    subjs = sorted(all_triples.subjects(unique=True))
+    props = sorted(obj_graph.predicates(unique=True))
+    subjs = sorted(obj_graph.subjects(unique=True))
 
     rows = []
     for subj in subjs:
-        row = [(subj, prop, None) in all_triples for prop in props]
+        row = [(subj, prop, None) in obj_graph for prop in props]
         rows.append(row)
 
-    context_data = pandas.DataFrame(rows, index=(str(s) for s in subjs), columns=(str(p) for p in props))
+    context_data = DataFrame(rows, index=(str(s) for s in subjs), columns=(str(p) for p in props))
     
+    # Ensure all data are actually True or False
     assert all(dtype == 'bool' for dtype in context_data.dtypes)
 
-    ### DEBUG ###
-    print(context_data.shape)
-
+    # Drop sparse, dense, and trivial properties
     sparse_props = context_data.columns[(context_data == True).sum(axis=0) == 1].tolist()
     dense_props = context_data.columns[(context_data == False).sum(axis=0) ==1].tolist()
     trivial_props = context_data.columns[context_data.nunique() == 1].tolist()
-
     context_data.drop(sparse_props, axis=1, inplace=True)
     context_data.drop(dense_props, axis=1, inplace=True)
     context_data.drop(trivial_props, axis=1, inplace=True)
   
     ### DEBUG ###
-    print(context_data.shape)
+    print("DataFrame shape:", context_data.shape)
 
-    return concepts.Context(context_data.index.tolist(), context_data.columns.tolist(), context_data.values.tolist())
+    return Context(context_data.index.tolist(), context_data.columns.tolist(), context_data.values.tolist())
+
+def add_concept_relationships(obj_graph: Graph, obj_context: Context) -> Graph:
+    """
+    adds concepts relationships to the object graph
+    """
+    
+    obj_lattice = obj_context.lattice
+    
+    # index the concepts
+    concept_index_map = {
+        hash(concept.intent): i for i, concept in enumerate(obj_lattice)
+    }
+
+    for obj in obj_graph.subjects():
+        e, intent = obj_context[str(obj),]
+        obj_concept_index = concept_index_map[hash(intent)]
+        print(obj,':', obj_concept_index)
+
+        ### TODO: create tagology namespace and add concept relationships
+
+    return obj_graph
+
