@@ -8,17 +8,18 @@ def get_obj_context(obj_graph: Graph) -> Context:
     """
 
     props = sorted(obj_graph.predicates(unique=True))
-    subjs = sorted(obj_graph.subjects(unique=True))
+    objs = sorted(obj_graph.subjects(unique=True))
 
     rows = []
-    for subj in subjs:
-        row = [(subj, prop, None) in obj_graph for prop in props]
+    for obj in objs:
+        row = [(obj, prop, None) in obj_graph for prop in props]
         rows.append(row)
 
-    context_data = DataFrame(rows, index=(str(s) for s in subjs), columns=(str(p) for p in props))
+    context_data = DataFrame(rows, index=(str(s) for s in objs), columns=(str(p) for p in props))
     
-    # Ensure all data are actually True or False
-    assert all(dtype == 'bool' for dtype in context_data.dtypes)
+    # Ensure all DataFrame values are True or False
+    if not (context_data.dtypes == bool).all():
+        raise ValueError("Non-boolean data detected")
 
     # Drop sparse, dense, and trivial properties
     sparse_props = context_data.columns[(context_data == True).sum(axis=0) == 1].tolist()
@@ -45,7 +46,7 @@ def add_concept_relationships(obj_graph: Graph, obj_context: Context) -> Graph:
         hash(concept.intent): i for i, concept in enumerate(obj_lattice)
     }
 
-    for obj in obj_graph.subjects():
+    for obj in obj_graph.subjects(unique=True):
         e, intent = obj_context[str(obj),]
         obj_concept_index = concept_index_map[hash(intent)]
         print(obj,':', obj_concept_index)
