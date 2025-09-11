@@ -10,7 +10,7 @@ if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 else:
     tag_graph = None
 
-@app.route("/sparql", methods=["POST"])
+@app.route("/tagology_graph", methods=["POST"])
 def sparql_query():
 
     post_query = request.json.get("query")
