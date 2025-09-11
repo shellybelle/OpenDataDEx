@@ -1,14 +1,10 @@
-from sparql import get_object_graph
-from conceptLattice import get_object_context, add_related_objects
+from brain.tagology_graph import get_tagology_graph
 
 def main():
-    
-    ### TODO: pass get_object_graph() a sparql query
-    obj_graph = get_object_graph()
+    tagology_graph = get_tagology_graph()
 
-    obj_context = get_object_context(obj_graph)
-    
-    add_related_objects(obj_graph, obj_context)
+    ### DEBUG ###
+    print(f"tagology graph created that contained {len(tagology_graph)} triples")
 
 if __name__ == "__main__":
     main()
