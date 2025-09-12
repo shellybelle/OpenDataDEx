@@ -2,14 +2,14 @@ from brain.source_graph import get_object_graph
 from brain.formal_context import get_object_context, add_related_objects
 from rdflib import Graph
 
-def get_tagology_graph() -> Graph:
+def create_tagology_graph(source_query: str) -> Graph:
     
     ### TODO: ###
     # pass get_object_graph() a sparql query
     # thorough data validation and error handling
     # benchmarking & optimization
 
-    obj_graph = get_object_graph()
+    obj_graph = get_object_graph(source_query)
     obj_context = get_object_context(obj_graph)
     
     for obj in obj_graph.subjects(unique=True):

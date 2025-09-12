@@ -1,29 +1,73 @@
-from flask import Flask, request, jsonify
-import os
+from flask import Flask, request, jsonify, session
 from rdflib import Graph
-from brain.tagology_graph import get_tagology_graph
+from brain.tagology_graph import create_tagology_graph
+import os, uuid
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
+
+DEFAULT_QUERY = """
+        PREFIX wd:     <http://www.wikidata.org/entity/>
+        PREFIX wdt:    <http://www.wikidata.org/prop/direct/>
+        PREFIX schema: <http://schema.org/>
+
+        CONSTRUCT {
+            ?wikip ?prop ?val .
+            ?wikip schema:about ?item .
+        }
+        WHERE {
+            ?wikip schema:isPartOf <https://en.wikipedia.org/>;
+                schema:about ?item .
+            
+            ?item
+                wdt:P31 wd:Q144;        # DOGS
+                #wdt:P31 wd:Q146;        # CATS
+                #wdt:P31 wd:Q11424;      # MOVIES
+                #wdt:P5008 ?list;        # ON A LIST
+                ?prop ?val .
+
+            FILTER(STRSTARTS(STR(?prop), STR(wdt:)))    # Property must be from truthy namespace
+        }
+        LIMIT 100000
+    """
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    tag_graph = get_tagology_graph()
+    GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_QUERY)
 else:
-    tag_graph = None
+    GLOBAL_TAG_GRAPH = None
+
+# key: user session id (str)
+# Value: a tagology_graph (rdflib.Graph)
+user_tag_graphs = {}
+
+@app.before_request
+def ensure_user_id():
+    if "user_id" not in session:
+        session["user_id"] = str(uuid.uuid4())
+
+@app.route("/new_tag_graph", methods=["POST"])
+def create_user_tag_graph():
+    user_id = session["user_id"]
+    source_query = request.json.get("query", DEFAULT_QUERY)
+    user_tag_graphs[user_id] = create_tagology_graph(source_query)
+    return jsonify({"message": "New graph created"})
 
 @app.route("/tagology_graph", methods=["POST"])
 def sparql_query():
+    user_id = session["user_id"]
+    tag_graph = user_tag_graphs.get(user_id, GLOBAL_TAG_GRAPH)
+    query = request.json.get("query")
 
-    post_query = request.json.get("query")
-    if not post_query:
+    if tag_graph is None:
+        return jsonify({"error": "Missing tagology graph"}), 500
+    if query is None:
         return jsonify({"error": "Missing SPARQL query"}), 400
 
     try:
-        results = tag_graph.query(post_query)
-    
-        json_results = []
-        for row in results:
-            json_results.append({str(l): str(row[l]) for l in row.labels})
-
+        results = tag_graph.query(query)
+        json_results = [
+            {str(l): str(row[l]) for l in row.labels}
+            for row in results]
         return jsonify(json_results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
