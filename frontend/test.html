@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tagology PoC</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #cy { width: 100vw; height: 100vh; display: block; }
+  </style>
+  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+</head>
+<body>
+  <div id="cy"></div>
+
+  <script>
+    // --- Mock backend graph data ---
+    const graphDB = {
+      A: ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'],
+      B: ['A', 'N', 'O', 'P'],
+      C: ['A', 'Q', 'R'],
+      // Add more nodes if you want deeper graphs
+    };
+
+    // --- Utility to build a small radial subgraph ---
+    function getSubgraph(focusId) {
+      const neighbors = graphDB[focusId] || [];
+      const nodes = [{ data: { id: focusId, label: focusId, focus: true } }];
+      const edges = [];
+
+      neighbors.forEach(n => {
+        nodes.push({ data: { id: n, label: n, focus: false } });
+        edges.push({ data: { id: `${focusId}-${n}`, source: focusId, target: n } });
+      });
+
+      return { nodes, edges };
+    }
+
+    // --- Render a subgraph with cytoscape ---
+    function renderGraph(focusId) {
+      const { nodes, edges } = getSubgraph(focusId);
+
+      const cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: [...nodes, ...edges],
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'background-color': ele => ele.data('focus') ? '#ff6600' : '#0074D9',
+              'label': 'data(label)',
+              'color': '#fff',
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'font-size': 14
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 2,
+              'line-color': '#ccc',
+              'curve-style': 'bezier'
+            }
+          }
+        ],
+        layout: {
+          name: 'concentric',
+          concentric: ele => ele.data('focus') ? 2 : 1,
+          levelWidth: () => 1,
+          spacingFactor: 2
+        }
+      });
+
+      cy.nodes().on('tap', evt => {
+        const id = evt.target.id();
+        if (id !== focusId) {
+          renderGraph(id);
+        }
+      });
+    }
+
+    // --- Kick off with node A as the focus ---
+    renderGraph('A');
+  </script>
+</body>
+</html>
+

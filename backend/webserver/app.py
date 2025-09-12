@@ -53,7 +53,7 @@ def create_user_tag_graph():
     return jsonify({"message": "New graph created"})
 
 @app.route("/tagology_graph", methods=["POST"])
-def sparql_query():
+def query_tag_graph():
     user_id = session["user_id"]
     tag_graph = user_tag_graphs.get(user_id, GLOBAL_TAG_GRAPH)
     query = request.json.get("query")
