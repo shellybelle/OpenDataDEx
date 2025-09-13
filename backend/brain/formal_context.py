@@ -27,14 +27,16 @@ def get_object_context(obj_graph: Graph) -> Context:
 def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context):
 
     obj_extent, obj_intent = obj_context[str(obj),]
-    neighbor_concepts = obj_context.neighbors(obj_extent)
-        
-    related_objs = set(obj_extent)
-        
-    for extent, i in neighbor_concepts:
-        related_objs.update(extent)
-        
-    related_objs.discard(str(obj))
+    related_objs = set()
+
+    upper_concepts = obj_context.neighbors(obj_extent)
+    while(len(related_objs) < RELATED_OBJ_THRESHOLD) and upper_concepts:
+        upper_upper_concepts = []
+        for extent, i in upper_concepts:
+            related_objs.update(extent)
+            upper_upper_concepts.extend(obj_context.neighbors(extent))
+        related_objs.discard(str(obj))
+        upper_concepts = upper_upper_concepts
     
     if(len(related_objs) > RELATED_OBJ_THRESHOLD):
         related_objs = _prune_related_objs(obj, related_objs, obj_graph)

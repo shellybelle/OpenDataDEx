@@ -1,0 +1,1331 @@
+[
+  {
+    "totalObjects": "336"
+  }
+]
+[
+  {
+    "obj": "https://en.wikipedia.org/wiki/Baxter_LePage",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tuna_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Auditor_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Paddy_the_Wanderer",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Kuma_von_Clifford",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Boji_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Nemo_A534",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fido_(Abraham_Lincoln%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Orca_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Dog_of_Osu",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Chesty_(mascot)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Arthur_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Gipsy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Max_(British_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Zuyaqui",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bob_the_Railway_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Kratu_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Spanish_Battleship",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lord_Nelson_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Argo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Diesel_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sarail_Hound",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Briergate_Bright_Beauty",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Freddy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pete_(Theodore_Roosevelt%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Dylan_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Millie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Nigel_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Snowy_(military_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Anuel_AA",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Jet_of_Iada",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Hachik%C5%8D",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lampo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fernando_Bale",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Miss_Beazley_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bailey_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Trump_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Major_(Franklin_D._Roosevelt%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Buffy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Count_Noble",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Primley_Sceptre",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Caesar_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Smoky_(Olympic_mascot)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Waghya",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sutter_Brown",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bothie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ulk_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Resist%C3%AAncia_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Conejo_Wycollar_Boy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rajah_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tracey_Witch_of_Ware",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pickles_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Owney_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Giro_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Haymarket_Faultless",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Kabosu_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Slumber_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lennu",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Commander_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Orion_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Daddy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pal_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Old_Hemp",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pushinka",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Manny_the_Frenchie",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bunk%C5%8D",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Blue_(Don_Cherry%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Luckystar_of_Ware",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Vanderbilt_%27N_Printemp%27s_Lucky_Strike",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sergeant_Stubby",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Peggy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pitbull_(rapper)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Saint_Guinefort",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Endal",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Patron_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Skippy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Conan_(Javier_Milei%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rob_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Gibson_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Zeus_(dog,_born_2008)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Cook_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Uggie",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bamse_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Help_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Juliana_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Heart-kun",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bullseye_(mascot)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Konni_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Brownie_the_Wonder_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tickle_Em_Jock",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Moose_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lucky_Diamond_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Spike_(dog_actor)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Gander_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sinbad_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Loukanikos",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tillman_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fufu_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Dash_(spaniel)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sallie_Ann_Jarrett",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Torums_Scarf_Michael",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pulaski%27s_Masterpiece",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rip_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pete_the_Pup",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Smoky_(war_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Messi_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Barney_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Nevado",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Thunder_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Boy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Luke_the_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Nipper",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Cosmo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Salilyn_%27N_Erin%27s_Shameless",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Jean_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Hurricane_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Koko_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lucky_(war_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Willie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rocky_Top%27s_Sundance_Kid",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Chips_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Spot_Fetcher",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Peritas",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Balto",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Max_(American_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Don_the_Talking_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lump_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rob_Roy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pompey_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/K9_Killer",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bobbie_the_Wonder_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Snuppy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rex_(Ronald_Reagan%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Strathtay_Prince_Albert",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sabine_Rarebit",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lightning_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sykes_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Duke_the_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Butler_Blue",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Shep_(dog_actor)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Madison_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Otto_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Mancs_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rigel_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Master_McGrath",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ace_the_Wonder_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Marnie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Teddy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Chanel_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rifleman_Khan",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Horand_von_Grafrath",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Nigger_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lex_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Diamond_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fido_(Italian_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Doug_the_Pug",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Saucisse",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Red_Dog_(Pilbara)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fid%C3%A8le_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Laddie_Boy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Seaman_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Shep_(American_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Malchik",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Koton_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Crusoe_the_Dachshund",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bretagne_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Burneze_Geordie_Girl",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Puggy_Smalls",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Westmead_Hawk",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Crumstone_Irma",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Zorba_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Strongheart",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Wheely_Willy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Laika",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Almanza_Backseat_Driver",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pep_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Buddy_(Bill_Clinton%27s_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bobi_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Elwood_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Giant_George",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Titan_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rags_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Norbert_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sanggeun",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Babydog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Judy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ballyregan_Bob",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fala_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bosco_Ramos",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Horrie_the_Wog_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Abuwtiyuw",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Just_Nuisance",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Buster_(spaniel)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Chalky_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Enzo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Canigou_Cambrai",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tich_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sam_(ugly_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Apollo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Hungargunn_Bear_It%27n_Mind",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Araki_Fabulous_Willy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Dookie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Shep_(British_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Efbe%27s_Hidalgo_At_Goodspice",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Gunner_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Star_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Faith_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tongdaeng",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bluey_(long-lived_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Izzy_the_Frenchie",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Kabang",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Agata_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Salilyn%27s_Condor",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Theo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Jed_(wolfdog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Darla_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Moonie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/George_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Brigitte_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Taco_Bell_chihuahua",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Terry_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Higgins_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tillamook_Cheddar_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Field_Dog_Stud_Book",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sarbi",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/My_Own_Brucie",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Palacegarden_Malachy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rancho_Dobe%27s_Storm",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Foxcliffe_Hickory_Wind",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Soccer_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Roundtown_Mercedes_of_Maryscot",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ferry_v._Rauhfelsen_of_Giralda",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rapid_Ranger",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Zeltim_Odie_Peterson",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Snip_Nua",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Trakr",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Vbos_The_Kentuckian",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Old_Jock",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Nemo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Peter_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Alex_the_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Salty_and_Roselle",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Loteki_Supernatural_Being",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Zentarr_Elizabeth",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bobbie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Manchinha_case",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Jafrak_Philippe_Olivier",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Lupo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Heaven_Sent_Brandy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Treo_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ruppy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Buster_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Jackie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tucker_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Shieling%27s_Signature",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Boxwood_Barkentine",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Maida_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Swansea_Jack",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Toby_Rimes",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Warren_Remedy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Taylors_Sky",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fiacre%27s_First_and_Foremost",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rolf_(Airedale_terrier)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bob_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Looty_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Cheeseface",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Mr._Winkle",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Obo_II",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bonn%E2%80%93Oberkassel_dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Mutant_Giant_Spider_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/McVan%27s_To_Russia_With_Love",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Barberryhill_Bootlegger",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Huddersfield_Ben",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Rex_(search_and_rescue_dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Donnie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Exquisite_Model_of_Ware",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Soletrader_Peek_A_Boo",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Shiba_Inu_Puppy_Cam",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pepper_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sidaz_Jack",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Caesar_(the_Anzac_Dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Toppy",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Midkiff_Seductive",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Signal_Circuit_of_Halleston",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Fred_Basset_(greyhound)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Milly_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Velvet_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Cheeka_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Scurlogue_Champ",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Patsy_Ann",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Banana_Joe_V_Tani_Kazari",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Orla_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Dempsey_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tyson_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Hypnodog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Dilyn",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Magourna_Reject",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Patricias_Hope",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Joy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Choo-tai_of_Egham",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Topscore_Contradiction",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Special_Times_Just_Right",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Cell_dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Yakee_A_Dangerous_Liaison",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pigalle_Wonder",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Anna_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Matford_Vic",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Thorn_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Bing_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Beauty_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Miss_Ellie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Betsy_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Philly_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sadie_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Shelby_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ana_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Gabi_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Olivia_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ricky_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Pelorus_Jack_(HMS_New_Zealand_mascot)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Frida_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Kenmare_Sorceress",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Mayor_Max_II",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Sasha_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Tinkerbelle_the_Dog",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ricochet_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Chaser_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Carlos_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Gobi_(dog)",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Willie_Bean",
+    "relObjCount": "12"
+  },
+  {
+    "obj": "https://en.wikipedia.org/wiki/Ravenswood_Flo",
+    "relObjCount": "12"
+  }
+]
