@@ -1,9 +1,15 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, render_template
 from rdflib import Graph
 from brain.tagology_graph import create_tagology_graph
 import os, uuid
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, '../../frontend/template'),
+    static_folder=os.path.join(BASE_DIR, '../../frontend/static')
+)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
 
 DEFAULT_QUERY = """
@@ -39,6 +45,10 @@ else:
 # key: user session id (str)
 # Value: a tagology_graph (rdflib.Graph)
 user_tag_graphs = {}
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.before_request
 def ensure_user_id():
