@@ -29,6 +29,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context):
     obj_extent, obj_intent = obj_context[str(obj),]
     related_objs = set()
 
+    ### TODO: should I ONLY look at 1st neighbor concepts (<= 12 related)?
     upper_concepts = obj_context.neighbors(obj_extent)
     while(len(related_objs) < RELATED_OBJ_THRESHOLD) and upper_concepts:
         upper_upper_concepts = []

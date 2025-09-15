@@ -1,10 +1,6 @@
 from brain.tagology_graph import create_tagology_graph
 
 TEST_QUERY  = """
-        PREFIX wd:     <http://www.wikidata.org/entity/>
-        PREFIX wdt:    <http://www.wikidata.org/prop/direct/>
-        PREFIX schema: <http://schema.org/>
-
         CONSTRUCT {
             ?wikip ?prop ?val .
             ?wikip schema:about ?item .

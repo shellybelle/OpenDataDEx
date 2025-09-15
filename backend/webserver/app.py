@@ -13,10 +13,6 @@ app = Flask(
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
 
 DEFAULT_QUERY = """
-        PREFIX wd:     <http://www.wikidata.org/entity/>
-        PREFIX wdt:    <http://www.wikidata.org/prop/direct/>
-        PREFIX schema: <http://schema.org/>
-
         CONSTRUCT {
             ?wikip ?prop ?val .
             ?wikip schema:about ?item .
