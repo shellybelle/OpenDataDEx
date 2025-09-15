@@ -5,27 +5,31 @@
 }
 
 #cyto-pane {
-  flex: 1;               /* take whatever is left */
-  min-width: 400px;
   display: flex;
+  flex: 1;
+  min-width: 0; /* allow shrinking when space is tight */
 }
 
 #cyto {
   flex: 1;
+  height: 100%;
+  width: 100%;
 }
 
 #obj-pane {
-  width: 300px;          /* default width */
-  max-width: 600px;      /* cap */
-  min-width: 200px;      /* prevent collapse */
-  resize: horizontal;    /* browser resizer shows */
-  overflow: auto;
-  border-left: 4px solid #ccc;
   display: flex;
+  width: 300px;
+  max-width: 600px;
+  min-width: 200px;
+  overflow: auto;
+  resize: horizontal;
+  border-left: 4px solid #ccc;
 }
 
 #obj-frame {
   flex: 1;
   border: none;
+  width: 100%;
+  height: 100%;
 }
 
