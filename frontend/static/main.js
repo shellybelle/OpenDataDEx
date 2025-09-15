@@ -95,7 +95,7 @@ async function init() {
   });
 
   cy = cytoscape({
-    container: document.getElementById('DEx'),
+    container: document.getElementById('cyto'),
     style: [{
       selector: 'node',
       style: {'label': 'data(label)', 'font-size': 8, 'text-valign': 'center', 'text-halign': 'center'}

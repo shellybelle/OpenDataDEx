@@ -1,10 +1,31 @@
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+#DEx {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
 }
 
-#DEx {
-  width: 100%;
-  height: 100%;
+#cyto-pane {
+  flex: 1;               /* take whatever is left */
+  min-width: 400px;
+  display: flex;
 }
+
+#cyto {
+  flex: 1;
+}
+
+#obj-pane {
+  width: 300px;          /* default width */
+  max-width: 600px;      /* cap */
+  min-width: 200px;      /* prevent collapse */
+  resize: horizontal;    /* browser resizer shows */
+  overflow: auto;
+  border-left: 4px solid #ccc;
+  display: flex;
+}
+
+#obj-frame {
+  flex: 1;
+  border: none;
+}
+
