@@ -58,6 +58,7 @@ def _prune_related_objs(obj: URIRef, related_objs: set, obj_graph: Graph) -> set
             VALUES ?related_obj {{ {related_obj_list} }}
             <{obj}> ?p ?v .
             ?related_obj ?p ?v .
+            FILTER(?p NOT IN (skos:prefLabel, skos:related))
         }}
         GROUP BY ?related_obj
         ORDER BY DESC(COUNT(DISTINCT ?p))

@@ -4,11 +4,12 @@ const OBJECT_TYPE = "wikipedia_url";
 
 async function fetchHubObj() {
   const query = `
-    SELECT ?hubObj
+    SELECT ?hubObj ?label
     WHERE {
       ?o skos:related ?hubObj .
+      ?hubObj skos:prefLabel ?label .
     }
-    GROUP BY ?hubObj
+    GROUP BY ?hubObj ?label
     ORDER BY DESC(COUNT(?o))
     LIMIT 1
   `;
@@ -22,9 +23,10 @@ async function fetchHubObj() {
 
 async function fetchRelObjs(focusObj) {
   const query = `
-    SELECT ?relObj
+    SELECT ?relObj ?label
     WHERE {
       <${focusObj}> skos:related ?relObj .
+      ?relObj skos:prefLabel ?label .
     }
   `;
   const result = await fetch("/tagology_graph", {
@@ -35,63 +37,20 @@ async function fetchRelObjs(focusObj) {
   return await result.json();
 }
 
-async function fetchWikiItemLabels(allObjs) {
-  const endpoint = "https://query.wikidata.org/sparql";
-  const valuesList = allObjs.map(obj => `<${obj}>`).join(" ");
-  const query = `
-    PREFIX schema: <http://schema.org/>
-    SELECT ?obj ?itemLabel
-    WHERE {
-      VALUES ?obj {${valuesList}}
-      ?obj schema:about ?item .
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-    }
-  `;
-  const url = endpoint + "?query=" + encodeURIComponent(query);
-  const result = await fetch(url, {
-    headers: {
-      "Accept": "application/sparql-results+json",
-      "User-Agent": "tagology/1.0 (michelle.lee.tom@gmail.com)"
-    }
-  });
-  return await result.json();
-}
-
-async function getLabels(focusObj, relObjs) {
-  const labels = {};
-  const allObjs = [focusObj, ...relObjs];
-  if(OBJECT_TYPE == "wikipedia_url") {
-    const itemLabelsData = await fetchWikiItemLabels(allObjs);
-
-    // DEBUG
-    console.log(itemLabelsData);
-
-    itemLabelsData.results.bindings.forEach(row => {
-      labels[row.obj.value] = row.itemLabel?.value || row.obj.value;
-    });
-  } else {
-    allObjs.forEach(o => {
-      labels[o] = o;
-    })
-  }
-  return labels;
-}
-
 async function init() {
   const hubObjData = await fetchHubObj();
-  hubObj = hubObjData[0].hubObj;
+  hubObj = {id: hubObjData[0].hubObj, label: hubObjData[0].label};
 
   // MAKE NEW CYTOSCAPE GRAPH
   const focusObj = hubObj
-  const relObjsData = await fetchRelObjs(focusObj);
-  const relObjs = relObjsData.map(row => row.relObj);
-  const labels = await getLabels(focusObj, relObjs);
+  const relObjsData = await fetchRelObjs(focusObj.id);
+  const relObjs = relObjsData.map(row => ({id: row.relObj, label: row.label}));
 
-  const nodes = [{data: {id: focusObj, label: labels[focusObj]}}];
+  const nodes = [{data: {id: focusObj.id, label: focusObj.label}}];
   const edges = [];
   relObjs.forEach(ro => {
-    nodes.push({data: {id: ro, label: labels[ro]}});
-    edges.push({data: {id: focusObj + "-" + ro, source: focusObj, target: ro}});
+    nodes.push({data: {id: ro.id, label: ro.label}});
+    edges.push({data: {id: focusObj.id + "-" + ro.id, source: focusObj.id, target: ro.id}});
   });
 
   cy = cytoscape({
