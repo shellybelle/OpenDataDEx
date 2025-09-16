@@ -12,23 +12,30 @@ html, body {
 }
 
 #cyto {
-  aspect-ratio: 1 / 1;  /* keep it square */
-  width: 100vmin;       /* scale to smaller viewport dimension */
-  height: 100vmin;      /* match width to stay square */
-  max-width: 100vw;     /* never overflow horizontally */
-  max-height: 100vh;    /* never overflow vertically */
-  overflow: hidden;     /* Cytoscape never scrolls */
+  aspect-ratio: 1/1;
+  width: 100vmin;
+  height: 100vmin;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 #obj-pane {
-  flex: 1; /* take remaining horizontal space */
+  flex: 1;
   border-left: 4px solid #ccc;
+}
+
+#query-bar {
+  flex: 0 0 auto;
+  padding: 0.5em;
+  border-bottom: 1px solid #ccc;
+  background: #f0f0f0;
 }
 
 #obj-frame {
   border: none;
   width: 100%;
   height: 100%;
-  overflow: auto; /* iframe scrolls independently */
+  overflow: auto;
 }
 

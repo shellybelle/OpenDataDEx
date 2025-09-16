@@ -14,6 +14,16 @@
                 <div id="cyto"></div>
             </div>
             <div id="obj-pane">
+                <div id="query-bar">
+                    <select id="endpoint-select">
+                        <option value="wiki">Wikipedia</option>
+                        <option value="other">Other endpoint</option>
+                    </select>
+                    <select id="query-select">
+                        <option value="default">Default query</option>
+                        <option value="alt">Alternative query</option>
+                    </select>
+                </div>
                 <iframe id="obj-frame" src="{{ url_for('static', filename='welcome.html') }}"></iframe>
             </div>
         </div>

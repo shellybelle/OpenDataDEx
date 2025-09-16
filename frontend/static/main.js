@@ -1,6 +1,4 @@
 let cy;
-let hubObj = null;
-const OBJECT_TYPE = "wikipedia_url";
 
 async function fetchHubObj() {
   const query = `
@@ -39,19 +37,17 @@ async function fetchRelObjs(focusObj) {
 
 async function init() {
   const hubObjData = await fetchHubObj();
-  hubObj = {id: hubObjData[0].hubObj, label: hubObjData[0].label};
+  const focusObj = {id: hubObjData[0].hubObj, label: hubObjData[0].label};
 
-  // MAKE NEW CYTOSCAPE GRAPH
-  const focusObj = hubObj
   const relObjsData = await fetchRelObjs(focusObj.id);
   const relObjs = relObjsData.map(row => ({id: row.relObj, label: row.label}));
 
   const nodes = [{data: {id: focusObj.id, label: focusObj.label}}];
-  const edges = [];
-  relObjs.forEach(ro => {
-    nodes.push({data: {id: ro.id, label: ro.label}});
-    edges.push({data: {id: focusObj.id + "-" + ro.id, source: focusObj.id, target: ro.id}});
-  });
+  relObjs.forEach(ro => nodes.push({data: {id: ro.id, label: ro.label}}));
+
+  const edges = relObjs.map(ro => ({
+    data: {id: `${focusObj.id}-${ro.id}`, source: focusObj.id, target: ro.id}
+  }));
 
   cy = cytoscape({
     container: document.getElementById('cyto'),
@@ -73,6 +69,7 @@ async function init() {
   });
 
   cy.layout({name: 'concentric'}).run();
+  cy.fit();
 }
 
 init();
