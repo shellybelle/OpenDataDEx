@@ -1,35 +1,34 @@
+html, body {
+  margin: 0;
+  overflow: hidden; /* no page-level scrollbars */
+  height: 100%;
+  width: 100%;
+}
+
 #DEx {
   display: flex;
   height: 100vh;
   width: 100vw;
 }
 
-#cyto-pane {
-  display: flex;
-  flex: 1;
-  min-width: 0; /* allow shrinking when space is tight */
-}
-
 #cyto {
-  flex: 1;
-  height: 100%;
-  width: 100%;
+  aspect-ratio: 1 / 1;  /* keep it square */
+  width: 100vmin;       /* scale to smaller viewport dimension */
+  height: 100vmin;      /* match width to stay square */
+  max-width: 100vw;     /* never overflow horizontally */
+  max-height: 100vh;    /* never overflow vertically */
+  overflow: hidden;     /* Cytoscape never scrolls */
 }
 
 #obj-pane {
-  display: flex;
-  width: 300px;
-  max-width: 600px;
-  min-width: 200px;
-  overflow: auto;
-  resize: horizontal;
+  flex: 1; /* take remaining horizontal space */
   border-left: 4px solid #ccc;
 }
 
 #obj-frame {
-  flex: 1;
   border: none;
   width: 100%;
   height: 100%;
+  overflow: auto; /* iframe scrolls independently */
 }
 

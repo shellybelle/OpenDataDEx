@@ -62,6 +62,16 @@ async function init() {
     elements: nodes.concat(edges)
   });
 
+  cy.on('tap', 'node', function (evt) {
+    const clickedNode = evt.target;
+    document.getElementById('obj-frame').src = clickedNode.data('id');
+  });
+
+  window.addEventListener('resize', () => {
+    cy.resize();
+    cy.fit();
+  });
+
   cy.layout({name: 'concentric'}).run();
 }
 
