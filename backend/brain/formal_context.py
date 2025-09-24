@@ -2,7 +2,7 @@ from rdflib import Graph, URIRef, SKOS
 from concepts import Context
 from pandas import DataFrame
 
-RELATED_OBJ_THRESHOLD = 12
+RELATED_OBJ_THRESHOLD = 6
 
 def get_object_context(obj_graph: Graph) -> Context:
     

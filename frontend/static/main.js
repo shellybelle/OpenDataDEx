@@ -1,61 +1,64 @@
+import {queries} from './queries.js';
 let cy;
 
 async function fetchHubObj() {
-  const query = `
-    SELECT ?hubObj ?label
-    WHERE {
-      ?o skos:related ?hubObj .
-      ?hubObj skos:prefLabel ?label .
-    }
-    GROUP BY ?hubObj ?label
-    ORDER BY DESC(COUNT(?o))
-    LIMIT 1
-  `;
   const result = await fetch("/tagology_graph", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({query})}
-  );
+    body: JSON.stringify({query: queries.getHubObj()})
+  });
   return await result.json();
 }
 
-async function fetchRelObjs(focusObj) {
-  const query = `
-    SELECT ?relObj ?label
-    WHERE {
-      <${focusObj}> skos:related ?relObj .
-      ?relObj skos:prefLabel ?label .
-    }
-  `;
+async function fetchRelRelObjs(focusObj) {
   const result = await fetch("/tagology_graph", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({query})
+    body: JSON.stringify({query: queries.getRelRelObjs(focusObj)})
   });
   return await result.json();
 }
 
 async function init() {
   const hubObjData = await fetchHubObj();
-  const focusObj = {id: hubObjData[0].hubObj, label: hubObjData[0].label};
+  const focusNode = {id: hubObjData[0].hubObj, label: hubObjData[0].label, level: 3};
+  const relRelObjsData = await fetchRelRelObjs(focusNode.id);
 
-  const relObjsData = await fetchRelObjs(focusObj.id);
-  const relObjs = relObjsData.map(row => ({id: row.relObj, label: row.label}));
+  const nodes = [{data: focusNode}];
+  const edges = [];
 
-  const nodes = [{data: {id: focusObj.id, label: focusObj.label}}];
-  relObjs.forEach(ro => nodes.push({data: {id: ro.id, label: ro.label}}));
+  const relObjs = new Map();
+  const relRelObjs = new Map();
+  
+  relRelObjsData.forEach(ro => {
+    relObjs.set(ro.relObj, ro.label);
+    relRelObjs.set(ro.relObj2, ro.label2);
+    edges.push({data: {id: `${focusNode.id}-${ro.relObj}`, source: focusNode.id, target: ro.relObj}});
+    edges.push({data: {id: `${ro.relObj}-${ro.relObj2}`, source: ro.relObj, target: ro.relObj2}});
+  });
 
-  const edges = relObjs.map(ro => ({
-    data: {id: `${focusObj.id}-${ro.id}`, source: focusObj.id, target: ro.id}
-  }));
+  relObjs.forEach((label, id) => {
+    nodes.push({data: {id, label, level: 2}});
+  });
+
+  relRelObjs.forEach((label, id) => {
+    if(!nodes.find(n => n.data.id === id)) {
+      nodes.push({data: {id, label, level: 1}});
+    };
+  });
 
   cy = cytoscape({
     container: document.getElementById('cyto'),
-    style: [{
-      selector: 'node',
-      style: {'label': 'data(label)', 'font-size': 8, 'text-valign': 'center', 'text-halign': 'center'}
-    }],
-    elements: nodes.concat(edges)
+    style: [
+      {
+        selector: 'node',
+        style: {'label': 'data(label)', 'font-size': 8, 'text-valign': 'center', 'text-halign': 'center'}
+      }, {
+        selector: 'edge',
+        style: {'target-arrow-shape': 'vee', 'curve-style': 'bezier'}
+      }
+    ],
+    elements: [...nodes, ...edges]
   });
 
   cy.on('tap', 'node', function (evt) {
@@ -63,13 +66,11 @@ async function init() {
     document.getElementById('obj-frame').src = clickedNode.data('id');
   });
 
-  window.addEventListener('resize', () => {
-    cy.resize();
-    cy.fit();
-  });
-
-  cy.layout({name: 'concentric'}).run();
-  cy.fit();
+  cy.layout({
+    name: 'concentric',
+    concentric: n => n.data('level'),
+    levelWidth: () => 1
+  }).run();
 }
 
 init();
