@@ -4,10 +4,10 @@ export const cyStyle = [
       style: {
         'label': 'data(label)',
         'color': 'white',
-        'text-outline-color': 'firebrick',
+        'text-outline-color': 'maroon',
         'text-valign': 'center',
         'text-halign': 'center',
-        'border-color': 'firebrick',
+        'text-outline-width': 2,
         'border-style': 'dashed',
         'border-width': '1'
       }
@@ -25,33 +25,33 @@ export const cyStyle = [
       selector: 'node[level = 5]',
       style: {
         'shape': 'star',
-        'background-color': 'gold',
+        'background-color': 'yellow',
         'background-opacity': 0.95,
+        'border-color': 'gold',
         'width': 100,
         'height': 100,
-        'text-outline-width': 2,
-        'font-size': 20
+        'font-size': 25
       }
     }, {
       selector: 'node[level = 2]',
       style: {
         'background-color': 'tomato',
         'background-opacity': 0.95,
+        'border-color': 'maroon',
         'width': 75,
         'height': 75,
-        'text-outline-width': 1.5,
-        'font-size': 15
+        'font-size': 20
       }
     }, {
       selector: 'node[level = 1]',
       style: {
         'shape': 'octagon',
-        'background-color': 'peru',
+        'background-color': 'goldenrod',
         'background-opacity': 0.95,
+        'border-color': 'darkgoldenrod',
         'width': 50,
         'height': 50,
-        'text-outline-width': 1,
-        'font-size': 10
+        'font-size': 15
       }
     }
 ]
