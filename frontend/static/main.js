@@ -1,4 +1,5 @@
 import {queries} from './queries.js';
+import {cyStyle} from './style.js';
 let cy;
 
 async function fetchHubObj() {
@@ -21,7 +22,7 @@ async function fetchRelRelObjs(focusObj) {
 
 async function init() {
   const hubObjData = await fetchHubObj();
-  const focusNode = {id: hubObjData[0].hubObj, label: hubObjData[0].label, level: 3};
+  const focusNode = {id: hubObjData[0].hubObj, label: hubObjData[0].label, level: 5};
   const relRelObjsData = await fetchRelRelObjs(focusNode.id);
 
   const nodes = [{data: focusNode}];
@@ -49,15 +50,7 @@ async function init() {
 
   cy = cytoscape({
     container: document.getElementById('cyto'),
-    style: [
-      {
-        selector: 'node',
-        style: {'label': 'data(label)', 'font-size': 8, 'text-valign': 'center', 'text-halign': 'center'}
-      }, {
-        selector: 'edge',
-        style: {'target-arrow-shape': 'vee', 'curve-style': 'bezier'}
-      }
-    ],
+    style: cyStyle,
     elements: [...nodes, ...edges]
   });
 
@@ -69,8 +62,10 @@ async function init() {
   cy.layout({
     name: 'concentric',
     concentric: n => n.data('level'),
-    levelWidth: () => 1
+    levelWidth: () => 1,
+    spacingFactor: 1.5
   }).run();
+  window.cy = cy;
 }
 
 init();

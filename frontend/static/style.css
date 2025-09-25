@@ -18,19 +18,19 @@ html, body {
   max-width: 100vw;
   max-height: 100vh;
   overflow: hidden;
-  background-color: #0b0c2a;
+  background: radial-gradient(circle at center, #2a2b6e 0%, #0b0c2a 60%, #000010 100%);
 }
 
 #obj-pane {
   flex: 1;
-  border-left: 4px solid #ccc;
+  border-left: 2px solid silver;
 }
 
 #query-bar {
   flex: 0 0 auto;
   padding: 0.5em;
-  border-bottom: 1px solid #ccc;
-  background: #f0f0f0;
+  border-bottom: 2px solid silver;
+  background: #1e1f4a;
 }
 
 #obj-frame {
