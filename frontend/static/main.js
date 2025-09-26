@@ -61,6 +61,39 @@ async function newDExView(focusNodeId, focusNodeLabel) {
         newDExView(clickedNode.data('id'), clickedNode.data('label'));
       }
     });
+
+    cy.on('mouseover', 'node', (e) => {
+      const hoveredNode = e.target;
+      const currentFontSize = parseFloat(hoveredNode.style('font-size'));
+      hoveredNode.style({
+        'font-size': currentFontSize * 1.5,
+        'border-style': 'solid',
+        'border-width': 2,
+        'border-color': 'lightcyan'
+      });
+    });
+
+    cy.on('mouseover', 'edge', (e) => {
+      e.target.style({
+        'label': "click to see\nrelated tags",
+        'line-color': 'lightcyan',
+        'target-arrow-color': 'lightcyan',
+        'arrow-scale': 1,
+        'width': 2,
+        'color': 'lightcyan',
+        'font-size': 10,
+        'text-rotation': 'autorotate',
+        'text-wrap': 'wrap'
+      });
+    });
+
+    cy.on('mouseout', 'node', (e) => {
+      e.target.removeStyle();
+    });
+
+    cy.on('mouseout', 'edge', (e) => {
+      e.target.removeStyle();
+    });
         
     cy.layout({
       name: 'concentric',

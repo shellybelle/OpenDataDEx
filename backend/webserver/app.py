@@ -25,10 +25,8 @@ DEFAULT_QUERY = """
                 schema:about ?item .
             
             ?item
-                #wdt:P31 wd:Q144;        # DOGS
+                wdt:P31 wd:Q144;        # DOGS
                 #wdt:P31 wd:Q146;        # CATS
-                wdt:P31 wd:Q11424;      # MOVIES
-                wdt:P5008 ?list;        # ON A LIST
                 ?prop ?val .
             FILTER(STRSTARTS(STR(?prop), STR(wdt:)))    # Property must be from truthy namespace
             SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }

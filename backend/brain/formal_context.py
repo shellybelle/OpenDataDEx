@@ -29,7 +29,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context):
     obj_extent, obj_intent = obj_context[str(obj),]
     related_objs = set()
 
-    ### TODO: should I ONLY look at 1st neighbor concepts? (<12 related)
+    ### TODO: should I ONLY look at 1st neighbor concepts? (<THRESHOLD related)
     upper_concepts = obj_context.neighbors(obj_extent)
     while(len(related_objs) < RELATED_OBJ_THRESHOLD):
         if not upper_concepts:
@@ -44,6 +44,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context):
             upper_concepts = upper_upper_concepts
     
     if(len(related_objs) > RELATED_OBJ_THRESHOLD):
+        print("calling prune_related_objs")
         related_objs = _prune_related_objs(obj, related_objs, obj_graph)
 
     for ro in related_objs:
@@ -57,8 +58,8 @@ def _prune_related_objs(obj: URIRef, related_objs: set, obj_graph: Graph) -> set
         WHERE {{
             VALUES ?related_obj {{ {related_obj_list} }}
             <{obj}> ?p ?v .
-            ?related_obj ?p ?v .
             FILTER(?p NOT IN (skos:prefLabel, skos:related))
+            ?related_obj ?p ?v .
         }}
         GROUP BY ?related_obj
         ORDER BY DESC(COUNT(DISTINCT ?p))

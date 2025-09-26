@@ -15,8 +15,8 @@ export const cyStyle = [
     }, {
       selector: 'edge',
       style: {
-        'target-arrow-shape': 'diamond',
         'curve-style': 'straight',
+        'target-arrow-shape': 'diamond',
         'target-arrow-color': 'white',
         'arrow-scale': 0.5,
         'line-color': 'white',
