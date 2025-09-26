@@ -8,7 +8,7 @@ export const cyStyle = [
         'text-valign': 'center',
         'text-halign': 'center',
         'text-wrap': 'wrap',
-        'text-outline-width': 2,
+        'text-outline-width': 1.5,
         'border-style': 'dashed',
         'border-width': '1'
       }
@@ -35,7 +35,7 @@ export const cyStyle = [
         'font-size': 18
       }
     }, {
-      selector: 'node[level = 2]',
+      selector: 'node[level = 3]',
       style: {
         'background-color': 'tomato',
         'background-opacity': 0.95,
@@ -49,13 +49,25 @@ export const cyStyle = [
       selector: 'node[level = 1]',
       style: {
         'shape': 'octagon',
-        'background-color': 'goldenrod',
+        'background-color': 'orange',
         'background-opacity': 0.95,
-        'border-color': 'darkgoldenrod',
+        'border-color': 'darkorange',
         'width': 35,
         'height': 35,
         'text-max-width' : 50,
         'font-size': 10
       }
+    }, {
+      selector: '#ghostLevel2, #ghostLevel4',
+      style: {'display': 'none'}
     }
 ]
+
+export const cyLayout = {
+  name: 'concentric',
+  concentric: n => n.data('level'),
+  levelWidth: () => 1,
+  nodeDimensionsIncludeLabels: true,
+  spacingFactor: 0.5,
+  minNodeSpacing: 25
+}

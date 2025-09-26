@@ -10,10 +10,8 @@
     </head>
     <body>
         <div id="DEx">
-            <div id="cyto-pane">
-                <div id="cyto"></div>
-            </div>
-            <div id="obj-pane">
+            <div id="cyto"></div>
+            <div id="info-pane">
                 <div id="query-bar">
                     <select id="endpoint-select">
                         <option value="wiki">Wikipedia</option>
@@ -24,7 +22,7 @@
                         <option value="alt">Alternative query</option>
                     </select>
                 </div>
-                <iframe id="obj-frame" src="{{ url_for('static', filename='welcome.html') }}"></iframe>
+                <iframe id="obj-display" src="{{ url_for('static', filename='welcome.html') }}"></iframe>
             </div>
         </div>
     </body>

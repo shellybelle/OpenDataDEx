@@ -1,5 +1,5 @@
 import {queries} from './queries.js';
-import {cyStyle} from './style.js';
+import {cyStyle, cyLayout} from './cyOptions.js';
 let cy;
 
 async function fetchHubObj() {
@@ -36,7 +36,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
   });
 
   relObjs.forEach((label, id) => {
-    nodes.push({data: {id, label, level: 2}});
+    nodes.push({data: {id, label, level: 3}});
   });
 
   relRelObjs.forEach((label, id) => {
@@ -44,6 +44,9 @@ async function newDExView(focusNodeId, focusNodeLabel) {
       nodes.push({data: {id, label, level: 1}});
     };
   });
+
+  nodes.push({data: {id: 'ghostLevel2', label: '', level: 2}});
+  nodes.push({data: {id: 'ghostLevel4', label: '', level: 4}});
   
   if(!cy) {
     cy = cytoscape({
@@ -56,7 +59,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
 
     cy.on('tap', 'node', function (evt) {
       let clickedNode = evt.target;
-      document.getElementById('obj-frame').src = clickedNode.data('id');
+      document.getElementById('obj-display').src = clickedNode.data('id');
       if (clickedNode.data('level') !== 5) {
         newDExView(clickedNode.data('id'), clickedNode.data('label'));
       }
@@ -95,12 +98,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
       e.target.removeStyle();
     });
         
-    cy.layout({
-      name: 'concentric',
-      concentric: n => n.data('level'),
-      levelWidth: () => 1,
-      nodeDimensionsIncludeLabels: true,
-    }).run();
+    cy.layout(cyLayout).run();
   } else {
     let clickedNode = cy.getElementById(focusNodeId);
     cy.elements().not(clickedNode).remove();
@@ -117,14 +115,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
           duration: 500
         });
         
-        cy.layout({
-          name: 'concentric',
-          concentric: n => n.data('level'),
-          levelWidth: () => 1,
-          nodeDimensionsIncludeLabels: true,
-          spacingFactor: 0.75,
-          minNodeSpacing: 25
-        }).run();
+        cy.layout(cyLayout).run();
       } 
     });
   }
