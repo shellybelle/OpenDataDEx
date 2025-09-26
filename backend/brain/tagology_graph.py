@@ -9,10 +9,13 @@ def create_tagology_graph(source_query: str, source_endpoint: str) -> Graph:
     # thorough data validation and error handling
     # benchmarking & optimization
 
+    print("calling get_object_graph()")
     obj_graph = get_object_graph(source_query, source_endpoint)
+    print("calling get_object_context()")
     obj_context = get_object_context(obj_graph)
     
     for obj in obj_graph.subjects(unique=True):
+        print("calling add_related_objects()")
         add_related_objects(obj, obj_graph, obj_context)
     
     return obj_graph

@@ -7,6 +7,7 @@ export const cyStyle = [
         'text-outline-color': 'maroon',
         'text-valign': 'center',
         'text-halign': 'center',
+        'text-wrap': 'wrap',
         'text-outline-width': 2,
         'border-style': 'dashed',
         'border-width': '1'
@@ -30,6 +31,7 @@ export const cyStyle = [
         'border-color': 'gold',
         'width': 100,
         'height': 100,
+        'text-max-width' : 150,
         'font-size': 25
       }
     }, {
@@ -40,6 +42,7 @@ export const cyStyle = [
         'border-color': 'maroon',
         'width': 75,
         'height': 75,
+        'text-max-width' : 100,
         'font-size': 20
       }
     }, {
@@ -51,6 +54,7 @@ export const cyStyle = [
         'border-color': 'darkgoldenrod',
         'width': 50,
         'height': 50,
+        'text-max-width' : 75,
         'font-size': 15
       }
     }
