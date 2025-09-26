@@ -88,7 +88,9 @@ async function newDExView(focusNodeId, focusNodeLabel) {
           name: 'concentric',
           concentric: n => n.data('level'),
           levelWidth: () => 1,
-          nodeDimensionsIncludeLabels: true
+          nodeDimensionsIncludeLabels: true,
+          spacingFactor: 0.75,
+          minNodeSpacing: 25
         }).run();
       } 
     });

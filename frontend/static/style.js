@@ -29,10 +29,10 @@ export const cyStyle = [
         'background-color': 'yellow',
         'background-opacity': 0.95,
         'border-color': 'gold',
-        'width': 100,
-        'height': 100,
-        'text-max-width' : 150,
-        'font-size': 25
+        'width': 75,
+        'height': 75,
+        'text-max-width' : 100,
+        'font-size': 18
       }
     }, {
       selector: 'node[level = 2]',
@@ -40,10 +40,10 @@ export const cyStyle = [
         'background-color': 'tomato',
         'background-opacity': 0.95,
         'border-color': 'maroon',
-        'width': 75,
-        'height': 75,
-        'text-max-width' : 100,
-        'font-size': 20
+        'width': 50,
+        'height': 50,
+        'text-max-width' : 65,
+        'font-size': 12
       }
     }, {
       selector: 'node[level = 1]',
@@ -52,10 +52,10 @@ export const cyStyle = [
         'background-color': 'goldenrod',
         'background-opacity': 0.95,
         'border-color': 'darkgoldenrod',
-        'width': 50,
-        'height': 50,
-        'text-max-width' : 75,
-        'font-size': 15
+        'width': 35,
+        'height': 35,
+        'text-max-width' : 50,
+        'font-size': 10
       }
     }
 ]
