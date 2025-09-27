@@ -69,5 +69,13 @@ def query_tag_graph():
         for row in results]
     return jsonify(json_results)
 
+@app.route("/tags")
+def tags_page():
+    return render_template("tags.html")
+
+@app.route("/welcome")
+def welcome_page():
+    return render_template("welcome.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

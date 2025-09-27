@@ -2,10 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="icon" href="{{url_for('static', filename='favicon.ico')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
         <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
-        <script src="{{ url_for('static', filename='main.js') }}" type="module"></script>
+        <script src="{{url_for('static', filename='main.js')}}" type="module"></script>
         <title>tagology</title>
     </head>
     <body>
@@ -22,7 +22,7 @@
                         <option value="alt">Alternative query</option>
                     </select>
                 </div>
-                <iframe id="obj-display" src="{{url_for('static', filename='welcome.html')}}"></iframe>
+                <iframe id="obj-display" src="{{url_for('welcome_page')}}"></iframe>
             </div>
         </div>
     </body>

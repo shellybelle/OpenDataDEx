@@ -45,7 +45,7 @@ async function displayTags(clickedEdge) {
   diffs.sort((a, b) => a.prop.localeCompare(b.prop));
 
   const tagsView = document.getElementById('obj-display');
-  tagsView.src = "/static/tags.html";
+  tagsView.src = "/tags";
   tagsView.onload = () => {
     const tagsHtml = tagsView.contentWindow.document;
 
