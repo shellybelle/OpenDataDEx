@@ -2,36 +2,18 @@ import {queries} from './queries.js';
 import {cyStyle, cyLayout} from './cyOptions.js';
 let cy;
 
-async function fetchHubObj() {
+async function queryTagGraph(query) {
   const result = await fetch("/tagology_graph", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({query: queries.getHubObj()})
+    body: JSON.stringify({query})
   });
-  return await result.json();
-}
-
-async function fetchRelRelObjs(focusObj) {
-  const result = await fetch("/tagology_graph", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({query: queries.getRelRelObjs(focusObj)})
-  });
-  return await result.json();
-}
-
-async function fetchTags(obj) {
-  const result = await fetch("/tagology_graph", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({query: queries.getTags(obj)})
-  });
-  return await result.json();
+  return result.json();
 }
 
 async function displayTags(clickedEdge) {
-  const sourceTagsData = await fetchTags(clickedEdge.data('source'));
-  const targetTagsData = await fetchTags(clickedEdge.data('target'));
+  const sourceTagsData = await queryTagGraph(queries.getTags(clickedEdge.data('source')));
+  const targetTagsData = await queryTagGraph(queries.getTags(clickedEdge.data('target')));
   
   const sourceTagsMap = new Map(sourceTagsData.map(t => [t.prop, t.val]));
   const targetTagsMap = new Map(targetTagsData.map(t => [t.prop, t.val]));
@@ -111,7 +93,7 @@ async function displayTags(clickedEdge) {
 }
 
 async function newDExView(focusNodeId, focusNodeLabel) {
-  const relRelObjsData = await fetchRelRelObjs(focusNodeId);
+  const relRelObjsData = await queryTagGraph(queries.getRelRelObjs(focusNodeId));
   const nodes = [{data: {id: focusNodeId, label: focusNodeLabel, level: 5}}];
   const edges = [];
 
@@ -198,15 +180,15 @@ async function newDExView(focusNodeId, focusNodeLabel) {
   } else {
     let clickedNode = cy.getElementById(focusNodeId);
     cy.elements().not(clickedNode).remove();
-    clickedNode.data({level: 5});
 
     clickedNode.animate({
       position: {x: cy.width()/2, y: cy.height()/2},
       duration: 500,
       complete: () => {
-        const newNodes = cy.add([...nodes.filter(n => n.data.id !== focusNodeId), ...edges]);
-        newNodes.style('opacity', 0);
-        newNodes.animate({
+        clickedNode.data({level: 5});
+        const newElements = cy.add([...nodes.filter(n => n.data.id !== focusNodeId), ...edges]);
+        newElements.style('opacity', 0);
+        newElements.animate({
           style: {opacity: 1},
           duration: 500
         });
@@ -218,7 +200,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
 }
 
 async function init() {
-  const hubObjData = await fetchHubObj();
+  const hubObjData = await queryTagGraph(queries.getHubObj);
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
 }
 
