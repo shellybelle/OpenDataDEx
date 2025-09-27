@@ -36,8 +36,6 @@ DEFAULT_QUERY = """
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_QUERY, DEFAULT_ENDPOINT)
-else:
-    GLOBAL_TAG_GRAPH = None
 
 # key: user session id (str)
 # Value: a tagology_graph (rdflib.Graph)
@@ -65,19 +63,11 @@ def query_tag_graph():
     tag_graph = user_tag_graphs.get(user_id, GLOBAL_TAG_GRAPH)
     query = request.json.get("query")
 
-    if tag_graph is None:
-        return jsonify({"error": "Missing tagology graph"}), 500
-    if query is None:
-        return jsonify({"error": "Missing SPARQL query"}), 400
-
-    try:
-        results = tag_graph.query(query)
-        json_results = [
-            {str(l): str(row[l]) for l in row.labels}
-            for row in results]
-        return jsonify(json_results)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    results = tag_graph.query(query)
+    json_results = [
+        {str(l): str(row[l]) for l in row.labels}
+        for row in results]
+    return jsonify(json_results)
 
 if __name__ == "__main__":
     app.run(debug=True)
