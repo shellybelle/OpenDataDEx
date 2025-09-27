@@ -20,6 +20,96 @@ async function fetchRelRelObjs(focusObj) {
   return await result.json();
 }
 
+async function fetchTags(obj) {
+  const result = await fetch("/tagology_graph", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({query: queries.getTags(obj)})
+  });
+  return await result.json();
+}
+
+async function displayTags(clickedEdge) {
+  const sourceTagsData = await fetchTags(clickedEdge.data('source'));
+  const targetTagsData = await fetchTags(clickedEdge.data('target'));
+  
+  const sourceTagsMap = new Map(sourceTagsData.map(t => [t.prop, t.val]));
+  const targetTagsMap = new Map(targetTagsData.map(t => [t.prop, t.val]));
+
+  const matches = [];
+  const diffs = [];
+  const sourceOnly = [];
+  const targetOnly = [];
+
+  sourceTagsMap.forEach((sVal, sProp) => {
+    if (targetTagsMap.has(sProp)) {
+      const tVal = targetTagsMap.get(sProp);
+      if (tVal === sVal) {
+        matches.push({prop: sProp, val: sVal});
+      } else {
+        diffs.push({prop: sProp, srcVal: sVal, tgtVal: tVal});
+      }
+    } else {
+      sourceOnly.push({prop: sProp, val: sVal});
+    }
+  });
+
+  targetTagsMap.forEach((tVal, tProp) => {
+    if (!sourceTagsMap.has(tProp)) {
+      targetOnly.push({prop: tProp, val: tVal});
+    }
+  });
+
+  diffs.sort((a, b) => a.prop.localeCompare(b.prop));
+
+  const tagsView = document.getElementById('obj-display');
+  tagsView.src = "/static/tags.html";
+  tagsView.onload = () => {
+    const tagsHtml = tagsView.contentWindow.document;
+
+    const sourceLabel = clickedEdge.source().data('label');
+    const targetLabel = clickedEdge.target().data('label');
+
+    tagsHtml.getElementById('shared-title').textContent = `tags shared by ${sourceLabel} and ${targetLabel}`;
+    tagsHtml.getElementById('similar-src-title').textContent = sourceLabel;
+    tagsHtml.getElementById('similar-tgt-title').textContent = targetLabel;
+    tagsHtml.getElementById('unique-src-title').textContent = sourceLabel;
+    tagsHtml.getElementById('unique-tgt-title').textContent = targetLabel;
+
+    const sharedDiv = tagsHtml.getElementById('shared');
+    matches.forEach(({prop, val}) => {
+      const p = tagsHtml.createElement('p');
+      p.textContent = `[${prop}: ${val}]`;
+      sharedDiv.appendChild(p);
+    });
+
+    const similarSrcDiv = tagsHtml.getElementById('similar-src');
+    const similarTgtDiv = tagsHtml.getElementById('similar-tgt');
+    diffs.forEach(({prop, srcVal, tgtVal}) => {
+      const pSrc = tagsHtml.createElement('p');
+      const pTgt = tagsHtml.createElement('p');
+      pSrc.textContent = `[${prop}: ${srcVal}]`;
+      pTgt.textContent = `[${prop}: ${tgtVal}]`;
+      similarSrcDiv.appendChild(pSrc);
+      similarTgtDiv.appendChild(pTgt);
+    });
+
+    const uniqueSrcDiv = tagsHtml.getElementById('unique-src');
+    sourceOnly.forEach(({prop, val}) => {
+      const p = tagsHtml.createElement('p');
+      p.textContent = `[${prop}: ${val}]`;
+      uniqueSrcDiv.appendChild(p);
+    });
+
+    const uniqueTgtDiv = tagsHtml.getElementById('unique-tgt');
+    targetOnly.forEach(({prop, val}) => {
+      const p = tagsHtml.createElement('p');
+      p.textContent = `[${prop}: ${val}]`;
+      uniqueTgtDiv.appendChild(p);
+    });
+  };
+}
+
 async function newDExView(focusNodeId, focusNodeLabel) {
   const relRelObjsData = await fetchRelRelObjs(focusNodeId);
   const nodes = [{data: {id: focusNodeId, label: focusNodeLabel, level: 5}}];
@@ -59,10 +149,16 @@ async function newDExView(focusNodeId, focusNodeLabel) {
 
     cy.on('tap', 'node', function (evt) {
       let clickedNode = evt.target;
-      document.getElementById('obj-display').src = clickedNode.data('id');
+      const frame = document.getElementById('obj-display');
+      frame.onload = null;
+      frame.src = clickedNode.data('id');
       if (clickedNode.data('level') !== 5) {
         newDExView(clickedNode.data('id'), clickedNode.data('label'));
       }
+    });
+
+    cy.on('tap', 'edge', async function (evt) {
+      displayTags(evt.target);
     });
 
     cy.on('mouseover', 'node', (e) => {
@@ -78,7 +174,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
 
     cy.on('mouseover', 'edge', (e) => {
       e.target.style({
-        'label': "click to see\nrelated tags",
+        'label': "click to\nsee tags",
         'line-color': 'lightcyan',
         'target-arrow-color': 'lightcyan',
         'arrow-scale': 1,

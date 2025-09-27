@@ -19,5 +19,13 @@ export const queries = {
       ?relObj skos:related ?relObj2 .
       ?relObj2 skos:prefLabel ?label2 .
     }
+  `,
+  getTags: (obj) => `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?prop ?val
+    WHERE {
+      <${obj}> ?prop ?val
+      FILTER(?prop NOT IN (skos:prefLabel, skos:related))
+    }
   `
 };

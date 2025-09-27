@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   height: 100%;
@@ -34,8 +38,28 @@ html, body {
   border: none;
 }
 
-body#welcome {
-  display: flex;
+h2 {
+  margin-top: 2rem;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+body#welcome, body#tags {
   color: white;
   background: linear-gradient(to right, black, midnightblue);
+  background-attachment: fixed;
+  padding-left: 2rem;
+}
+
+.side-by-side {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.side-by-side > div {
+  flex: 1;
+  min-width: 0;
 }
