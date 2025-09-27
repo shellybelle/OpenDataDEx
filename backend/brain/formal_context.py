@@ -44,7 +44,6 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context):
             upper_concepts = upper_upper_concepts
     
     if(len(related_objs) > RELATED_OBJ_THRESHOLD):
-        print("calling prune_related_objs")
         related_objs = _prune_related_objs(obj, related_objs, obj_graph)
 
     for ro in related_objs:
