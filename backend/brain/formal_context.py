@@ -53,6 +53,7 @@ def _prune_related_objs(obj: URIRef, related_objs: set, obj_graph: Graph) -> set
     
     related_obj_list = " ".join(f"<{ro}>" for ro in related_objs)
     q = f"""
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         SELECT ?related_obj
         WHERE {{
             VALUES ?related_obj {{ {related_obj_list} }}
