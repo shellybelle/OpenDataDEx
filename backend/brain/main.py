@@ -25,7 +25,7 @@ DEFAULT_QUERY = """
     """
 
 def main():
-    tagology_graph = create_tagology_graph(DEFAULT_QUERY, DEFAULT_ENDPOINT)
+    tagology_graph = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
 
     ### DEBUG ###
     print(f"tagology graph contained {len(tagology_graph)} triples")

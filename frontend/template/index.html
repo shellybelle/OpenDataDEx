@@ -1,30 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="icon" href="{{url_for('static', filename='favicon.ico')}}">
-        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-        <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
-        <script src="{{url_for('static', filename='main.js')}}" type="module"></script>
-        <title>tagology</title>
-    </head>
-    <body>
-        <div id="DEx">
-            <div id="cyto"></div>
-            <div id="info-pane">
-                <div id="query-bar">
-                    <select id="endpoint-select">
-                        <option value="wiki">Wikipedia</option>
-                        <option value="other">Other endpoint</option>
-                    </select>
-                    <select id="query-select">
-                        <option value="default">Default query</option>
-                        <option value="alt">Alternative query</option>
-                    </select>
-                </div>
-                <iframe id="obj-display" src="{{url_for('welcome_page')}}"></iframe>
-            </div>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{url_for('static', filename='favicon.ico')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    <script src="{{url_for('static', filename='main.js')}}" type="module"></script>
+    <title>tagology</title>
+  </head>
+  <body>
+    <div id="DEx">
+      <div id="cyto"></div>
+      <div id="info-pane">
+        <div id="query-bar">
+          <h3>tagology Data Exploration</h3>
+          <label for="endpoint-select">sparql endpoint:</label>
+          <select id="endpoint-select">
+            <option value="wikidata">Wikidata</option>
+            <option value="custom">Custom...</option>
+          </select>
+          <label for="query-select">sparql query:</label>
+          <select id="query-select">
+            <option value="wiki-dogs">All wikipedia pages about notable dogs</option>
+            <option value="wiki-cats">All wikipedia pages about notable cats</option>
+            <option value="custom">Custom...</option>
+          </select>
+          <button id="generate-btn">Generate</button>
         </div>
-    </body>
+        <iframe id="obj-display" src="{{url_for('welcome_page')}}"></iframe>
+      </div>
+    </div>
+  </body>
 </html>
-

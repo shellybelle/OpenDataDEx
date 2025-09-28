@@ -1,4 +1,4 @@
-import {queries} from './queries.js';
+import {sourceQueries, tagGraphQueries} from './queries.js';
 import {cyStyle, cyLayout} from './cyOptions.js';
 let cy;
 
@@ -12,8 +12,8 @@ async function queryTagGraph(query) {
 }
 
 async function displayTags(clickedEdge) {
-  const sourceTagsData = await queryTagGraph(queries.getTags(clickedEdge.data('source')));
-  const targetTagsData = await queryTagGraph(queries.getTags(clickedEdge.data('target')));
+  const sourceTagsData = await queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('source')));
+  const targetTagsData = await queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('target')));
   
   const sourceTagsMap = new Map(sourceTagsData.map(t => [t.prop, t.val]));
   const targetTagsMap = new Map(targetTagsData.map(t => [t.prop, t.val]));
@@ -93,7 +93,7 @@ async function displayTags(clickedEdge) {
 }
 
 async function newDExView(focusNodeId, focusNodeLabel) {
-  const relRelObjsData = await queryTagGraph(queries.getRelRelObjs(focusNodeId));
+  const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
   const nodes = [{data: {id: focusNodeId, label: focusNodeLabel, level: 5}}];
   const edges = [];
 
@@ -199,8 +199,53 @@ async function newDExView(focusNodeId, focusNodeLabel) {
   }
 }
 
+async function generateNewTagGraph() {
+  const endpointSelect = document.getElementById('endpoint-select');
+  const querySelect = document.getElementById('query-select');
+
+  let endpoint;
+  if (endpointSelect.value === "custom") {
+    console.error("Can't handle custom endpoints at this time");
+  } else if (endpointSelect.value === "wikidata") {
+    endpoint = "https://query.wikidata.org/sparql";
+  }
+
+  let query;
+  if (querySelect.value === "custom") {
+    console.error("Can't handle custom queries at this time"); 
+  } else {
+    query = sourceQueries[querySelect.value];
+  }
+
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
+  btn.textContent = "Generating..."
+
+  await fetch("/new_tag_graph", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({endpoint, query})
+  });
+
+  const welcomeView = document.getElementById('obj-display');
+  welcomeView.src = "/welcome";
+
+  if (cy) {
+    cy.destroy();
+    cy = null;
+  }
+
+  const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
+  newDExView(hubObjData[0].hubObj, hubObjData[0].label);
+
+  btn.disabled = false;
+  btn.textContent = "Generate new DEx";
+}
+
+document.getElementById('generate-btn').addEventListener('click', generateNewTagGraph);
+
 async function init() {
-  const hubObjData = await queryTagGraph(queries.getHubObj());
+  const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
 }
 

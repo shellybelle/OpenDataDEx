@@ -18,7 +18,7 @@ html, body {
   aspect-ratio: 1/1;
   max-width: 100%;
   max-height: 100%;
-  background: radial-gradient(circle at center, midnightblue, black 75%, black);
+  background: radial-gradient(circle at center, midnightblue, midnightblue 15%, black 70%, black);
 }
 
 #info-pane {
@@ -29,8 +29,9 @@ html, body {
 }
 
 #query-bar {
-  padding: 10px;
+  padding: 2rem;
   background: linear-gradient(to right, black, midnightblue);
+  color: white;
 }
 
 #obj-display {
@@ -47,10 +48,10 @@ h3 {
 }
 
 body#welcome, body#tags {
-  color: white;
-  background: linear-gradient(to right, black, midnightblue);
   background-attachment: fixed;
   padding-left: 2rem;
+  background: linear-gradient(to right, black, midnightblue);
+  color: white;
 }
 
 .side-by-side {

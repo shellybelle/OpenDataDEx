@@ -1,4 +1,41 @@
-export const queries = {
+export const sourceQueries = {
+  "wiki-dogs": `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+      ?wikip ?prop ?val .
+      ?wikip schema:about ?item .
+      ?wikip skos:prefLabel ?itemLabel .
+    }
+    WHERE {
+      ?wikip schema:isPartOf <https://en.wikipedia.org/>;
+             schema:about ?item .
+      ?item wdt:P31 wd:Q144; # INSTANCE OF DOG
+            ?prop ?val .
+      FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
+      SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
+    }
+    LIMIT 100000
+  `,
+  "wiki-cats": `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+      ?wikip ?prop ?val .
+      ?wikip schema:about ?item .
+      ?wikip skos:prefLabel ?itemLabel .
+    }
+    WHERE {
+      ?wikip schema:isPartOf <https://en.wikipedia.org/>;
+             schema:about ?item .
+      ?item wdt:P31 wd:Q146; # INSTANCE OF CAT
+            ?prop ?val .
+      FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
+      SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
+    }
+    LIMIT 100000
+  `
+};
+
+export const tagGraphQueries = {
   getHubObj: () => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     SELECT ?hubObj ?label

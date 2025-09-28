@@ -22,12 +22,11 @@ DEFAULT_QUERY = """
         }
         WHERE {
             ?wikip schema:isPartOf <https://en.wikipedia.org/>;
-                schema:about ?item .
-            
-            ?item
-                wdt:P31 wd:Q144;        # DOGS
-                #wdt:P31 wd:Q146;        # CATS
-                ?prop ?val .
+                   schema:about ?item .
+            ?item 
+                  wdt:P31 wd:Q144; # DOGS
+                  #wdt:P31 wd:Q146; # CATS
+                  ?prop ?val .
             FILTER(STRSTARTS(STR(?prop), STR(wdt:)))    # Property must be from truthy namespace
             SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
         }
@@ -35,7 +34,7 @@ DEFAULT_QUERY = """
     """
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_QUERY, DEFAULT_ENDPOINT)
+    GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
 
 # key: user session id (str)
 # Value: a tagology_graph (rdflib.Graph)
@@ -53,9 +52,10 @@ def ensure_user_id():
 @app.route("/new_tag_graph", methods=["POST"])
 def create_user_tag_graph():
     user_id = session["user_id"]
+    source_endpoint = request.json.get("endpoint", DEFAULT_ENDPOINT)
     source_query = request.json.get("query", DEFAULT_QUERY)
-    user_tag_graphs[user_id] = create_tagology_graph(source_query)
-    return jsonify({"message": "New graph created"})
+    user_tag_graphs[user_id] = create_tagology_graph(source_endpoint, source_query)
+    return jsonify({"message": "New tagology graph created"})
 
 @app.route("/tagology_graph", methods=["POST"])
 def query_tag_graph():

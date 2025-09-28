@@ -17,5 +17,4 @@ def get_object_graph(source_query, source_endpoint) -> Graph:
     sparqlCall = SPARQLWrapper(source_endpoint)
     sparqlCall.setQuery(source_query)
     sparqlCall.addCustomHttpHeader("User-Agent", "tagology/1.0 (michelle.lee.tom@gmail.com)")
-
     return sparqlCall.queryAndConvert()
