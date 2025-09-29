@@ -34,6 +34,9 @@ html, body {
   color: white;
 }
 
+#query-editor {
+}
+
 #obj-display {
   flex: 1;
   border: none;

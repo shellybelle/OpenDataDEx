@@ -202,6 +202,7 @@ async function newDExView(focusNodeId, focusNodeLabel) {
 async function generateNewTagGraph() {
   const endpointSelect = document.getElementById('endpoint-select');
   const querySelect = document.getElementById('query-select');
+  const queryEditor = document.getElementById('query-editor');
 
   let endpoint;
   if (endpointSelect.value === "custom") {
@@ -212,7 +213,7 @@ async function generateNewTagGraph() {
 
   let query;
   if (querySelect.value === "custom") {
-    console.error("Can't handle custom queries at this time"); 
+    query = queryEditor.value;
   } else {
     query = sourceQueries[querySelect.value];
   }
@@ -247,6 +248,18 @@ document.getElementById('generate-btn').addEventListener('click', generateNewTag
 async function init() {
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
+
+  const querySelect = document.getElementById('query-select');
+  const queryEditor = document.getElementById('query-editor');
+
+  querySelect.addEventListener('change', () => {
+    if (querySelect.value === "custom") {
+      queryEditor.removeAttribute("readonly");
+    } else {
+      queryEditor.setAttribute("readonly", true);
+      queryEditor.value = sourceQueries[querySelect.value];
+    }
+  });
 }
 
 init();

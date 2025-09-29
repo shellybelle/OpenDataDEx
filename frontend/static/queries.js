@@ -1,4 +1,21 @@
 export const sourceQueries = {
+  "wiki-space": `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+        ?wikip ?prop ?val .
+        ?wikip schema:about ?item .
+        ?wikip skos:prefLabel ?itemLabel .
+    }
+    WHERE {
+        ?wikip schema:isPartOf <https://en.wikipedia.org/> ;
+               schema:about ?item .
+        ?item wdt:P4466 ?uat ;
+              ?prop ?val .
+        FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
+        SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
+    }
+    LIMIT 50000
+  `,
   "wiki-dogs": `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     CONSTRUCT {
@@ -14,7 +31,7 @@ export const sourceQueries = {
       FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
       SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
     }
-    LIMIT 100000
+    LIMIT 50000
   `,
   "wiki-cats": `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -31,7 +48,7 @@ export const sourceQueries = {
       FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
       SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
     }
-    LIMIT 100000
+    LIMIT 50000
   `
 };
 

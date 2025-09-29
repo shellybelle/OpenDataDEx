@@ -14,28 +14,26 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24))
 
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
 DEFAULT_QUERY = """
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        CONSTRUCT {
-            ?wikip ?prop ?val .
-            ?wikip schema:about ?item .
-            ?wikip skos:prefLabel ?itemLabel .
-        }
-        WHERE {
-            ?wikip schema:isPartOf <https://en.wikipedia.org/>;
-                   schema:about ?item .
-            ?item 
-                  wdt:P31 wd:Q144; # DOGS
-                  #wdt:P31 wd:Q146; # CATS
-                  ?prop ?val .
-            FILTER(STRSTARTS(STR(?prop), STR(wdt:)))    # Property must be from truthy namespace
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-        }
-        LIMIT 100000
-    """
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+        ?wikip ?prop ?val .
+        ?wikip schema:about ?item .
+        ?wikip skos:prefLabel ?itemLabel .
+    }
+    WHERE {
+        ?wikip schema:isPartOf <https://en.wikipedia.org/> ;
+               schema:about ?item .
+        ?item wdt:P4466 ?uat ;
+              ?prop ?val .
+        FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
+        SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
+    }
+    LIMIT 50000
+"""
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
-
+    
 # key: user session id (str)
 # Value: a tagology_graph (rdflib.Graph)
 user_tag_graphs = {}
@@ -55,6 +53,7 @@ def create_user_tag_graph():
     source_endpoint = request.json.get("endpoint", DEFAULT_ENDPOINT)
     source_query = request.json.get("query", DEFAULT_QUERY)
     user_tag_graphs[user_id] = create_tagology_graph(source_endpoint, source_query)
+    
     return jsonify({"message": "New tagology graph created"})
 
 @app.route("/tagology_graph", methods=["POST"])
