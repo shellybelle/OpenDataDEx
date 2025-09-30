@@ -222,9 +222,9 @@ async function generateNewTagGraph() {
     query = sourceQueries[querySelect.value];
   }
 
-  const btn = document.getElementById('generate-btn');
-  btn.disabled = true;
-  btn.textContent = "Generating..."
+  const genButton = document.getElementById('generate-btn');
+  genButton.disabled = true;
+  genButton.textContent = "Generating..."
 
   await fetch("/new_tag_graph", {
     method: "POST",
@@ -243,8 +243,8 @@ async function generateNewTagGraph() {
   const welcomeView = document.getElementById('obj-display');
   welcomeView.src = "/welcome";
 
-  btn.disabled = false;
-  btn.textContent = "Generate new DEx";
+  genButton.disabled = true;
+  genButton.textContent = "Generate new DEx";
 
   localStorage.setItem("currentEndpoint", endpointSelect.value);
   localStorage.setItem("currentQuery", querySelect.value);
@@ -258,6 +258,9 @@ function editorUnlocked() {
 async function init() {
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
+
+  const genButton = document.getElementById('generate-btn');
+  genButton.addEventListener('click', generateNewTagGraph);
 
   if (!localStorage.getItem("currentEndpoint")) {
     localStorage.setItem("currentEndpoint", "wikidata");
@@ -298,6 +301,7 @@ async function init() {
       endpointEditor.setAttribute("readonly", true);
       endpointEditor.value = sourceEndpoints[endpointSelect.value];
     }
+    genButton.disabled = false;
   });
 
   querySelect.addEventListener('change', () => {
@@ -312,9 +316,8 @@ async function init() {
       queryEditor.setAttribute("readonly", true);
       queryEditor.value = sourceQueries[querySelect.value];
     }
+    genButton.disabled = false;
   });
-
-  document.getElementById('generate-btn').addEventListener('click', generateNewTagGraph);
 }
 
 init();
