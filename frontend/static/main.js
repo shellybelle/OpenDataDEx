@@ -1,5 +1,6 @@
-import {sourceQueries, tagGraphQueries} from './queries.js';
+import {sourceEndpoints, sourceQueries, tagGraphQueries} from './queries.js';
 import {cyStyle, cyLayout} from './cyOptions.js';
+
 let cy;
 
 async function queryTagGraph(query) {
@@ -201,19 +202,22 @@ async function newDExView(focusNodeId, focusNodeLabel) {
 
 async function generateNewTagGraph() {
   const endpointSelect = document.getElementById('endpoint-select');
+  const endpointEditor = document.getElementById('endpoint-editor');
   const querySelect = document.getElementById('query-select');
   const queryEditor = document.getElementById('query-editor');
 
   let endpoint;
   if (endpointSelect.value === "custom") {
-    console.error("Can't handle custom endpoints at this time");
+    endpoint = endpointEditor.value.trim();
+    localStorage.setItem("customEndpoint", endpoint);
   } else if (endpointSelect.value === "wikidata") {
-    endpoint = "https://query.wikidata.org/sparql";
+    endpoint = sourceEndpoints[endpointSelect.value];
   }
 
   let query;
   if (querySelect.value === "custom") {
-    query = queryEditor.value;
+    query = queryEditor.value.trim();
+    localStorage.setItem("customQuery", query);
   } else {
     query = sourceQueries[querySelect.value];
   }
@@ -228,9 +232,6 @@ async function generateNewTagGraph() {
     body: JSON.stringify({endpoint, query})
   });
 
-  const welcomeView = document.getElementById('obj-display');
-  welcomeView.src = "/welcome";
-
   if (cy) {
     cy.destroy();
     cy = null;
@@ -239,27 +240,81 @@ async function generateNewTagGraph() {
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
 
+  const welcomeView = document.getElementById('obj-display');
+  welcomeView.src = "/welcome";
+
   btn.disabled = false;
   btn.textContent = "Generate new DEx";
+
+  localStorage.setItem("currentEndpoint", endpointSelect.value);
+  localStorage.setItem("currentQuery", querySelect.value);
 }
 
-document.getElementById('generate-btn').addEventListener('click', generateNewTagGraph);
+function editorUnlocked() {
+  const key = prompt(`Enter editor key:`);
+  return key === "ariadne";
+}
 
 async function init() {
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
 
+  if (!localStorage.getItem("currentEndpoint")) {
+    localStorage.setItem("currentEndpoint", "wikidata");
+  }
+  if (!localStorage.getItem("currentQuery")) {
+    localStorage.setItem("currentQuery", "wiki-space");
+  }
+
+  const endpointSelect = document.getElementById('endpoint-select');
+  const endpointEditor = document.getElementById('endpoint-editor');
   const querySelect = document.getElementById('query-select');
   const queryEditor = document.getElementById('query-editor');
+  
+  endpointSelect.value = localStorage.getItem("currentEndpoint");
+  if (endpointSelect.value === "custom") {
+    endpointEditor.value = localStorage.getItem("customEndpoint");
+    endpointEditor.removeAttribute("readonly");
+  } else {
+    endpointEditor.value = sourceEndpoints[endpointSelect.value];
+  }
+  querySelect.value = localStorage.getItem("currentQuery");
+  if (querySelect.value === "custom") {
+    queryEditor.value = localStorage.getItem("customQuery");
+    queryEditor.removeAttribute("readonly");
+  } else {
+    queryEditor.value = sourceQueries[querySelect.value];
+  }
+
+  endpointSelect.addEventListener('change', () => {
+    if (endpointSelect.value === "custom") {
+      if (editorUnlocked()) {
+        endpointEditor.removeAttribute("readonly");
+      } else {
+        alert("Invalid key");
+        endpointSelect.value = localStorage.getItem("currentEndpoint");
+      }
+    } else {
+      endpointEditor.setAttribute("readonly", true);
+      endpointEditor.value = sourceEndpoints[endpointSelect.value];
+    }
+  });
 
   querySelect.addEventListener('change', () => {
     if (querySelect.value === "custom") {
-      queryEditor.removeAttribute("readonly");
+      if (editorUnlocked()) {
+        queryEditor.removeAttribute("readonly");
+      } else {
+        alert("Invalid key");
+        querySelect.value = localStorage.getItem("currentQuery");
+      }
     } else {
       queryEditor.setAttribute("readonly", true);
       queryEditor.value = sourceQueries[querySelect.value];
     }
   });
+
+  document.getElementById('generate-btn').addEventListener('click', generateNewTagGraph);
 }
 
 init();

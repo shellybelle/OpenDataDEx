@@ -11,23 +11,30 @@
   <body>
     <div id="DEx">
       <div id="cyto"></div>
-      <div id="info-pane">
-        <div id="query-bar">
-          <h3>tagology Data Exploration</h3>
-          <label for="endpoint-select">sparql endpoint:</label>
-          <select id="endpoint-select">
-            <option value="wikidata">Wikidata</option>
-            <option value="custom">Custom...</option>
-          </select>
-          <label for="query-select">sparql query:</label>
-          <select id="query-select">
-            <option value="wiki-space">Wikipedia pages for items in the Unified Astronomy Thesaurus</option>
-            <option value="wiki-dogs">All wikipedia pages about famous dogs</option>
-            <option value="wiki-cats">All wikipedia pages about famous cats</option>
-            <option value="custom">Custom...</option>
-          </select>
-          <textarea id="query-editor" spellcheck="false"></textarea>
-          <button id="generate-btn">Generate</button>
+      <div id="info-pane"> 
+        <div id="query-box" class="DEx-right">
+          <h3>tagology lets you explore Open Data</h3>
+          <div id="query-columns">
+            <div id="query-left">
+              <label for="endpoint-select">sparql endpoint:</label>
+              <select id="endpoint-select">
+                <option value="wikidata">Wikidata</option>
+                <option value="custom">Custom...</option>
+              </select>
+              <textarea id="endpoint-editor" spellcheck="false" readonly></textarea>
+              <button id="generate-btn">Generate new DEx</button>
+            </div>
+            <div id="query-right">
+              <label for="query-select">sparql query:</label>
+              <select id="query-select">
+                <option value="wiki-space">Wikipedia pages for items in the Unified Astronomy Thesaurus</option>
+                <option value="wiki-dogs">All wikipedia pages about famous dogs</option>
+                <option value="wiki-cats">All wikipedia pages about famous cats</option>
+                <option value="custom">Custom...</option>
+              </select>
+              <textarea id="query-editor" spellcheck="false" readonly></textarea>
+            </div>
+          </div>
         </div>
         <iframe id="obj-display" src="{{url_for('welcome_page')}}"></iframe>
       </div>

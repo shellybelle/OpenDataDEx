@@ -8,6 +8,24 @@ html, body {
   width: 100%;
 }
 
+h2 {
+  margin-top: 2rem;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.25rem;
+  white-space: nowrap;
+}
+
+textarea[readonly] {
+  color: silver;
+}
+
 #DEx {
   display: flex;
   height: 100%;
@@ -28,31 +46,44 @@ html, body {
   height: 100%;
 }
 
-#query-bar {
-  padding: 2rem;
-  background: linear-gradient(to right, black, midnightblue);
-  color: white;
-}
-
-#query-editor {
-}
-
 #obj-display {
   flex: 1;
   border: none;
 }
 
-h2 {
-  margin-top: 2rem;
+#query-columns {
+  display: flex;
+  gap: 1rem;
 }
 
-h3 {
-  margin-top: 0;
+#query-left {
+  display: flex;
+  flex: 0 0 300px;
+  flex-direction: column;
 }
 
-body#welcome, body#tags {
+#query-right {
+  display: flex;
+  flex: 1;
+  flex-direction: column
+}
+
+#endpoint-editor {
+  height: 2rem;
+}
+
+#query-editor {
+  height: 5rem;
+  resize: vertical;
+}
+
+#generate-btn {
+  margin: 1rem;
+}
+
+.DEx-right {
   background-attachment: fixed;
-  padding-left: 2rem;
+  padding: 1rem;
   background: linear-gradient(to right, black, midnightblue);
   color: white;
 }
