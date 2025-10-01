@@ -16,29 +16,28 @@ async function displayTags(clickedEdge) {
   const sourceTagsData = await queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('source')));
   const targetTagsData = await queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('target')));
   
-  const sourceTagsMap = new Map(sourceTagsData.map(t => [t.prop, t.val]));
-  const targetTagsMap = new Map(targetTagsData.map(t => [t.prop, t.val]));
-
   const matches = [];
   const diffs = [];
   const sourceOnly = [];
   const targetOnly = [];
 
-  sourceTagsMap.forEach((sVal, sProp) => {
-    if (targetTagsMap.has(sProp)) {
-      const tVal = targetTagsMap.get(sProp);
-      if (tVal === sVal) {
-        matches.push({prop: sProp, val: sVal});
-      } else {
-        diffs.push({prop: sProp, srcVal: sVal, tgtVal: tVal});
-      }
+  sourceTagsData.forEach(({prop: sProp, val: sVal}) => {
+    const propertyTargetTags = targetTagsData.filter(t => t.prop === sProp);
+    if (propertyTargetTags.length > 0) {
+      propertyTargetTags.forEach(t => {
+        if (t.val === sVal) {
+          matches.push({prop: sProp, val: sVal});
+        } else {
+          diffs.push({prop: sProp, srcVal: sVal, tgtVal: t.val});
+        }
+      });
     } else {
       sourceOnly.push({prop: sProp, val: sVal});
     }
   });
 
-  targetTagsMap.forEach((tVal, tProp) => {
-    if (!sourceTagsMap.has(tProp)) {
+  targetTagsData.forEach(({prop: tProp, val: tVal}) => {
+    if (!sourceTagsData.some(s => s.prop === tProp && s.val === tVal)) {
       targetOnly.push({prop: tProp, val: tVal});
     }
   });
