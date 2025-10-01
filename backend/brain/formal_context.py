@@ -11,10 +11,14 @@ def get_object_context(obj_graph: Graph) -> Context:
 
     rows = []
     for obj in objs:
-        row = [(obj, prop, None) in obj_graph for prop in props]
+        row = [any(obj_graph.objects(obj, p)) for p in props]
         rows.append(row)
 
-    context_data = DataFrame(rows, index=(str(s) for s in objs), columns=(str(p) for p in props))
+    context_data = DataFrame(
+            rows,
+            index=[str(s) for s in objs],
+            columns=[str(p) for p in props],
+            dtype=bool)
 
     ### TODO: Should sparse and dense properties be dropped?
     #sparse_props = context_data.columns[(context_data == True).sum(axis=0) <= 1].tolist()

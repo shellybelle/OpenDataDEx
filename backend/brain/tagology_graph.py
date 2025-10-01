@@ -11,15 +11,15 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
 
     obj_graph = get_object_graph(source_query, source_endpoint)
     
-    print("STATUS: graph initialized, calling context")
+    print("[STATUS] graph initialized, calling context")
     
     obj_context = get_object_context(obj_graph)
     
-    print("STATUS: context made, calling add_related")
+    print("[STATUS] context made, calling add_related")
     
     for obj in obj_graph.subjects(unique=True):
         add_related_objects(obj, obj_graph, obj_context)
     
-    print(f"STATUS: graph complete with {len(obj_graph)} triples")
+    print(f"[STATUS] graph complete with {len(obj_graph)} triples")
     
     return obj_graph
