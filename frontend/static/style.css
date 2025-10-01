@@ -8,6 +8,19 @@ html, body {
   width: 100%;
 }
 
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 img {
+  max-height: 2em;
+  height: auto;
+  width: auto;
+  margin-left: 0.25em;
+}
+
 h2 {
   margin-top: 2rem;
 }
@@ -73,12 +86,23 @@ textarea[readonly] {
 }
 
 #query-editor {
-  height: 5rem;
+  height: 6rem;
   resize: vertical;
 }
 
 #generate-btn {
   margin: 1rem;
+  background-color: red;
+  color: white;
+  border: 2px solid white;
+  padding: 0.25rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+#generate-btn:disabled {
+  opacity: 0.35;
 }
 
 .DEx-right {

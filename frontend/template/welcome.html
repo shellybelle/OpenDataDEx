@@ -4,8 +4,21 @@
   <meta charset="UTF-8">
   <title>Welcome to tagology</title>
   <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+  <script src="{{url_for('static', filename='welcome.js')}}" type="module"></script>
 </head>
 <body class="DEx-right">
-  <h1>Hello, world!</h1>
+  <div id="welcome-container">
+    <h1>
+      Welcome to
+      <img src="{{url_for('static', filename='tagologyLogo.png')}}" alt="tagology logo">
+    </h1>
+    <p>
+      Now exploring [
+      <span id="total-objs">loading...</span>
+      ] objects using [
+      <span id="total-tags">loading...</span>
+      ] tags.
+    </p>
+  </div>
 </body>
 </html>

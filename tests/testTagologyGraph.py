@@ -3,25 +3,25 @@ import requests
 queryA = """
     SELECT (COUNT(DISTINCT ?obj) as ?totalObjects)
     WHERE {
-        ?obj ?prop ?val .
+        ?obj ?p ?v .
     }
 """
 
 queryB = """
-    SELECT ?hubObj (COUNT(?obj) AS ?count)
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT (COUNT(?prop) as ?totalTags)
     WHERE {
-        ?obj skos:related ?hubObj .
+        ?obj ?prop ?val .
+        FILTER(!STRSTARTS(STR(?prop), STR(skos:)))
     }
-    GROUP BY ?hubObj
-    ORDER BY DESC(?count)
 """
 
-query = """
+queryC = """
+    # 
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     SELECT DISTINCT ?relObj
     WHERE {
-        ?relObj ?p ?v .
-        FILTER(isIRI(?relObj))
+        ?relObj schema:about ?item.
         FILTER NOT EXISTS {?any skos:related ?relObj .}
     }
 """
@@ -29,6 +29,6 @@ query = """
 endpoint = "http://127.0.0.1:5000/tagology_graph"
 
 print("Running query:")
-response = requests.post(endpoint, json={"query": query})
+response = requests.post(endpoint, json={"query": queryB})
 print(response.json())
 print()

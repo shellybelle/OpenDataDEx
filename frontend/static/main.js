@@ -209,7 +209,7 @@ async function generateNewTagGraph() {
   let endpoint;
   if (endpointSelect.value === "custom") {
     endpoint = endpointEditor.value.trim();
-    localStorage.setItem("customEndpoint", endpoint);
+    sessionStorage.setItem("customEndpoint", endpoint);
   } else if (endpointSelect.value === "wikidata") {
     endpoint = sourceEndpoints[endpointSelect.value];
   }
@@ -217,7 +217,7 @@ async function generateNewTagGraph() {
   let query;
   if (querySelect.value === "custom") {
     query = queryEditor.value.trim();
-    localStorage.setItem("customQuery", query);
+    sessionStorage.setItem("customQuery", query);
   } else {
     query = sourceQueries[querySelect.value];
   }
@@ -246,8 +246,8 @@ async function generateNewTagGraph() {
   genButton.disabled = true;
   genButton.textContent = "Generate new DEx";
 
-  localStorage.setItem("currentEndpoint", endpointSelect.value);
-  localStorage.setItem("currentQuery", querySelect.value);
+  sessionStorage.setItem("currentEndpoint", endpointSelect.value);
+  sessionStorage.setItem("currentQuery", querySelect.value);
 }
 
 function editorUnlocked() {
@@ -260,13 +260,14 @@ async function init() {
   newDExView(hubObjData[0].hubObj, hubObjData[0].label);
 
   const genButton = document.getElementById('generate-btn');
+  genButton.disabled = true;
   genButton.addEventListener('click', generateNewTagGraph);
 
-  if (!localStorage.getItem("currentEndpoint")) {
-    localStorage.setItem("currentEndpoint", "wikidata");
+  if (!sessionStorage.getItem("currentEndpoint")) {
+    sessionStorage.setItem("currentEndpoint", "wikidata");
   }
-  if (!localStorage.getItem("currentQuery")) {
-    localStorage.setItem("currentQuery", "wiki-space");
+  if (!sessionStorage.getItem("currentQuery")) {
+    sessionStorage.setItem("currentQuery", "wiki-space");
   }
 
   const endpointSelect = document.getElementById('endpoint-select');
@@ -274,16 +275,16 @@ async function init() {
   const querySelect = document.getElementById('query-select');
   const queryEditor = document.getElementById('query-editor');
   
-  endpointSelect.value = localStorage.getItem("currentEndpoint");
+  endpointSelect.value = sessionStorage.getItem("currentEndpoint");
   if (endpointSelect.value === "custom") {
-    endpointEditor.value = localStorage.getItem("customEndpoint");
+    endpointEditor.value = sessionStorage.getItem("customEndpoint");
     endpointEditor.removeAttribute("readonly");
   } else {
     endpointEditor.value = sourceEndpoints[endpointSelect.value];
   }
-  querySelect.value = localStorage.getItem("currentQuery");
+  querySelect.value = sessionStorage.getItem("currentQuery");
   if (querySelect.value === "custom") {
-    queryEditor.value = localStorage.getItem("customQuery");
+    queryEditor.value = sessionStorage.getItem("customQuery");
     queryEditor.removeAttribute("readonly");
   } else {
     queryEditor.value = sourceQueries[querySelect.value];
@@ -295,7 +296,7 @@ async function init() {
         endpointEditor.removeAttribute("readonly");
       } else {
         alert("Invalid key");
-        endpointSelect.value = localStorage.getItem("currentEndpoint");
+        endpointSelect.value = sessionStorage.getItem("currentEndpoint");
       }
     } else {
       endpointEditor.setAttribute("readonly", true);
@@ -310,7 +311,7 @@ async function init() {
         queryEditor.removeAttribute("readonly");
       } else {
         alert("Invalid key");
-        querySelect.value = localStorage.getItem("currentQuery");
+        querySelect.value = sessionStorage.getItem("currentQuery");
       }
     } else {
       queryEditor.setAttribute("readonly", true);

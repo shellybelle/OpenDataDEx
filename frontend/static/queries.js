@@ -87,5 +87,18 @@ export const tagGraphQueries = {
       <${obj}> ?prop ?val
       FILTER(?prop NOT IN (skos:prefLabel, skos:related))
     }
+  `,
+  getTotalObjects: () => `
+    SELECT (COUNT(DISTINCT ?obj) as ?totalObjs)
+    WHERE {
+        ?obj ?p ?v .
+    }
+  `,
+  getTotalTags: () => `
+    SELECT (COUNT(*) as ?totalTags)
+    WHERE {
+        ?obj ?prop ?val .
+        FILTER(!STRSTARTS(STR(?prop), STR(skos:)))
+    }
   `
 };
