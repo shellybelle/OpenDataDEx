@@ -82,7 +82,7 @@ export const tagGraphQueries = {
       [rdf:type rdf:Statement ;
        rdf:subject <${focusObj}> ;
        rdf:predicate skos:related ;
-       rdf:object ?relObj] tag:relatedScore ?score1 .
+       rdf:object ?relObj] tag:relatedScore ?score .
 
       ?relObj skos:related ?relObj2 .
       ?relObj2 skos:prefLabel ?label2 .

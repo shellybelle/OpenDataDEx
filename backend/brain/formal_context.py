@@ -24,8 +24,7 @@ def get_object_context(obj_graph: Graph) -> Context:
     onePercent = len(objs)*0.01
     sparse_props = context_data.columns[(context_data == True).sum(axis=0) < onePercent].tolist()
     dense_props = context_data.columns[(context_data == False).sum(axis=0) < onePercent].tolist()
-    print(f"dropping {len(sparse_props)} sparse properties")
-    print(f"dropping {len(dense_props)} dense properties")
+    print(f"dropping {len(sparse_props)} sparse and {len(dense_props)} dense of {len(props)} total properties")
     context_data.drop(sparse_props, axis=1, inplace=True)
     context_data.drop(dense_props, axis=1, inplace=True)
 

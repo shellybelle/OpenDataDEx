@@ -16,7 +16,7 @@ DEFAULT_QUERY = """
         FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
         SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
     }
-    LIMIT 50000
+    LIMIT 1000
 """
 
 def main():
