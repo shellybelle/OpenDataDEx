@@ -1,6 +1,7 @@
 from brain.source_graph import get_object_graph
 from brain.formal_context import get_object_context, add_related_objects
-from rdflib import Graph, SKOS
+from brain.namespaces import TAG
+from rdflib import Graph, Namespace, SKOS
 
 RELATED_OBJ_THRESHOLD = 12
 
@@ -13,7 +14,8 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     print("[STATUS] sending query")
 
     obj_graph = get_object_graph(source_query, source_endpoint)
-    
+    obj_graph.bind("tag", TAG)
+
     print("[STATUS] graph initialized, creating context")
     
     obj_context = get_object_context(obj_graph)

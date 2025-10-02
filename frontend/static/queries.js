@@ -19,7 +19,7 @@ WHERE {
     FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
     SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
 }
-LIMIT 50000`
+LIMIT 10000`
   ,
   "wiki-dogs":
 `PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -36,7 +36,7 @@ WHERE {
     FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
     SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
 }
-LIMIT 50000`
+LIMIT 10000`
   ,
   "wiki-cats":
 `PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -53,7 +53,7 @@ WHERE {
     FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
     SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
 }
-LIMIT 50000`
+LIMIT 10000`
   ,
   "custom": "Custom Query"
 };
@@ -72,31 +72,29 @@ export const tagGraphQueries = {
   `,
   getRelRelObjs: (focusObj) => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX tag: <http://example.org/tagology/>
     SELECT ?score ?relObj ?label ?score2 ?relObj2 ?label2
     WHERE {
       <${focusObj}> skos:related ?relObj .
       ?relObj skos:prefLabel ?label .
-      [rdf:type rdf:Statement ;
-       rdf:subject <${focusObj}> ;
-       rdf:predicate skos:related ;
-       rdf:object ?relObj] tag:relatedScore ?score .
+      <${focusObj}> tag:relatedEdge ?edge .
+      ?edge tag:target ?relObj .
+      ?edge tag:score ?score .
 
       ?relObj skos:related ?relObj2 .
       ?relObj2 skos:prefLabel ?label2 .
-      [rdf:type rdf:Statement ;
-       rdf:subject ?relObj ;
-       rdf:predicate skos:related ;
-       rdf:object ?relObj2] tag:relatedScore ?score2 .
-     }
+      ?relObj tag:relatedEdge ?edge2 .
+      ?edge2 tag:target ?relObj2 .
+      ?edge2 tag:score ?score2 .
+    }
   `,
   getTags: (obj) => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX tag: <http://example.org/tagology/>
     SELECT ?prop ?val
     WHERE {
       <${obj}> ?prop ?val
-      FILTER(?prop NOT IN (skos:prefLabel, skos:related))
+      FILTER(?prop NOT IN (skos:prefLabel, skos:related, tag:relatedScore))
     }
   `,
   getTotalObjects: () => `
@@ -108,11 +106,15 @@ export const tagGraphQueries = {
   `,
   getTotalTags: () => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX tag: <http://example.org/tagology/>
     SELECT (COUNT(*) as ?totalTags)
     WHERE {
         ?obj skos:prefLabel ?label ;
              ?prop ?val .
-        FILTER(!STRSTARTS(STR(?prop), STR(skos:)))
+        FILTER(
+          !STRSTARTS(STR(?prop), STR(skos:))  &&
+          !STRSTARTS(STR(?prop), STR(tag:))
+        )
     }
   `
 };

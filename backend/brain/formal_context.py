@@ -1,9 +1,8 @@
-from rdflib import Graph, URIRef, SKOS, Namespace, Literal, BNode
-from rdflib.namespace import RDF, XSD
+from rdflib import Graph, URIRef, SKOS, Literal, BNode
+from rdflib.namespace import XSD
 from concepts import Context
 from pandas import DataFrame
-
-TAG = Namespace("http://example.org/tagology/")
+from brain.namespaces import TAG
 
 def get_object_context(obj_graph: Graph) -> Context:
     
@@ -52,13 +51,11 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
 
     for simScore, ro in scored_related_objs:
         obj_graph.add((obj, SKOS.related, ro))
-        
-        stmt = BNode()
-        obj_graph.add((stmt, RDF.type, RDF.Statement))
-        obj_graph.add((stmt, RDF.subject, obj))
-        obj_graph.add((stmt, RDF.predicate, SKOS.related))
-        obj_graph.add((stmt, RDF.object, ro))
-        obj_graph.add((stmt, TAG.relatedScore, Literal(simScore, datatype=XSD.float)))
+
+        edge = BNode()
+        obj_graph.add((obj, TAG.relatedEdge, edge))
+        obj_graph.add((edge, TAG.target, ro))
+        obj_graph.add((edge, TAG.score, Literal(simScore, datatype=XSD.float)))
 
 def _score_threshold_related(
     obj: URIRef,

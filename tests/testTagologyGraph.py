@@ -1,29 +1,36 @@
 import requests
 
 queryA = """
-    SELECT (COUNT(DISTINCT ?obj) as ?totalObjects)
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT (COUNT(?obj) AS ?totalObjs)
     WHERE {
-        ?obj ?p ?v .
+        ?obj skos:prefLabel ?label .
     }
 """
 
 queryB = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT (COUNT(?prop) as ?totalTags)
+    PREFIX tag: <http://example.org/tagology/>
+    SELECT (COUNT(*) as ?totalTags)
     WHERE {
-        ?obj ?prop ?val .
-        FILTER(!STRSTARTS(STR(?prop), STR(skos:)))
+        ?obj skos:prefLabel ?label ;
+             ?prop ?val .
+        FILTER(
+          !STRSTARTS(STR(?prop), STR(skos:))  &&
+          !STRSTARTS(STR(?prop), STR(tag:))
+        )
     }
 """
 
-queryC = """
-    # 
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT DISTINCT ?relObj
-    WHERE {
-        ?relObj schema:about ?item.
-        FILTER NOT EXISTS {?any skos:related ?relObj .}
-    }
+queryC = q = """
+PREFIX tag: <http://example.org/tagology/>
+SELECT ?relObj ?score
+WHERE {
+  ?obj tag:relatedEdge ?edge .
+  ?edge tag:target ?relObj .
+  ?edge tag:score ?score .
+}
+LIMIT 10
 """
 
 endpoint = "http://127.0.0.1:5000/tagology_graph"
