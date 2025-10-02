@@ -1,24 +1,26 @@
 from brain.source_graph import get_object_graph
 from brain.formal_context import get_object_context, add_related_objects
-from rdflib import Graph
+from rdflib import Graph, SKOS
+
+RELATED_OBJ_THRESHOLD = 4
 
 def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     
     ### TODO: ###
-    # pass get_object_graph() a sparql query
     # thorough data validation and error handling
     # benchmarking & optimization
 
+    print("[STATUS] sending query")
+
     obj_graph = get_object_graph(source_query, source_endpoint)
     
-    print("[STATUS] graph initialized, calling context")
+    print("[STATUS] graph initialized, creating context")
     
     obj_context = get_object_context(obj_graph)
     
-    print("[STATUS] context made, calling add_related")
-    
-    for obj in obj_graph.subjects(unique=True):
-        add_related_objects(obj, obj_graph, obj_context)
+    for obj in obj_graph.subjects(predicate=SKOS.prefLabel):
+        print(f"[STATUS] adding related objects for {str(obj)}")
+        add_related_objects(obj, obj_graph, obj_context, RELATED_OBJ_THRESHOLD)
     
     print(f"[STATUS] graph complete with {len(obj_graph)} triples")
     

@@ -72,13 +72,25 @@ export const tagGraphQueries = {
   `,
   getRelRelObjs: (focusObj) => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?relObj ?label ?relObj2 ?label2
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX tag: <http://example.org/tagology/>
+    SELECT ?score ?relObj ?label ?score2 ?relObj2 ?label2
     WHERE {
+
       <${focusObj}> skos:related ?relObj .
       ?relObj skos:prefLabel ?label .
+      [rdf:type rdf:Statement ;
+       rdf:subject <${focusObj}> ;
+       rdf:predicate skos:related ;
+       rdf:object ?relObj] tag:relatedScore ?score1 .
+
       ?relObj skos:related ?relObj2 .
       ?relObj2 skos:prefLabel ?label2 .
-    }
+      [rdf:type rdf:Statement ;
+       rdf:subject ?relObj ;
+       rdf:predicate skos:related ;
+       rdf:object ?relObj2] tag:relatedScore ?score2 .
+     }
   `,
   getTags: (obj) => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -89,15 +101,18 @@ export const tagGraphQueries = {
     }
   `,
   getTotalObjects: () => `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     SELECT (COUNT(DISTINCT ?obj) as ?totalObjs)
     WHERE {
-        ?obj ?p ?v .
+        ?obj skos:prefLabel ?v .
     }
   `,
   getTotalTags: () => `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     SELECT (COUNT(*) as ?totalTags)
     WHERE {
-        ?obj ?prop ?val .
+        ?obj skos:prefLabel ?label ;
+             ?prop ?val .
         FILTER(!STRSTARTS(STR(?prop), STR(skos:)))
     }
   `

@@ -10,3 +10,4 @@ for file in ../frontend/template/*.html; do
   cat "$file" >> html.txt
   echo -e "\n\n" >> html.txt
 done
+cp ../frontend/static/style.css ./style.css
