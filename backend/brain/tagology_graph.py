@@ -2,7 +2,7 @@ from brain.source_graph import get_object_graph
 from brain.formal_context import get_object_context, add_related_objects
 from rdflib import Graph, SKOS
 
-RELATED_OBJ_THRESHOLD = 4
+RELATED_OBJ_THRESHOLD = 12
 
 def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     

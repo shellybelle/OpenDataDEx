@@ -28,7 +28,7 @@ DEFAULT_QUERY = """
         FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
         SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
     }
-    LIMIT 1000
+    LIMIT 5000
 """
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
@@ -61,9 +61,7 @@ def query_tag_graph():
     user_id = session["user_id"]
     tag_graph = user_tag_graphs.get(user_id, GLOBAL_TAG_GRAPH)
     query = request.json.get("query")
-
     results = tag_graph.query(query)
-
     json_results = [
         {str(l): str(row[l]) for l in row.labels}
         for row in results]

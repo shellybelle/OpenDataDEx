@@ -76,7 +76,6 @@ export const tagGraphQueries = {
     PREFIX tag: <http://example.org/tagology/>
     SELECT ?score ?relObj ?label ?score2 ?relObj2 ?label2
     WHERE {
-
       <${focusObj}> skos:related ?relObj .
       ?relObj skos:prefLabel ?label .
       [rdf:type rdf:Statement ;
@@ -102,9 +101,9 @@ export const tagGraphQueries = {
   `,
   getTotalObjects: () => `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT (COUNT(DISTINCT ?obj) as ?totalObjs)
+    SELECT (COUNT(?obj) AS ?totalObjs)
     WHERE {
-        ?obj skos:prefLabel ?v .
+        ?obj skos:prefLabel ?label .
     }
   `,
   getTotalTags: () => `
