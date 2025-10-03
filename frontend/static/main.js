@@ -1,7 +1,10 @@
 import {sourceEndpoints, sourceQueries, tagGraphQueries} from './queries.js';
 import {cyStyle, cyLayout} from './cyOptions.js';
 
+const DEFAULT_RELATED_COUNT = 6;
 let cy;
+let currentRelMap;
+let currentFocusNode;
 
 async function queryTagGraph(query) {
   const result = await fetch("/tagology_graph", {
@@ -92,95 +95,145 @@ async function displayTags(clickedEdge) {
   };
 }
 
-async function newDExView(focusNodeId, focusNodeLabel) {
-  const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
-  const nodes = [{data: {id: focusNodeId, label: focusNodeLabel, level: 5}}];
+function initCy(elements) {
+  cy = cytoscape({
+    container: document.getElementById('cyto'),
+    style: cyStyle,
+    userZoomingEnabled: false,
+    userPanningEnabled: false,
+    elements 
+  });
+
+  cy.on('tap', 'node', function (evt) {
+    let clickedNode = evt.target;
+    const frame = document.getElementById('obj-display');
+    frame.src = clickedNode.data('id');
+    if (clickedNode.data('level') !== 5) {
+      const relatedCount = parseInt(document.getElementById('related-count').textContent)
+      newDExView(relatedCount, clickedNode.data('id'), clickedNode.data('label'));
+    }
+  });
+
+  cy.on('tap', 'edge', async function (evt) {
+    displayTags(evt.target);
+  });
+
+  cy.on('mouseover', 'node', (e) => {
+    const hoveredNode = e.target;
+    const currentFontSize = parseFloat(hoveredNode.style('font-size'));
+    hoveredNode.style({
+      'font-size': currentFontSize * 1.5,
+      'border-style': 'solid',
+      'border-width': 2,
+      'border-color': 'lightcyan'
+    });
+  });
+
+  cy.on('mouseover', 'edge', (e) => {
+    e.target.style({
+      'label': "click to\nsee tags",
+      'line-color': 'lightcyan',
+      'target-arrow-color': 'lightcyan',
+      'arrow-scale': 1,
+      'width': 2,
+      'color': 'lightcyan',
+      'font-size': 10,
+      'text-rotation': 'autorotate',
+      'text-wrap': 'wrap'
+    });
+  });
+
+  cy.on('mouseout', 'node', (e) => {
+    e.target.removeStyle();
+  });
+
+  cy.on('mouseout', 'edge', (e) => {
+    e.target.removeStyle();
+  });
+  
+  cy.layout(cyLayout).run();
+}
+
+async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = null) {
+  
+  if (focusNodeId && focusNodeLabel) {
+    const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
+    currentFocusNode = [focusNodeId, focusNodeLabel]
+  
+    currentRelMap = new Map();
+    for (const row of relRelObjsData) {
+      let relObj = currentRelMap.get(row.relObj);
+      if (!relObj) {
+        relObj = {
+          id: row.relObj,
+          label: row.label,
+          score: parseFloat(row.score),
+          relRelObjs: []
+        };
+        currentRelMap.set(row.relObj, relObj);
+      }
+      relObj.relRelObjs.push({
+        id: row.relObj2,
+        label: row.label2,
+        score: parseFloat(row.score2)
+      });
+    }
+  }
+
+  const nodes = [{data: {id: currentFocusNode[0], label: currentFocusNode[1], level: 5}}];
   const edges = [];
 
-  const relObjs = new Map();
-  const relRelObjs = new Map();
-  
-  relRelObjsData.forEach(ro => {
-    relObjs.set(ro.relObj, ro.label);
-    relRelObjs.set(ro.relObj2, ro.label2);
-    edges.push({data: {id: `${focusNodeId}-${ro.relObj}`, source: focusNodeId, target: ro.relObj}});
-    edges.push({data: {id: `${ro.relObj}-${ro.relObj2}`, source: ro.relObj, target: ro.relObj2}});
-  });
+  const subsetRelObjs = [...currentRelMap.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, relatedCount)
+    .map(relObj => ({
+      id: relObj.id,
+      label: relObj.label,
+      score: relObj.score,
+      relRelObjs: [...relObj.relRelObjs]
+        .sort((a, b) => b.score - a.score)
+        .slice(0, relatedCount)
+    }));
 
-  relObjs.forEach((label, id) => {
-    nodes.push({data: {id, label, level: 3}});
-  });
+  for (const relObj of subsetRelObjs) {
+    nodes.push({data: {id: relObj.id, label: relObj.label, level: 3}});
+    edges.push({
+      data: {
+        id: `${currentFocusNode[0]}-${relObj.id}`,
+        source: currentFocusNode[0],
+        target: relObj.id,
+        weight: relObj.score
+      }
+    });
+  }
 
-  relRelObjs.forEach((label, id) => {
-    if(!nodes.find(n => n.data.id === id)) {
-      nodes.push({data: {id, label, level: 1}});
-    };
-  });
+  for (const relObj of subsetRelObjs) {
+    for (const relRelObj of relObj.relRelObjs) {
+      if (!nodes.find(n => n.data.id === relRelObj.id)) {
+        nodes.push({data: {id: relRelObj.id, label: relRelObj.label, level: 1}});
+      }
+      edges.push({
+        data: {
+          id: `${relObj.id}-${relRelObj.id}`,
+          source: relObj.id,
+          target: relRelObj.id,
+          weight: relRelObj.score
+        }
+      });
+    }
+  }
 
+  // NEEDED FOR CONCENTRIC SPACING
   nodes.push({data: {id: 'ghostLevel2', label: '', level: 2}});
   nodes.push({data: {id: 'ghostLevel4', label: '', level: 4}});
   
   if(!cy) {
-    cy = cytoscape({
-      container: document.getElementById('cyto'),
-      style: cyStyle,
-      userZoomingEnabled: false,
-      userPanningEnabled: false,
-      elements: [...nodes, ...edges]
-    });
-
-    cy.on('tap', 'node', function (evt) {
-      let clickedNode = evt.target;
-      const frame = document.getElementById('obj-display');
-      frame.onload = null;
-      frame.src = clickedNode.data('id');
-      if (clickedNode.data('level') !== 5) {
-        newDExView(clickedNode.data('id'), clickedNode.data('label'));
-      }
-    });
-
-    cy.on('tap', 'edge', async function (evt) {
-      displayTags(evt.target);
-    });
-
-    cy.on('mouseover', 'node', (e) => {
-      const hoveredNode = e.target;
-      const currentFontSize = parseFloat(hoveredNode.style('font-size'));
-      hoveredNode.style({
-        'font-size': currentFontSize * 1.5,
-        'border-style': 'solid',
-        'border-width': 2,
-        'border-color': 'lightcyan'
-      });
-    });
-
-    cy.on('mouseover', 'edge', (e) => {
-      e.target.style({
-        'label': "click to\nsee tags",
-        'line-color': 'lightcyan',
-        'target-arrow-color': 'lightcyan',
-        'arrow-scale': 1,
-        'width': 2,
-        'color': 'lightcyan',
-        'font-size': 10,
-        'text-rotation': 'autorotate',
-        'text-wrap': 'wrap'
-      });
-    });
-
-    cy.on('mouseout', 'node', (e) => {
-      e.target.removeStyle();
-    });
-
-    cy.on('mouseout', 'edge', (e) => {
-      e.target.removeStyle();
-    });
-        
-    cy.layout(cyLayout).run();
-  } else {
+    // GRAPH INITIALIZED
+    initCy([...nodes, ...edges]); 
+  } else if (focusNodeId && focusNodeLabel) {
+    //NODE CLICKED
     let clickedNode = cy.getElementById(focusNodeId);
     cy.elements().not(clickedNode).remove();
-
     clickedNode.animate({
       position: {x: cy.width()/2, y: cy.height()/2},
       duration: 500,
@@ -192,10 +245,15 @@ async function newDExView(focusNodeId, focusNodeLabel) {
           style: {opacity: 1},
           duration: 500
         });
-        
+
         cy.layout(cyLayout).run();
       } 
     });
+  } else {
+    // RELATEDCOUNT CHANGED
+    cy.elements().remove();
+    cy.add([...nodes, ...edges]);
+    cy.layout(cyLayout).run();
   }
 }
 
@@ -235,9 +293,10 @@ async function generateNewTagGraph() {
     cy.destroy();
     cy = null;
   }
-
+  
+  document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  newDExView(hubObjData[0].hubObj, hubObjData[0].label);
+  newDExView(DEFAULT_RELATED_COUNT, hubObjData[0].hubObj, hubObjData[0].label);
 
   const welcomeView = document.getElementById('obj-display');
   welcomeView.src = "/welcome";
@@ -255,9 +314,14 @@ function editorUnlocked() {
 }
 
 async function init() {
+  
+  // CYTOSCAPE INITIALIZATION
+  const countDisplay = document.getElementById('related-count');
+  countDisplay.textContent = DEFAULT_RELATED_COUNT;
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  newDExView(hubObjData[0].hubObj, hubObjData[0].label);
+  newDExView(DEFAULT_RELATED_COUNT, hubObjData[0].hubObj, hubObjData[0].label);
 
+  // QUERY BOX
   const genButton = document.getElementById('generate-btn');
   genButton.disabled = true;
   genButton.addEventListener('click', generateNewTagGraph);
@@ -317,6 +381,25 @@ async function init() {
       queryEditor.value = sourceQueries[querySelect.value];
     }
     genButton.disabled = false;
+  });
+
+  // RELATED COUNT CONTROLS
+  document.getElementById('decrease-related').addEventListener('click', () => {
+    let relatedCount = parseInt(countDisplay.textContent)
+    if (relatedCount > 1) {
+      relatedCount--;
+      countDisplay.textContent = relatedCount;
+      newDExView(relatedCount);
+    }
+  });
+  
+  document.getElementById('increase-related').addEventListener('click', () => {
+    let relatedCount = parseInt(countDisplay.textContent)
+    if (relatedCount < 12) {
+      relatedCount++;
+      countDisplay.textContent = relatedCount;
+      newDExView(relatedCount);
+    }
   });
 }
 
