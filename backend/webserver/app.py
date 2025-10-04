@@ -1,17 +1,11 @@
 from flask import Flask, request, jsonify, session, render_template
 from rdflib import Graph
 from brain.tagology_graph import create_tagology_graph
+from threading import Lock
 import os, uuid
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-app = Flask(
-    __name__,
-    template_folder=os.path.join(BASE_DIR, '../../frontend/template'),
-    static_folder=os.path.join(BASE_DIR, '../../frontend/static')
-)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
-
+GLOBAL_TAG_GRAPH = None
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
 DEFAULT_QUERY = """
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -31,12 +25,21 @@ DEFAULT_QUERY = """
     LIMIT 10000
 """
 
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, '../../frontend/template'),
+    static_folder=os.path.join(BASE_DIR, '../../frontend/static')
+)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
+
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
     
 # key: user session id (str)
-# Value: a tagology_graph (rdflib.Graph)
+# value: a tagology_graph (rdflib.Graph)
 user_tag_graphs = {}
+
+query_lock = Lock()
 
 @app.route("/")
 def index():
@@ -61,10 +64,12 @@ def query_tag_graph():
     user_id = session["user_id"]
     tag_graph = user_tag_graphs.get(user_id, GLOBAL_TAG_GRAPH)
     query = request.json.get("query")
-    results = tag_graph.query(query)
+    with query_lock:
+        results = tag_graph.query(query)
     json_results = [
         {str(l): str(row[l]) for l in row.labels}
-        for row in results]
+        for row in results
+    ]
     return jsonify(json_results)
 
 @app.route("/tags")

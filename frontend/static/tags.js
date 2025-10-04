@@ -1,4 +1,5 @@
 import {queryTagGraph} from './utils.js';
+import {tagGraphQueries} from './queries.js';
 
 export async function displayTags(clickedEdge) {
   const [sourceTagsData, targetTagsData] = await Promise.all([

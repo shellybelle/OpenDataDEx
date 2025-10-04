@@ -12,10 +12,10 @@ Jinja2==3.1.6
 MarkupSafe==3.0.3
 numpy==2.3.3
 pandas==2.3.3
-pyparsing==3.2.5
+pyparsing==3.0.9
 python-dateutil==2.9.0.post0
 pytz==2025.2
-rdflib==7.2.1
+rdflib==6.3.2
 requests==2.32.5
 six==1.17.0
 SPARQLWrapper==2.0.0
