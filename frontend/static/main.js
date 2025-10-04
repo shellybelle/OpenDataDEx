@@ -107,6 +107,7 @@ function initCy(elements) {
   cy.on('tap', 'node', function (evt) {
     let clickedNode = evt.target;
     const frame = document.getElementById('obj-display');
+    frame.onload = null;
     frame.src = clickedNode.data('id');
     if (clickedNode.data('level') !== 5) {
       const relatedCount = parseInt(document.getElementById('related-count').textContent)
@@ -157,6 +158,8 @@ function initCy(elements) {
 async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = null) {
   
   if (focusNodeId && focusNodeLabel) {
+    // UPDATE CURRENT VIEW GLOBAL VARIABLES
+
     const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
     currentFocusNode = [focusNodeId, focusNodeLabel]
   
@@ -179,6 +182,8 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
       });
     }
   }
+
+  // ADD NODES AND EDGES DEPENDING ON relatedCount
 
   const nodes = [{data: {id: currentFocusNode[0], label: currentFocusNode[1], level: 5}}];
   const edges = [];
@@ -228,10 +233,10 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
   nodes.push({data: {id: 'ghostLevel4', label: '', level: 4}});
   
   if(!cy) {
-    // GRAPH INITIALIZED
+    // BUILD BRAND NEW DEx
     initCy([...nodes, ...edges]); 
   } else if (focusNodeId && focusNodeLabel) {
-    //NODE CLICKED
+    // UPDATE DEx AROUND NEW FOCUS NODE
     let clickedNode = cy.getElementById(focusNodeId);
     cy.elements().not(clickedNode).remove();
     clickedNode.animate({
@@ -245,12 +250,11 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
           style: {opacity: 1},
           duration: 500
         });
-
         cy.layout(cyLayout).run();
       } 
     });
   } else {
-    // RELATEDCOUNT CHANGED
+    // UPDATE DEx RELATED COUNT ONLY
     cy.elements().remove();
     cy.add([...nodes, ...edges]);
     cy.layout(cyLayout).run();
@@ -258,6 +262,13 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
 }
 
 async function generateNewTagGraph() {
+  
+  const genButton = document.getElementById('generate-btn');
+  genButton.disabled = true;
+  genButton.textContent = "Generating..."
+
+  // USE QUERY BOX DATA
+
   const endpointSelect = document.getElementById('endpoint-select');
   const endpointEditor = document.getElementById('endpoint-editor');
   const querySelect = document.getElementById('query-select');
@@ -266,7 +277,6 @@ async function generateNewTagGraph() {
   let endpoint;
   if (endpointSelect.value === "custom") {
     endpoint = endpointEditor.value.trim();
-    sessionStorage.setItem("customEndpoint", endpoint);
   } else if (endpointSelect.value === "wikidata") {
     endpoint = sourceEndpoints[endpointSelect.value];
   }
@@ -274,14 +284,9 @@ async function generateNewTagGraph() {
   let query;
   if (querySelect.value === "custom") {
     query = queryEditor.value.trim();
-    sessionStorage.setItem("customQuery", query);
   } else {
     query = sourceQueries[querySelect.value];
   }
-
-  const genButton = document.getElementById('generate-btn');
-  genButton.disabled = true;
-  genButton.textContent = "Generating..."
 
   await fetch("/new_tag_graph", {
     method: "POST",
@@ -289,39 +294,54 @@ async function generateNewTagGraph() {
     body: JSON.stringify({endpoint, query})
   });
 
+  // REFRESH DEx
+
   if (cy) {
     cy.destroy();
     cy = null;
   }
   
-  document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(DEFAULT_RELATED_COUNT, hubObjData[0].hubObj, hubObjData[0].label);
 
-  const welcomeView = document.getElementById('obj-display');
-  welcomeView.src = "/welcome";
+  document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
 
   genButton.disabled = true;
   genButton.textContent = "Generate new DEx";
 
+  console.log("Setting sessionStorage", endpointSelect.value, querySelect.value);
   sessionStorage.setItem("currentEndpoint", endpointSelect.value);
   sessionStorage.setItem("currentQuery", querySelect.value);
+  if (endpointSelect.value === "custom") {
+    sessionStorage.setItem("customEndpoint", endpoint);
+  } else {
+    sessionStorage.setItem("customEndpoint", '');
+  }
+  if (querySelect.value === "custom") {
+    sessionStorage.setItem("customQuery", query);
+  } else {
+    sessionStorage.setItem("customQuery", '');
+  }
+  
+  const welcomeView = document.getElementById('obj-display');
+  welcomeView.src = "/welcome";
 }
 
 function editorUnlocked() {
+  // TODO: MOVE THIS CHECK TO THE BACKEND
   const key = prompt(`Enter editor key:`);
   return key === "ariadne";
 }
 
 async function init() {
   
-  // CYTOSCAPE INITIALIZATION
-  const countDisplay = document.getElementById('related-count');
-  countDisplay.textContent = DEFAULT_RELATED_COUNT;
+  // INITIALIZE CYTOSCAPE VIEW
+  
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   newDExView(DEFAULT_RELATED_COUNT, hubObjData[0].hubObj, hubObjData[0].label);
 
-  // QUERY BOX
+  // INITIALIZE QUERY BOX
+
   const genButton = document.getElementById('generate-btn');
   genButton.disabled = true;
   genButton.addEventListener('click', generateNewTagGraph);
@@ -341,17 +361,18 @@ async function init() {
   endpointSelect.value = sessionStorage.getItem("currentEndpoint");
   if (endpointSelect.value === "custom") {
     endpointEditor.value = sessionStorage.getItem("customEndpoint");
-    endpointEditor.removeAttribute("readonly");
   } else {
     endpointEditor.value = sourceEndpoints[endpointSelect.value];
   }
+  endpointEditor.setAttribute("readonly", true);
+  
   querySelect.value = sessionStorage.getItem("currentQuery");
   if (querySelect.value === "custom") {
     queryEditor.value = sessionStorage.getItem("customQuery");
-    queryEditor.removeAttribute("readonly");
   } else {
     queryEditor.value = sourceQueries[querySelect.value];
   }
+  queryEditor.setAttribute("readonly", true);
 
   endpointSelect.addEventListener('change', () => {
     if (endpointSelect.value === "custom") {
@@ -383,7 +404,11 @@ async function init() {
     genButton.disabled = false;
   });
 
-  // RELATED COUNT CONTROLS
+  // INITIALIZE RELATED COUNT CONTROLS
+
+  const countDisplay = document.getElementById('related-count');
+  countDisplay.textContent = DEFAULT_RELATED_COUNT;
+
   document.getElementById('decrease-related').addEventListener('click', () => {
     let relatedCount = parseInt(countDisplay.textContent)
     if (relatedCount > 1) {

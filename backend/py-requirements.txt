@@ -31,7 +31,7 @@ pip-autoremove==0.10.0
 pydantic==2.11.7
 pydantic_core==2.33.2
 pydot==4.0.1
-pyparsing==3.2.3
+pyparsing==3.0.9
 pyroaring==1.0.2
 python-dateutil==2.9.0.post0
 pytz==2025.2

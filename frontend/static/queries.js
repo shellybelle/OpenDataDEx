@@ -94,7 +94,7 @@ export const tagGraphQueries = {
     SELECT ?prop ?val
     WHERE {
       <${obj}> ?prop ?val
-      FILTER(?prop NOT IN (skos:prefLabel, skos:related, tag:relatedScore))
+      FILTER(?prop NOT IN (skos:prefLabel, skos:related, tag:relatedEdge))
     }
   `,
   getTotalObjects: () => `
