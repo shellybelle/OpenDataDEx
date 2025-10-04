@@ -28,7 +28,7 @@ DEFAULT_QUERY = """
         FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
         SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
     }
-    LIMIT 5000
+    LIMIT 10000
 """
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
@@ -74,6 +74,14 @@ def tags_page():
 @app.route("/welcome")
 def welcome_page():
     return render_template("welcome.html")
+
+@app.route("/delete_user_graph", methods=["POST"])
+def delete_user_graph():
+    user_id = session.get("user_id")
+    if user_id in user_tag_graphs:
+        del user_tag_graphs[user_id]
+        return jsonify({"message": f"Graph for user {user_id} deleted."}), 200
+    return jsonify({"message": "No graph to delete."}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
