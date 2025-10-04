@@ -44,9 +44,9 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
             for extent, i in upper_concepts:
                 related_objs_str.update(extent)
                 upper_upper_concepts.extend(obj_context.neighbors(extent))
-            related_objs_str.discard(str(obj))
             upper_concepts = upper_upper_concepts
 
+    related_objs_str.discard(str(obj))
     scored_related_objs = _score_threshold_related(obj, related_objs_str, obj_graph, threshold)
 
     for simScore, ro in scored_related_objs:
