@@ -19,6 +19,7 @@ h1 img {
   height: auto;
   width: auto;
   margin-left: 0.25em;
+  margin-right: 0.5em;
 }
 
 h2 {
@@ -33,6 +34,7 @@ textarea {
   width: 100%;
   padding: 0.25rem;
   white-space: nowrap;
+  margin: 0;
 }
 
 textarea[readonly] {
@@ -96,7 +98,7 @@ textarea[readonly] {
 }
 
 #query-editor {
-  height: 6rem;
+  height: 4.5rem;
   resize: vertical;
 }
 

@@ -99,7 +99,7 @@ WHERE {
   ,
   getTotalObjects: () =>
 `PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-SELECT (COUNT(?obj) AS ?totalObjs)
+SELECT (COUNT(DISTINCT ?obj) AS ?totalObjs)
 WHERE {
     ?obj skos:prefLabel ?label .
 }`
@@ -107,7 +107,7 @@ WHERE {
   getTotalTags: () =>
 `PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX tag: <http://example.org/tagology/>
-SELECT (COUNT(*) as ?totalTags)
+SELECT (COUNT(DISTINCT CONCAT(STR(?prop), STR(?val))) as ?totalTags)
 WHERE {
     ?obj skos:prefLabel ?label ;
          ?prop ?val .
