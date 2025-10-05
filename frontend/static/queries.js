@@ -23,7 +23,7 @@ WHERE {
           ?property ?value ;
           rdfs:label ?label .
     FILTER(STRSTARTS(STR(?property), STR(wdt:))) #TRUTHY
-    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+    FILTER(lang(?label) = "en")
 }`
   ,
   
@@ -37,7 +37,7 @@ WHERE {
           ?property ?value ;
           rdfs:label ?label .
     FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY
-    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+    FILTER(lang(?label) = "en")
 }`
   ,
   
@@ -51,7 +51,7 @@ WHERE {
           ?property ?value ;
           rdfs:label ?label .
     FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY NAMESPACE
-    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+    FILTER(lang(?label) = "en")
 }`
   ,
   

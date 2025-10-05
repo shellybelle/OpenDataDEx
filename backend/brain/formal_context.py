@@ -7,7 +7,7 @@ from brain.namespaces import TAG
 def get_object_context(obj_graph: Graph) -> Context:
     
     props = list(obj_graph.predicates(unique=True))
-    objs = list(obj_graph.subjects(predicate=SKOS.prefLabel))
+    objs = list(obj_graph.subjects(predicate=SKOS.prefLabel, unique=True))
 
     rows = []
     for obj in objs:

@@ -1,6 +1,7 @@
 import requests
 
-query = """
+# UNATTACHED OBJECTS
+queryA = """
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 SELECT ?relObj ?label
 WHERE {
@@ -9,18 +10,23 @@ WHERE {
 }
 """
 
-queryB = """
+query = """
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX tag: <http://example.org/tagology/>
-SELECT (COUNT(*) as ?totalTags)
-WHERE {
-    ?obj skos:prefLabel ?label ;
-         ?prop ?val .
-    FILTER(
-      !STRSTARTS(STR(?prop), STR(skos:))  &&
-      !STRSTARTS(STR(?prop), STR(tag:))
-    )
+CONSTRUCT {
+    ?object ?property ?value .
+    ?object skos:prefLabel ?label .
+    ?object schema:about ?item .
 }
+WHERE {
+    ?object schema:isPartOf <https://en.wikipedia.org/>;
+           schema:about ?item .
+    ?item wdt:P31 wd:Q146; # INSTANCE OF CAT
+          ?property ?value ;
+          rdfs:label ?label .
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY NAMESPACE
+    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+}
+LIMIT 10000
 """
 
 queryC = """

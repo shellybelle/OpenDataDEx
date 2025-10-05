@@ -207,6 +207,7 @@ async function generateNewTagGraph() {
       sourceQueries["limit"];
   }
 
+  console.log(query);
   await fetch("/new_tag_graph", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
