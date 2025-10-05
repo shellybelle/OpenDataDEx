@@ -87,12 +87,22 @@ textarea[readonly] {
 }
 
 #endpoint-editor {
-  height: 2rem;
+  height: 1.75rem;
+}
+
+#query-construct {
+  height: 4.5rem;
+  resize: none;
 }
 
 #query-editor {
   height: 6rem;
   resize: vertical;
+}
+
+#query-limit {
+  height: 1.75rem;
+  resize: none;
 }
 
 #generate-btn {

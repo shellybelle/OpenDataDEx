@@ -1,61 +1,61 @@
 export const sourceEndpoints = {
   "wikidata": "https://query.wikidata.org/sparql",
-  "custom": "Custom Endpoint"
+  "custom": "<custom endpoint>"
 };
 
 export const sourceQueries = {
-  "wiki-space":
+  "construct":
 `PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 CONSTRUCT {
-    ?wikip ?prop ?val .
-    ?wikip schema:about ?item .
-    ?wikip skos:prefLabel ?itemLabel .
-}
-WHERE {
-    ?wikip schema:isPartOf <https://en.wikipedia.org/> ;
-           schema:about ?item .
-    ?item wdt:P4466 ?uat ;
-          ?prop ?val .
-    FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
-    SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
-}
-LIMIT 10000`
+    ?object ?property ?value .
+    ?object skos:prefLabel ?label .`
   ,
-  "wiki-dogs":
-`PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-CONSTRUCT {
-    ?wikip ?prop ?val .
-    ?wikip schema:about ?item .
-    ?wikip skos:prefLabel ?itemLabel .
+
+  "limit": `LIMIT 10000`,
+
+  "wiki-space":
+`    ?object schema:about ?item .
 }
 WHERE {
-    ?wikip schema:isPartOf <https://en.wikipedia.org/>;
+    ?object schema:isPartOf <https://en.wikipedia.org/> ;
+           schema:about ?item .
+    ?item wdt:P4466 ?uat ; # HAS UAT ID
+          ?property ?value ;
+          rdfs:label ?label .
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) #TRUTHY
+    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+}`
+  ,
+  
+  "wiki-dogs":
+`    ?object schema:about ?item .
+}
+WHERE {
+    ?object schema:isPartOf <https://en.wikipedia.org/>;
            schema:about ?item .
     ?item wdt:P31 wd:Q144; # INSTANCE OF DOG
-          ?prop ?val .
-    FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
-    SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
-}
-LIMIT 10000`
+          ?property ?value ;
+          rdfs:label ?label .
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY
+    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+}`
   ,
+  
   "wiki-cats":
-`PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-CONSTRUCT {
-    ?wikip ?prop ?val .
-    ?wikip schema:about ?item .
-    ?wikip skos:prefLabel ?itemLabel .
+`    ?object schema:about ?item .
 }
 WHERE {
-    ?wikip schema:isPartOf <https://en.wikipedia.org/>;
+    ?object schema:isPartOf <https://en.wikipedia.org/>;
            schema:about ?item .
     ?item wdt:P31 wd:Q146; # INSTANCE OF CAT
-          ?prop ?val .
-    FILTER(STRSTARTS(STR(?prop), STR(wdt:))) # TRUTHY NAMESPACE
-    SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
-}
-LIMIT 10000`
+          ?property ?value ;
+          rdfs:label ?label .
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY NAMESPACE
+    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
+}`
   ,
-  "custom": "Custom Query"
+  
+  "custom": "<custom query>"
 };
 
 export const tagGraphQueries = {

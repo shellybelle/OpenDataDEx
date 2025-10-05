@@ -196,9 +196,15 @@ async function generateNewTagGraph() {
 
   let query;
   if (querySelect.value === "custom") {
-    query = queryEditor.value.trim();
+    query =
+      sourceQueries["construct"] + "\n" +
+      queryEditor.value.trim() + "\n" +
+      sourceQueries["limit"];
   } else {
-    query = sourceQueries[querySelect.value];
+    query =
+      sourceQueries["construct"] + "\n" +
+      sourceQueries[querySelect.value] + "\n" +
+      sourceQueries["limit"];
   }
 
   await fetch("/new_tag_graph", {
@@ -222,7 +228,6 @@ async function generateNewTagGraph() {
   genButton.disabled = true;
   genButton.textContent = "Generate new DEx";
 
-  console.log("Setting sessionStorage", endpointSelect.value, querySelect.value);
   sessionStorage.setItem("currentEndpoint", endpointSelect.value);
   sessionStorage.setItem("currentQuery", querySelect.value);
   if (endpointSelect.value === "custom") {
@@ -274,7 +279,9 @@ async function init() {
   const endpointSelect = document.getElementById('endpoint-select');
   const endpointEditor = document.getElementById('endpoint-editor');
   const querySelect = document.getElementById('query-select');
+  const queryConstruct = document.getElementById('query-construct');
   const queryEditor = document.getElementById('query-editor');
+  const queryLimit = document.getElementById('query-limit');
   
   endpointSelect.value = sessionStorage.getItem("currentEndpoint");
   if (endpointSelect.value === "custom") {
@@ -285,12 +292,14 @@ async function init() {
   endpointEditor.setAttribute("readonly", true);
   
   querySelect.value = sessionStorage.getItem("currentQuery");
+  queryConstruct.value = sourceQueries["construct"];
   if (querySelect.value === "custom") {
     queryEditor.value = sessionStorage.getItem("customQuery");
   } else {
     queryEditor.value = sourceQueries[querySelect.value];
   }
   queryEditor.setAttribute("readonly", true);
+  queryLimit.value = sourceQueries["limit"];
 
   endpointSelect.addEventListener('change', () => {
     if (endpointSelect.value === "custom") {
