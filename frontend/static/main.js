@@ -4,9 +4,11 @@ import {queryTagGraph} from './utils.js';
 import {displayTags} from './tags.js';
 
 const DEFAULT_RELATED_COUNT = 6;
-let cy;
-let currentRelMap;
-let currentFocusNode;
+let cy; // cytoscape object
+let hubObj; // [uri, prefLabel]
+let focusObj; // [uri, prefLabel]
+let prevObj; // [uri, prefLabel]
+let currentRelMap; // contains 12 related objs and each of their 12 related objs
 
 function initCy(elements) {
   cy = cytoscape({
@@ -23,7 +25,8 @@ function initCy(elements) {
     frame.onload = null;
     frame.src = clickedNode.data('id');
     if (clickedNode.data('level') !== 5) {
-      const relatedCount = parseInt(document.getElementById('related-count').textContent)
+      prevObj = [...focusObj];
+      const relatedCount = parseInt(document.getElementById('related-count').textContent);
       newDExView(relatedCount, clickedNode.data('id'), clickedNode.data('label'));
     }
   });
@@ -37,8 +40,8 @@ function initCy(elements) {
     const currentFontSize = parseFloat(hoveredNode.style('font-size'));
     hoveredNode.style({
       'font-size': currentFontSize * 1.5,
-      'border-style': 'solid',
       'border-width': 2,
+      'border-style': 'solid',
       'border-color': 'lightcyan'
     });
   });
@@ -74,7 +77,7 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
     // UPDATE CURRENT VIEW GLOBAL VARIABLES
 
     const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
-    currentFocusNode = [focusNodeId, focusNodeLabel]
+    focusObj = [focusNodeId, focusNodeLabel]
   
     currentRelMap = new Map();
     for (const row of relRelObjsData) {
@@ -98,7 +101,7 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
 
   // ADD NODES AND EDGES DEPENDING ON relatedCount
 
-  const nodes = [{data: {id: currentFocusNode[0], label: currentFocusNode[1], level: 5}}];
+  const nodes = [{data: {id: focusObj[0], label: focusObj[1], level: 5}}];
   const edges = [];
 
   const subsetRelObjs = [...currentRelMap.values()]
@@ -117,8 +120,8 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
     nodes.push({data: {id: relObj.id, label: relObj.label, level: 3}});
     edges.push({
       data: {
-        id: `${currentFocusNode[0]}-${relObj.id}`,
-        source: currentFocusNode[0],
+        id: `${focusObj[0]}-${relObj.id}`,
+        source: focusObj[0],
         target: relObj.id,
         weight: relObj.score
       }
@@ -216,13 +219,16 @@ async function generateNewTagGraph() {
 
   // REFRESH DEx
 
+  prevObj = null;
   if (cy) {
     cy.destroy();
     cy = null;
   }
   
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  newDExView(DEFAULT_RELATED_COUNT, hubObjData[0].hubObj, hubObjData[0].label);
+  hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
+  focusObj = [...hubObj];
+  newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1]);
 
   document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
 
@@ -243,6 +249,7 @@ async function generateNewTagGraph() {
   }
   
   const welcomeView = document.getElementById('obj-display');
+  welcomeView.onload = null;
   welcomeView.src = "/welcome";
 }
 
@@ -262,7 +269,9 @@ async function init() {
   // INITIALIZE CYTOSCAPE VIEW
   
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  newDExView(DEFAULT_RELATED_COUNT, hubObjData[0].hubObj, hubObjData[0].label);
+  hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
+  focusObj = [...hubObj]
+  newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1]);
 
   // INITIALIZE QUERY BOX
 
@@ -332,13 +341,48 @@ async function init() {
     genButton.disabled = false;
   });
 
+  // INITIALIZE NAV BUTTONS & SEARCH
+
+  document.getElementById('hub-btn').addEventListener('click', () => {
+    if (focusObj?.[0] !== hubObj?.[0]) {
+      prevObj = [...focusObj];
+      if (cy) {
+        cy.destroy();
+        cy = null;
+      }
+      const relatedCount = parseInt(document.getElementById('related-count').textContent);
+      newDExView(relatedCount, hubObj[0], hubObj[1]);
+      
+      const welcomeView = document.getElementById('obj-display');
+      welcomeView.onload = null;
+      welcomeView.src = "/welcome";
+    };
+  });
+
+  document.getElementById('back-btn').addEventListener('click', () => {
+    if (prevObj?.[0] && prevObj?.[1]) {
+      if (cy) {
+        cy.destroy();
+        cy = null;
+      }
+      const relatedCount = parseInt(document.getElementById('related-count').textContent);
+      newDExView(relatedCount, prevObj[0], prevObj[1]);
+    
+      const frame = document.getElementById('obj-display');
+      frame.onload = null;
+      frame.src = prevObj[0];
+      
+      prevObj = null;
+    }
+  });
+
   // INITIALIZE RELATED COUNT CONTROLS
 
   const countDisplay = document.getElementById('related-count');
   countDisplay.textContent = DEFAULT_RELATED_COUNT;
 
   document.getElementById('decrease-related').addEventListener('click', () => {
-    let relatedCount = parseInt(countDisplay.textContent)
+    let relatedCount = parseInt(countDisplay.textContent);
     if (relatedCount > 1) {
       relatedCount--;
       countDisplay.textContent = relatedCount;
@@ -347,7 +391,7 @@ async function init() {
   });
   
   document.getElementById('increase-related').addEventListener('click', () => {
-    let relatedCount = parseInt(countDisplay.textContent)
+    let relatedCount = parseInt(countDisplay.textContent);
     if (relatedCount < 12) {
       relatedCount++;
       countDisplay.textContent = relatedCount;

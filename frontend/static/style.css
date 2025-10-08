@@ -19,7 +19,7 @@ h1 img {
   height: auto;
   width: auto;
   margin-left: 0.25em;
-  margin-right: 0.5em;
+  margin-right: 5em;
 }
 
 h2 {
@@ -50,6 +50,64 @@ textarea[readonly] {
 #cyto-container {
   position: relative;
   flex: 1;
+}
+
+#cyto-container button {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 0.25rem;
+}
+
+#cyto-container button:hover {
+  border: 2px solid lightcyan;
+}
+
+#hub-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+}
+
+#back-btn {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  z-index: 10;
+}
+
+#label-search {
+  position:absolute;
+  bottom: 15px;
+  right: 15px;
+  z-index: 10;
+  width: 15ch;
+  font-size: 1rem;
+  padding: 0.15rem;
+}
+
+#related-count-controls {
+  position: absolute;
+  display: flex;
+  top: 15px;
+  right: 15px;
+  background: transparent; 
+  color: white;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  gap: 10px;
+  z-index: 10;
+}
+
+#related-count-controls button {
+  width: 25px;
 }
 
 #cyto {
@@ -139,32 +197,3 @@ textarea[readonly] {
   flex: 1;
   min-width: 0;
 }
-
-#related-count-controls {
-  position: absolute;
-  display: flex;
-  top: 15px;
-  right: 15px;
-  background: transparent; 
-  color: white;
-  align-items: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  align-items: center;
-  gap: 10px;
-  z-index: 10;
-}
-
-#related-count-controls button {
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 5px;
-  width: 25px;
-  height: 25px;
-}
-

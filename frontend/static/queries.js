@@ -11,7 +11,9 @@ CONSTRUCT {
     ?object skos:prefLabel ?label .`
   ,
 
-  "limit": `LIMIT 10000`,
+  "limit":
+`LIMIT 10000`
+  ,
 
   "wiki-space":
 `    ?object schema:about ?item .
