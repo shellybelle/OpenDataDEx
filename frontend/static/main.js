@@ -210,7 +210,6 @@ async function generateNewTagGraph() {
       sourceQueries["limit"];
   }
 
-  console.log(query);
   await fetch("/new_tag_graph", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
@@ -227,7 +226,6 @@ async function generateNewTagGraph() {
   
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
-  focusObj = [...hubObj];
   newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1]);
 
   document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
@@ -253,6 +251,24 @@ async function generateNewTagGraph() {
   welcomeView.src = "/welcome";
 }
 
+async function searchLabels(searchText) {
+  const matchObjData = await queryTagGraph(tagGraphQueries.getMatchObj(searchText.trim()));
+  if (matchObjData.length !== 0) {
+      prevObj = [...focusObj];
+      if (cy) {
+        cy.destroy();
+        cy = null;
+      }
+      
+      const relatedCount = parseInt(document.getElementById('related-count').textContent);
+      newDExView(relatedCount, matchObjData[0].matchObj, matchObjData[0].label);
+    
+      const frame = document.getElementById('obj-display');
+      frame.onload = null;
+      frame.src = matchObjData[0].matchObj;
+  }
+}
+
 function editorUnlocked() {
   // TODO: MOVE THIS CHECK TO THE BACKEND
   const key = prompt(`Enter editor key:`);
@@ -270,7 +286,6 @@ async function init() {
   
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
   hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
-  focusObj = [...hubObj]
   newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1]);
 
   // INITIALIZE QUERY BOX
@@ -350,6 +365,7 @@ async function init() {
         cy.destroy();
         cy = null;
       }
+      
       const relatedCount = parseInt(document.getElementById('related-count').textContent);
       newDExView(relatedCount, hubObj[0], hubObj[1]);
       
@@ -365,6 +381,7 @@ async function init() {
         cy.destroy();
         cy = null;
       }
+      
       const relatedCount = parseInt(document.getElementById('related-count').textContent);
       newDExView(relatedCount, prevObj[0], prevObj[1]);
     
@@ -373,6 +390,18 @@ async function init() {
       frame.src = prevObj[0];
       
       prevObj = null;
+    }
+  });
+
+  const searchInput = document.getElementById('label-search');
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const searchText = searchInput.value.trim();
+      if (searchText) {
+        searchLabels(searchText);
+        searchInput.value = "";
+        searchInput.placeholder = "Search objects...";
+      }
     }
   });
 

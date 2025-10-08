@@ -118,4 +118,13 @@ WHERE {
       !STRSTARTS(STR(?prop), STR(tag:))
     )
 }`
+  ,
+  getMatchObj: (text) =>
+`PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+SELECT ?matchObj ?label
+WHERE {
+  ?matchObj skos:prefLabel ?label .
+  FILTER(CONTAINS(LCASE(STR(?label)), LCASE("${text}")))
+}
+LIMIT 1`
 };
