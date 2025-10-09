@@ -1,4 +1,4 @@
-from rdflib import Graph, URIRef, SKOS, Literal, BNode
+from rdflib import Graph, URIRef, Literal, BNode
 from rdflib.namespace import XSD
 from concepts import Context
 from pandas import DataFrame
@@ -6,8 +6,8 @@ from brain.namespaces import TAG
 
 def get_object_context(obj_graph: Graph) -> Context:
     
-    props = list(obj_graph.predicates(unique=True))
-    objs = list(obj_graph.subjects(predicate=SKOS.prefLabel, unique=True))
+    props = list(obj_graph.subjects(predicate=TAG.propLabel, unique=True))
+    objs = list(obj_graph.subjects(predicate=TAG.objLabel, unique=True))
 
     rows = []
     for obj in objs:
@@ -50,7 +50,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
     scored_related_objs = _score_threshold_related(obj, related_objs_str, obj_graph, threshold)
 
     for simScore, ro in scored_related_objs:
-        obj_graph.add((obj, SKOS.related, ro))
+        obj_graph.add((obj, TAG.related, ro))
 
         edge = BNode()
         obj_graph.add((obj, TAG.relatedEdge, edge))
@@ -64,30 +64,23 @@ def _score_threshold_related(
     threshold: int
 ) -> list[tuple[float, URIRef]]:
 
-    ''' OLD CODE
-    related_obj_list = " ".join(f"<{ro}>" for ro in related_objs)
+    ''' TODO: WOULD THIS VERSION BE FASTER??
+    def get_propvals(o):
     q = f"""
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?related_obj
-        WHERE {{
-            VALUES ?related_obj {{ {related_obj_list} }}
-            <{obj}> ?p ?v .
-            FILTER(?p NOT IN (skos:prefLabel, skos:related))
-            ?related_obj ?p ?v .
-        }}
-        GROUP BY ?related_obj
-        ORDER BY DESC(COUNT(DISTINCT ?p))
-        LIMIT {threshold}
+    PREFIX tag: <{TAG}>
+    SELECT ?p ?v WHERE {{
+      <{o}> ?p ?v .
+      ?p tag:propLabel ?pl .
+    }}
     """
-
-    return {str(row["related_obj"]) for row in obj_graph.query(q)}
+    return {(row.p, row.v) for row in obj_graph.query(q)}
     '''
 
     def get_propvals(o: URIRef):
         return {
             (p, v)
             for p, v in obj_graph.predicate_objects(o)
-            if p not in (SKOS.prefLabel, SKOS.related)
+            if (p, TAG.propLabel, None) in obj_graph
         }
 
     obj_propvals = get_propvals(obj)

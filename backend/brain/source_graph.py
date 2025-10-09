@@ -13,8 +13,19 @@ def safe_datetime_converter(lexical):
         return lexical
 _toPythonMapping[XSD.dateTime] = safe_datetime_converter
 
+'''
+
+'''
+
 def get_object_graph(source_query, source_endpoint) -> Graph:
     sparqlCall = SPARQLWrapper(source_endpoint)
     sparqlCall.setQuery(source_query)
     sparqlCall.addCustomHttpHeader("User-Agent", "tagology/1.0 (michelle.lee.tom@gmail.com)")
-    return sparqlCall.queryAndConvert()
+    initialGraph = sparqlCall.queryAndConvert() # CONSTRUCT QUERY SO ALWAYS RETURNS AN RDFLIB GRAPH
+
+    # TODO: IF PROPERTY HAS NO tag:propLabel, ?prop tag:propLabel ?prop
+    # TODO: IF VALUE IS URI AND HAS NO tag:valLabel, ?val tag:valLabel ?val
+    # TODO: IF PROPERTY HAS MULTIPLE tag:propLabel, REMOVE ALL BUT 1
+    # TODO: IF VALUE HAS MULTIPLE tag:valLabel, REMOVE ALL BUT 1
+
+    return initialGraph

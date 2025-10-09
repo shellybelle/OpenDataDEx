@@ -1,23 +1,27 @@
 from brain.tagology_graph import create_tagology_graph
 
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
-DEFAULT_QUERY = """
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    CONSTRUCT {
-        ?wikip ?prop ?val .
-        ?wikip schema:about ?item .
-        ?wikip skos:prefLabel ?itemLabel .
-    }
-    WHERE {
-        ?wikip schema:isPartOf <https://en.wikipedia.org/> ;
-               schema:about ?item .
-        ?item wdt:P4466 ?uat ;
-              ?prop ?val .
-        FILTER(STRSTARTS(STR(?prop), STR(wdt:))) #TRUTHY
-        SERVICE wikibase:label {bd:serviceParam wikibase:language "en" .}
-    }
-    LIMIT 1000
-"""
+DEFAULT_QUERY = """PREFIX tag: <http://example.org/tagology/>
+CONSTRUCT {
+    ?object ?property ?value .
+    ?object tag:objLabel ?objectLabel .
+    ?property tag:propLabel ?propertyLabel .
+    ?value tag:valLabel ?valueLabel .
+    ?object schema:about ?item .
+}
+WHERE {
+    ?object schema:isPartOf <https://en.wikipedia.org/> ;
+            schema:about ?item .
+    ?item wdt:P4466 ?uat ; # HAS UAT ID
+          ?property ?value .
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+                             ?item rdfs:label ?objectLabel .
+                             ?property rdfs:label ?propertyLabel .
+                             ?value rdfs:label ?valueLabel .
+                           }
+}
+LIMIT 10000"""
 
 def main():
     tagology_graph = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)

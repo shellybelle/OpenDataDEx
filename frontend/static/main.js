@@ -329,9 +329,10 @@ async function init() {
   endpointSelect.addEventListener('change', () => {
     if (endpointSelect.value === "custom") {
       if (editorUnlocked()) {
+        alert("REQUIREMENTS: TODO");
         endpointEditor.removeAttribute("readonly");
       } else {
-        alert("Invalid key");
+        alert("Sorry, correct key required to edit endpoint.");
         endpointSelect.value = sessionStorage.getItem("currentEndpoint");
       }
     } else {
@@ -344,9 +345,10 @@ async function init() {
   querySelect.addEventListener('change', () => {
     if (querySelect.value === "custom") {
       if (editorUnlocked()) {
+        alert("REQUIREMENTS: TODO");
         queryEditor.removeAttribute("readonly");
       } else {
-        alert("Invalid key");
+        alert("Sorry, correct key required to edit query.");
         querySelect.value = sessionStorage.getItem("currentQuery");
       }
     } else {

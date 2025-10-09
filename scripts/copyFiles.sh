@@ -11,3 +11,4 @@ for file in ../frontend/template/*.html; do
   echo -e "\n\n" >> ../../html.txt
 done
 cp ../frontend/static/style.css ../../style.css
+cp ../backend/webserver/app.py ../../app.py
