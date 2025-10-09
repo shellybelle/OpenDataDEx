@@ -20,6 +20,7 @@ def get_object_context(obj_graph: Graph) -> Context:
             columns=[str(p) for p in props],
             dtype=bool)
 
+    # TODO: BENCHMARK WITH AND WITHOUT DROPPING COLUMNS
     onePercent = len(objs)*0.01
     sparse_props = context_data.columns[(context_data == True).sum(axis=0) < onePercent].tolist()
     dense_props = context_data.columns[(context_data == False).sum(axis=0) < onePercent].tolist()
@@ -29,11 +30,11 @@ def get_object_context(obj_graph: Graph) -> Context:
 
     return Context(context_data.index.tolist(), context_data.columns.tolist(), context_data.values.tolist())
 
+# TODO: BENCHMARK OBJECT FIRST VS CONCEPT FIRST ITERATION
 def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, threshold: int):
     obj_extent, obj_intent = obj_context[str(obj),]
     related_objs_str = set()
 
-    ### TODO: should I ONLY look at 1st neighbor concepts? (will end up with less than threshold)
     upper_concepts = obj_context.neighbors(obj_extent)
     while len(related_objs_str) < threshold:
         if not upper_concepts:
@@ -64,8 +65,8 @@ def _score_threshold_related(
     threshold: int
 ) -> list[tuple[float, URIRef]]:
 
-    ''' TODO: WOULD THIS VERSION BE FASTER??
-    def get_propvals(o):
+    # TODO: BENCHMARK QUERY VS FOR+IF VERSION
+    '''def get_propvals(o):
     q = f"""
     PREFIX tag: <{TAG}>
     SELECT ?p ?v WHERE {{

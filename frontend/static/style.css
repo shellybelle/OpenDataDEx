@@ -41,6 +41,24 @@ textarea[readonly] {
   color: silver;
 }
 
+p {
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: red;
+  text-decoration: none;
+}
+
+a:hover {
+  color: lightcyan;
+  font-weight: bold;
+}
+
+button:enabled:hover {
+  border: 3px solid lightcyan !important;
+}
+
 #DEx {
   display: flex;
   height: 100%;
@@ -55,17 +73,13 @@ textarea[readonly] {
 #cyto-container button {
   background: transparent;
   border: 1px solid white;
+  border-radius: 5px;
   color: white;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   font-weight: bold;
-  border-radius: 5px;
   padding: 0.25rem;
-}
-
-#cyto-container button:hover {
-  border: 2px solid lightcyan;
 }
 
 #hub-btn {
@@ -90,6 +104,12 @@ textarea[readonly] {
   width: 15ch;
   font-size: 1rem;
   padding: 0.15rem;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+#label-search:hover {
+  border: 3px solid lightcyan;
 }
 
 #related-count-controls {
@@ -169,11 +189,12 @@ textarea[readonly] {
   margin: 1rem;
   background-color: red;
   color: white;
-  border: 2px solid white;
+  border: 1px solid white;
   padding: 0.25rem;
   font-size: 1rem;
   font-weight: bold;
   border-radius: 5px;
+  opacity: 1;
 }
 
 #generate-btn:disabled {

@@ -14,21 +14,21 @@ CONSTRUCT {
   ,
 
   "limit":
-`LIMIT 10000`
+`LIMIT 50000`
   ,
 
   "wiki-space":
 `    ?object schema:about ?item .
 }
 WHERE {
-    ?object schema:isPartOf <https://en.wikipedia.org/> ;
-            schema:about ?item .
     ?item wdt:P4466 ?uat ; # HAS UAT ID
           ?property ?value .
-    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+    ?p wikibase:directClaim ?property . # TRUTHY PROPERTIES ONLY
+    ?object schema:about ?item ;
+            schema:isPartOf <https://en.wikipedia.org/> .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
                              ?item rdfs:label ?objectLabel . # MANUAL MODE DUE TO THIS BINDING
-                             ?property rdfs:label ?propertyLabel .
+                             ?p rdfs:label ?propertyLabel . # AND THIS BINDING
                              ?value rdfs:label ?valueLabel .
                            }
 }`
@@ -38,14 +38,14 @@ WHERE {
 `    ?object schema:about ?item .
 }
 WHERE {
-    ?object schema:isPartOf <https://en.wikipedia.org/>;
-            schema:about ?item .
     ?item wdt:P31 wd:Q144; # INSTANCE OF DOG
           ?property ?value .
-    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+    ?p wikibase:directClaim ?property . # TRUTHY PROPERTIES ONLY
+    ?object schema:about ?item ;
+            schema:isPartOf <https://en.wikipedia.org/> .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
                              ?item rdfs:label ?objectLabel . # MANUAL MODE DUE TO THIS BINDING
-                             ?property rdfs:label ?propertyLabel .
+                             ?p rdfs:label ?propertyLabel . # AND THIS BINDING
                              ?value rdfs:label ?valueLabel .
                            }
 }`
@@ -55,14 +55,14 @@ WHERE {
 `    ?object schema:about ?item .
 }
 WHERE {
-    ?object schema:isPartOf <https://en.wikipedia.org/>;
-            schema:about ?item .
     ?item wdt:P31 wd:Q146; # INSTANCE OF CAT
           ?property ?value .
-    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+    ?p wikibase:directClaim ?property .
+    ?object schema:about ?item ;
+            schema:isPartOf <https://en.wikipedia.org/> .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
                              ?item rdfs:label ?objectLabel . # MANUAL MODE DUE TO THIS BINDING
-                             ?property rdfs:label ?propertyLabel .
+                             ?p rdfs:label ?propertyLabel . # AND THIS BINDING
                              ?value rdfs:label ?valueLabel .
                            }
 }`
@@ -102,7 +102,7 @@ WHERE {
   ,
   getTags: (obj) =>
 `PREFIX tag: <http://example.org/tagology/>
-SELECT ?prop ?val
+SELECT ?prop ?propLabel ?val ?valLabel
 WHERE {
     <${obj}> ?prop ?val .
     ?prop tag:propLabel ?propLabel .

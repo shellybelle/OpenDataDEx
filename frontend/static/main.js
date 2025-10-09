@@ -224,6 +224,7 @@ async function generateNewTagGraph() {
       sourceQueries["limit"];
   }
 
+  console.log(query);
   await fetch("/new_tag_graph", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
@@ -251,11 +252,17 @@ async function generateNewTagGraph() {
   sessionStorage.setItem("currentQuery", querySelect.value);
   if (endpointSelect.value === "custom") {
     sessionStorage.setItem("customEndpoint", endpoint);
+    endpointEditor.addEventListener('change', () => {
+      genButton.disabled = false;
+    });
   } else {
     sessionStorage.setItem("customEndpoint", '');
   }
   if (querySelect.value === "custom") {
     sessionStorage.setItem("customQuery", query);
+    queryEditor.addEventListener('change', () => {
+      genButton.disabled = false;
+    });
   } else {
     sessionStorage.setItem("customQuery", '');
   }

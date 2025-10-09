@@ -7,9 +7,6 @@ RELATED_OBJ_THRESHOLD = 12
 
 def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     
-    # TODO: thorough data validation and error handling
-    # TODO: benchmarking & optimization
-
     print("[STATUS] sending query")
 
     obj_graph = get_object_graph(source_query, source_endpoint)
