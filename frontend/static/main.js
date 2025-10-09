@@ -4,6 +4,20 @@ import {queryTagGraph} from './utils.js';
 import {displayTags} from './tags.js';
 
 const DEFAULT_RELATED_COUNT = 6;
+const customEndpointNotes = `Endpoint Editor Notes:
+- Only single sparql endpoints handled at this time.
+- Multiple endpoint handling planned for future releases.`;
+const customQueryNotes = `Query Editor Notes:
+- ?object is the main navigatable node in the DEx.
+- Each ?object must be a clickable URI (loaded in an iframe).
+- One tag:objLabel triple is expected for each ?object.
+- One tag:propLabel triple is expected for each ?property.
+- One tag:valLabel triple is expected IF ?value is a URI.
+- The static portion of the CONSTRUCT clause is left open so
+    triples can be added if needed. It must be closed ('}').
+- Full query is submitted to the endpoint AS IS. Use caution.
+- Please test your query BEFORE using it in tagology.`;
+
 let cy; // cytoscape object
 let hubObj; // [uri, prefLabel]
 let focusObj; // [uri, prefLabel]
@@ -269,10 +283,14 @@ async function searchLabels(searchText) {
   }
 }
 
-function editorUnlocked() {
-  // TODO: MOVE THIS CHECK TO THE BACKEND
+async function editorUnlocked() {
   const key = prompt(`Enter editor key:`);
-  return key === "ariadne";
+  const boolResult = await fetch("/verify_editor_key", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(key)
+  });
+  return await boolResult.json();
 }
 
 async function init() {
@@ -326,13 +344,13 @@ async function init() {
   queryEditor.setAttribute("readonly", true);
   queryLimit.value = sourceQueries["limit"];
 
-  endpointSelect.addEventListener('change', () => {
+  endpointSelect.addEventListener('change', async () => {
     if (endpointSelect.value === "custom") {
-      if (editorUnlocked()) {
-        alert("REQUIREMENTS: TODO");
+      if (await editorUnlocked()) {
+        alert(customEndpointNotes);
         endpointEditor.removeAttribute("readonly");
       } else {
-        alert("Sorry, correct key required to edit endpoint.");
+        alert("Correct key required to edit endpoint.");
         endpointSelect.value = sessionStorage.getItem("currentEndpoint");
       }
     } else {
@@ -342,13 +360,13 @@ async function init() {
     genButton.disabled = false;
   });
 
-  querySelect.addEventListener('change', () => {
+  querySelect.addEventListener('change', async () => {
     if (querySelect.value === "custom") {
-      if (editorUnlocked()) {
-        alert("REQUIREMENTS: TODO");
+      if (await editorUnlocked()) {
+        alert(customQueryNotes);
         queryEditor.removeAttribute("readonly");
       } else {
-        alert("Sorry, correct key required to edit query.");
+        alert("Correct key required to edit query.");
         querySelect.value = sessionStorage.getItem("currentQuery");
       }
     } else {

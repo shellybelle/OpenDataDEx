@@ -6,6 +6,7 @@ import os, uuid
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 GLOBAL_TAG_GRAPH = None
+EDITOR_KEY = "ariadne"
 
 # MUST BE THE EXACT DEFAULT ENDPOINT & QUERY IN THE FRONTEND
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
@@ -93,6 +94,10 @@ def delete_user_graph():
         del user_tag_graphs[user_id]
         return jsonify({"message": f"Graph for user {user_id} deleted."}), 200
     return jsonify({"message": "No graph to delete."}), 200
+
+@app.route("/verify_editor_key", methods=["POST"])
+def verify_editor_key():
+    return jsonify(request.get_json() == EDITOR_KEY)
 
 if __name__ == "__main__":
     app.run(debug=True)
