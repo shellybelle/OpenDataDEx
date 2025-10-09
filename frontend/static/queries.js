@@ -128,8 +128,19 @@ WHERE {
 `PREFIX tag: <http://example.org/tagology/>
 SELECT ?matchObj ?label
 WHERE {
-  ?matchObj tag:objLabel ?label .
-  FILTER(CONTAINS(LCASE(STR(?label)), LCASE("${text}")))
+    ?matchObj tag:objLabel ?label .
+
+    BIND(LCASE(STR(?label)) AS ?lowLabel)
+    BIND(LCASE("${text}") AS ?lowText)
+    BIND(
+        IF(?lowLabel = ?lowText, 1,
+        IF(STRSTARTS(?lowLabel, ?lowText), 2,
+        IF(CONTAINS(?lowLabel, ?lowText), 3,
+        4))
+    ) AS ?rank)
+    
+    FILTER(?rank < 4)
 }
+ORDER BY ?rank
 LIMIT 1`
 };

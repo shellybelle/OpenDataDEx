@@ -399,11 +399,11 @@ async function init() {
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       const searchText = searchInput.value.trim();
-      if (searchText) {
+      if (searchText && /^[^\\"\r\n]*$/.test(searchText)) {
         searchLabels(searchText);
-        searchInput.value = "";
-        searchInput.placeholder = "Search objects...";
       }
+      searchInput.value = "";
+      searchInput.placeholder = "Search objects...";
     }
   });
 
