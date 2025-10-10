@@ -304,7 +304,7 @@ async function init() {
 
   // DELETE USER'S GRAPH IF NEW TAB
   if (performance.getEntriesByType("navigation")[0].type === "navigate") {
-    await fetch("/delete_user_graph", { method: "POST" });
+    await fetch("/delete_user_graph", { method: "DELETE" });
   }
   
   // INITIALIZE CYTOSCAPE VIEW

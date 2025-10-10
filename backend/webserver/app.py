@@ -4,9 +4,13 @@ from brain.tagology_graph import create_tagology_graph
 from threading import Lock
 import os, uuid
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-GLOBAL_TAG_GRAPH = None
+GLOBAL_TAG_GRAPH = Graph()
+GRAPH_LOCK = Lock()
 EDITOR_KEY = "ariadne"
+
+# key: user session id (str)
+# value: a tagology_graph (rdflib.Graph)
+USER_TAG_GRAPHS = {}
 
 # MUST BE THE EXACT DEFAULT ENDPOINT & QUERY IN THE FRONTEND
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
@@ -32,6 +36,7 @@ WHERE {
 }
 LIMIT 5000"""
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, '../../frontend/template'),
@@ -40,14 +45,11 @@ app = Flask(
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
 
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
+    try:
+        GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
+    except Exception as e:
+        print(f"[ERROR] Global tagology graph creation failed. Default is empty!\n{e}")
     
-# key: user session id (str)
-# value: a tagology_graph (rdflib.Graph)
-user_tag_graphs = {}
-
-query_lock = Lock()
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -59,25 +61,55 @@ def ensure_user_id():
 
 @app.route("/new_tag_graph", methods=["POST"])
 def create_user_tag_graph():
+    try:
+        source_endpoint = request.json.get("endpoint")
+        source_query = request.json.get("query")
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+    if not source_endpoint or not source_query:
+        return jsonify({"error": "Missing required 'endpoint' and/or 'query'"}), 400
+
+    try:
+        new_graph = create_tagology_graph(source_endpoint, source_query)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
     user_id = session["user_id"]
-    source_endpoint = request.json.get("endpoint", DEFAULT_ENDPOINT)
-    source_query = request.json.get("query", DEFAULT_QUERY)
-    user_tag_graphs[user_id] = create_tagology_graph(source_endpoint, source_query)
-    
-    return jsonify({"message": "New tagology graph created"})
+    if len(new_graph) == 0:
+        return jsonify({"error": "CONSTRUCT returned an empty graph. Reverting to default."}), 400
+    else:
+        USER_TAG_GRAPHS[user_id] = new_graph
+
+    return jsonify({"message": "User tagology graph created."}), 200
 
 @app.route("/tagology_graph", methods=["POST"])
 def query_tag_graph():
+    try:
+        query = request.json.get("query")
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+    if not query:
+        return jsonify({"error": "Missing required 'query'"}), 400
+
     user_id = session["user_id"]
-    tag_graph = user_tag_graphs.get(user_id, GLOBAL_TAG_GRAPH)
-    query = request.json.get("query")
-    with query_lock:
-        results = tag_graph.query(query)
-    json_results = [
-        {str(l): str(row[l]) for l in row.labels}
-        for row in results
-    ]
-    return jsonify(json_results)
+    tag_graph = USER_TAG_GRAPHS.get(user_id, GLOBAL_TAG_GRAPH)
+    
+    if len(tag_graph) == 0:
+        return jsonify({"error": "Empty tagology graph. Nothing to query."}), 500
+    
+    try:
+        with GRAPH_LOCK:
+            results = tag_graph.query(query)
+        json_results = [
+            {str(l): str(row[l]) for l in row.labels}
+            for row in results
+        ]
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    return jsonify(json_results), 200
 
 @app.route("/tags")
 def tags_page():
@@ -87,17 +119,24 @@ def tags_page():
 def welcome_page():
     return render_template("welcome.html")
 
-@app.route("/delete_user_graph", methods=["POST"])
+@app.route("/delete_user_graph", methods=["DELETE"])
 def delete_user_graph():
     user_id = session.get("user_id")
-    if user_id in user_tag_graphs:
-        del user_tag_graphs[user_id]
-        return jsonify({"message": f"Graph for user {user_id} deleted."}), 200
-    return jsonify({"message": "No graph to delete."}), 200
+    if user_id not in USER_TAG_GRAPHS:
+        return jsonify({"error": "No tagology graph to delete."}), 400
+    with GRAPH_LOCK:
+        del USER_TAG_GRAPHS[user_id]
+        
+    return jsonify({"message": f"tagology graph for user {user_id} deleted."}), 200
 
 @app.route("/verify_editor_key", methods=["POST"])
 def verify_editor_key():
-    return jsonify(request.get_json() == EDITOR_KEY)
+    try:
+        key = request.get_json()
+    except Exception as e:
+        return jsonify(False)
+    
+    return jsonify(key == EDITOR_KEY)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,3 +1,4 @@
+import sys
 from brain.tagology_graph import create_tagology_graph
 
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
@@ -21,10 +22,17 @@ WHERE {
                              ?value rdfs:label ?valueLabel .
                            }
 }
-LIMIT 50000"""
+LIMIT 5000"""
 
 def main():
-    tagology_graph = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
+    try:
+        tagology_graph = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
+    except Exception as e:
+        print(f"[ERROR] tagology graph creation failed.\n{e}")
+        sys.exit(1)
+
+    if len(tagology_graph) == 0:
+        print(f"[ERROR] Empty tagology graph")
 
 if __name__ == "__main__":
     main()
