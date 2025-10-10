@@ -7,19 +7,32 @@ RELATED_OBJ_THRESHOLD = 12
 
 def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     
-    print("[STATUS] sending query")
+    print(f"[STATUS] Sending query to {source_endpoint}:\n{source_query}")
+    try:
+        obj_graph = get_object_graph(source_query, source_endpoint)
+    except Exception as e:
+        print(f"[ERROR] Could not create rdflib Graph from source. Returning empty Graph.\n{e}")
+        return Graph()
 
-    obj_graph = get_object_graph(source_query, source_endpoint)
+    if len(obj_graph) == 0:
+        print("[ERROR] Graph from source is empty.")
+        return Graph()
+
+    print(f"[STATUS] Graph initialized with {len(obj_graph)} triples. Creating context.")    
+    try:
+        obj_context = get_object_context(obj_graph)
+    except Exception as e:
+        print(f"[ERROR] Could not create concepts Context from obj_graph\n{e}")
+        return Graph()
+    
+    print("[STATUS] Context created. Adding related object triples.")
     obj_graph.bind("tag", TAG)
-
-    print("[STATUS] graph initialized, creating context")
-    
-    obj_context = get_object_context(obj_graph)
-    
     for obj in obj_graph.subjects(predicate=TAG.objLabel):
-        print(f"[STATUS] adding related objects for {str(obj)}")
-        add_related_objects(obj, obj_graph, obj_context, RELATED_OBJ_THRESHOLD)
+        try:
+            add_related_objects(obj, obj_graph, obj_context, RELATED_OBJ_THRESHOLD)
+        except Exception as e:
+            print(f"[ERROR] failed to add related objects for {obj}\n{e}")
+            continue
     
-    print(f"[STATUS] graph created with {len(obj_graph)} total triples")
-    
+    print(f"[STATUS] tagology graph created with {len(obj_graph)} total triples")
     return obj_graph
