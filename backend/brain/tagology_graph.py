@@ -26,7 +26,6 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         return Graph()
     
     print("[STATUS] Context created. Adding related object triples.")
-    obj_graph.bind("tag", TAG)
     for obj in obj_graph.subjects(predicate=TAG.objLabel):
         try:
             add_related_objects(obj, obj_graph, obj_context, RELATED_OBJ_THRESHOLD)
@@ -35,4 +34,5 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
             continue
     
     print(f"[STATUS] tagology graph created with {len(obj_graph)} total triples")
+    obj_graph.bind("tag", TAG)
     return obj_graph
