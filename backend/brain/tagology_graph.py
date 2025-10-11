@@ -32,7 +32,16 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         except Exception as e:
             print(f"[ERROR] failed to add related objects for {obj}\n{e}")
             continue
-    
+
+    # TODO: FIGURE OUT WHAT TO DO ABOUT DETACHED OBJECTS
+    '''PREFIX tag: <http://example.org/tagology/>
+    SELECT ?relObj ?label
+    WHERE {
+        FILTER NOT EXISTS {?obj tag:related ?relObj}
+        ?relObj tag:objLabel ?label
+    }'''
+
+
     print(f"[STATUS] tagology graph created with {len(obj_graph)} total triples")
     obj_graph.bind("tag", TAG)
     return obj_graph

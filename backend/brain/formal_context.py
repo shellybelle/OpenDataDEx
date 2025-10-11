@@ -21,12 +21,12 @@ def get_object_context(obj_graph: Graph) -> Context:
             dtype=bool)
 
     # TODO: BENCHMARK WITH AND WITHOUT DROPPING COLUMNS
-    onePercent = len(objs)*0.01
+    '''onePercent = len(objs)*0.01
     sparse_props = context_data.columns[(context_data == True).sum(axis=0) < onePercent].tolist()
     dense_props = context_data.columns[(context_data == False).sum(axis=0) < onePercent].tolist()
     print(f"dropping {len(sparse_props)} sparse and {len(dense_props)} dense of {len(props)} total properties")
     context_data.drop(sparse_props, axis=1, inplace=True)
-    context_data.drop(dense_props, axis=1, inplace=True)
+    context_data.drop(dense_props, axis=1, inplace=True)'''
 
     return Context(context_data.index.tolist(), context_data.columns.tolist(), context_data.values.tolist())
 
@@ -46,8 +46,8 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
                 related_objs_str.update(extent)
                 upper_upper_concepts.extend(obj_context.neighbors(extent))
             upper_concepts = upper_upper_concepts
+        related_objs_str.discard(str(obj))
 
-    related_objs_str.discard(str(obj))
     scored_related_objs = _score_threshold_related(obj, related_objs_str, obj_graph, threshold)
 
     for simScore, ro in scored_related_objs:

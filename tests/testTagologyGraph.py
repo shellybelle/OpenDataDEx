@@ -2,39 +2,24 @@ import requests
 
 # UNATTACHED OBJECTS
 queryA = """
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tag: <http://example.org/tagology/>
 SELECT ?relObj ?label
 WHERE {
-    FILTER NOT EXISTS {?obj skos:related ?relObj}
-    ?relObj skos:prefLabel ?label
+    FILTER NOT EXISTS {?obj tag:related ?relObj}
+    ?relObj tag:objLabel ?label
 }
 """
 
+queryB = """
+"""
+
+# HUB OBJECT
 query = """
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-CONSTRUCT {
-    ?object ?property ?value .
-    ?object skos:prefLabel ?label .
-    ?object schema:about ?item .
-}
-WHERE {
-    ?object schema:isPartOf <https://en.wikipedia.org/>;
-           schema:about ?item .
-    ?item wdt:P31 wd:Q146; # INSTANCE OF CAT
-          ?property ?value ;
-          rdfs:label ?label .
-    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY NAMESPACE
-    FILTER(langMatches(lang(?label), "en") || lang(?label) = "")
-}
-LIMIT 10000
-"""
-
-queryC = """
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 SELECT ?hubObj ?label
 WHERE {
-  ?o skos:related ?hubObj .
-  ?hubObj skos:prefLabel ?label .
+  ?o tag:related ?hubObj .
+  ?hubObj tag:objLabel ?label .
 }
 GROUP BY ?hubObj ?label
 ORDER BY DESC(COUNT(?o))
