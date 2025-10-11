@@ -36,7 +36,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
     related_objs_str = set()
 
     upper_concepts = obj_context.neighbors(obj_extent)
-    while len(related_objs_str) < threshold:
+    while len(related_objs_str) <= threshold: # ASSUMES RELATED_OBJS_STR CONTAINS THE OBJ
         if not upper_concepts:
             related_objs_str.update(obj_context.objects)
             break
@@ -46,8 +46,8 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
                 related_objs_str.update(extent)
                 upper_upper_concepts.extend(obj_context.neighbors(extent))
             upper_concepts = upper_upper_concepts
-        related_objs_str.discard(str(obj))
 
+    related_objs_str.discard(str(obj))
     scored_related_objs = _score_threshold_related(obj, related_objs_str, obj_graph, threshold)
 
     for simScore, ro in scored_related_objs:

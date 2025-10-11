@@ -302,6 +302,7 @@ async function editorUnlocked() {
 
 async function init() {
 
+  // TODO: THIS IS NOT WORKING AS EXPECTED
   // DELETE USER'S GRAPH IF NEW TAB
   if (performance.getEntriesByType("navigation")[0].type === "navigate") {
     await fetch("/delete_user_graph", { method: "DELETE" });

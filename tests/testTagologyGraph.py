@@ -15,14 +15,14 @@ queryB = """
 
 # HUB OBJECT
 query = """
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tag: <http://example.org/tagology/>
 SELECT ?hubObj ?label
 WHERE {
   ?o tag:related ?hubObj .
   ?hubObj tag:objLabel ?label .
 }
 GROUP BY ?hubObj ?label
-ORDER BY DESC(COUNT(?o))
+ORDER BY ASC(COUNT(?o))
 LIMIT 1
 """
 
