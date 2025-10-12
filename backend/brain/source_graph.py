@@ -62,8 +62,4 @@ def get_object_graph(source_query, source_endpoint) -> Graph:
                 for lbl in valLabels[1:]:
                     initialGraph.remove((o, TAG.valLabel, lbl))
 
-    if (None, TAG.objLabel, None) not in initialGraph:
-        print(f"[ERROR] No valid objects. Returning empty Graph.")
-        return Graph()
-
     return initialGraph

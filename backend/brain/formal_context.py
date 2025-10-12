@@ -6,12 +6,19 @@ from brain.namespaces import TAG
 
 def get_object_context(obj_graph: Graph) -> Context:
     
-    props = list(obj_graph.subjects(predicate=TAG.propLabel, unique=True))
     objs = list(obj_graph.subjects(predicate=TAG.objLabel, unique=True))
+    props = list(obj_graph.subjects(predicate=TAG.propLabel, unique=True))
+
+    if len(objs) == 0:
+        print(f"[ERROR] Object Graph contains zero valid objects. Returning empty context.")
+        return Context([],[],[])
+    if len(props) == 0:
+        print(f"[ERROR] Object Graph contains zero valid properties. Returning empty context.")
+        return Context([],[],[])
 
     rows = []
     for obj in objs:
-        row = [any(obj_graph.objects(obj, p)) for p in props]
+        row = [(obj, p, None) in obj_graph for p in props]
         rows.append(row)
 
     context_data = DataFrame(
