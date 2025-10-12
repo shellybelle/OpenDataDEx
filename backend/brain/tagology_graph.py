@@ -15,7 +15,7 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         return Graph()
 
     if len(obj_graph) == 0:
-        print("[ERROR] Graph from source is empty.")
+        print("[ERROR] Graph from source is empty. Returning empty Graph.")
         return Graph()
 
     print(f"[STATUS] Graph initialized with {len(obj_graph)} triples. Creating context.")    
@@ -24,7 +24,11 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     except Exception as e:
         print(f"[ERROR] Could not create concepts Context from obj_graph\n{e}")
         return Graph()
-    
+
+    if not obj_context.bools:
+        print("[ERROR] Context is empty. Returning empty Graph.")
+        return Graph()
+
     print("[STATUS] Context created. Adding related object triples.")
     for obj in obj_graph.subjects(predicate=TAG.objLabel):
         try:
@@ -33,6 +37,7 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
             print(f"[ERROR] failed to add related objects for {obj}\n{e}")
             continue
 
+    # TODO: FINAL SANITY CHECKS ON THE TAGOLOGY GRAPH
     # TODO: FIGURE OUT WHAT TO DO ABOUT DETACHED OBJECTS
     '''PREFIX tag: <http://example.org/tagology/>
     SELECT ?relObj ?label
@@ -40,7 +45,6 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         FILTER NOT EXISTS {?obj tag:related ?relObj}
         ?relObj tag:objLabel ?label
     }'''
-
 
     print(f"[STATUS] tagology graph created with {len(obj_graph)} total triples")
     obj_graph.bind("tag", TAG)
