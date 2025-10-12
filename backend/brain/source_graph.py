@@ -40,7 +40,7 @@ def get_object_graph(source_query, source_endpoint) -> Graph:
 
     # ENSURE EVERY PROPERTY HAS A SINGLE tag:propLabel
     for pred in initialGraph.predicates(unique=True):
-        if pred != TAG.propLabel and pred != TAG.valLabel:
+        if pred not in (TAG.objLabel, TAG.propLabel, TAG.valLabel):
             # ASSUME AN OBJECT'S PROPERTY
             propLabels = list(initialGraph.objects(subject=pred, predicate=TAG.propLabel))
             if len(propLabels) == 0:

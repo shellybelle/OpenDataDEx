@@ -54,7 +54,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
     upper_concepts = obj_context.neighbors(obj_extent)
     while len(related_objs_str) <= threshold: # ASSUMES OBJ ITSELF IN RELATED_OBJS_STR
         if not upper_concepts:
-            print(f"[STATUS] Related cluster for {obj} reached supremum concept. All objects added.")
+            print(f"[WARNING] Related cluster for {obj} reached supremum concept. All objects added.")
             related_objs_str.update(obj_context.objects)
             break
         else:
@@ -76,7 +76,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
 
     obj_propvals = _get_propvals(obj, obj_graph)
     if len(obj_propvals) == 0:
-        print(f"[ERROR] Empty set of properties and values for {obj}. No related triples added.")
+        print(f"[WARNING] Empty set of properties and values for {obj}. No related triples added.")
         return
 
     try:
@@ -139,10 +139,5 @@ def _score_threshold_related(obj: URIRef,
             print(f"[ERROR] Failed to score {obj} relatedness to {ro}\n{e}")
             continue
 
-    try:
-        scored.sort(key=lambda x: x[0], reverse=True)
-    except Exception as e:
-        print(f"[ERROR] Failed to sort scored related objects. Returning empty array.\n{e}")
-        return []
-    
+    scored.sort(key=lambda x: x[0], reverse=True)
     return scored[:threshold]
