@@ -25,28 +25,45 @@ let prevObj; // [uri, prefLabel]
 let currentRelMap; // contains 12 related objs and each of their 12 related objs
 
 function initCy(elements) {
-  cy = cytoscape({
-    container: document.getElementById('cyto'),
-    style: cyStyle,
-    userZoomingEnabled: false,
-    userPanningEnabled: false,
-    elements 
-  });
+  try {
+    cy = cytoscape({
+      container: document.getElementById('cyto'),
+      style: cyStyle,
+      userZoomingEnabled: false,
+      userPanningEnabled: false,
+      elements 
+    });
+  } catch (e) {
+    console.error(`Failed to create cytoscape object. Empty DEx!!`\n${e});
+    return false;
+  }
 
   cy.on('tap', 'node', function (evt) {
     let clickedNode = evt.target;
-    const frame = document.getElementById('obj-display');
-    frame.onload = null;
-    frame.src = clickedNode.data('id');
+
+    try {
+      const frame = document.getElementById('obj-display');
+      frame.onload = null;
+      frame.src = clickedNode.data('id');
+    } catch (e) {
+      console.error(`Failed to load clicked object URI. Reverting to welcome page.\n${e}`);
+      displayWelcome();
+    }
+
     if (clickedNode.data('level') !== 5) {
       prevObj = [...focusObj];
       const relatedCount = parseInt(document.getElementById('related-count').textContent);
-      newDExView(relatedCount, clickedNode.data('id'), clickedNode.data('label'));
+      if (!newDExView(relatedCount, clickedNode.data('id'), clickedNode.data('label'))) {
+        console.error(`Failed to recenter view around ${clickedNode.data('id')}`)    
+      }
     }
   });
 
   cy.on('tap', 'edge', async function (evt) {
-    displayTags(evt.target);
+    if (!displayTags(evt.target)) {
+      console.error(`Failed to display tags for edge ${evt.target.data('id')}. Reverting to welcome page.`);
+      displayWelcome();
+    }
   });
 
   cy.on('mouseover', 'node', (e) => {
@@ -82,7 +99,14 @@ function initCy(elements) {
     e.target.removeStyle();
   });
   
-  cy.layout(cyLayout).run();
+  try {
+    cy.layout(cyLayout).run();
+  } catch (e) {
+    console.error(`Failed to create new cytoscape view. Blank DEx!!\n${e}`);
+    return false;
+  }
+
+  return true;
 }
 
 async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = null) {
@@ -91,25 +115,35 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
     // UPDATE CURRENT VIEW GLOBAL VARIABLES
 
     const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
-    focusObj = [focusNodeId, focusNodeLabel]
+    if (!relRelObjsData || !relRelObjsData.ok) {
+      console.error(`Failed to get related objects for ${focusNodeId}. View not updated.`)
+      return false;
+    }
   
+    focusObj = [focusNodeId, focusNodeLabel];
+    
     currentRelMap = new Map();
     for (const row of relRelObjsData) {
-      let relObj = currentRelMap.get(row.relObj);
-      if (!relObj) {
-        relObj = {
-          id: row.relObj,
-          label: row.label,
-          score: parseFloat(row.score),
-          relRelObjs: []
-        };
-        currentRelMap.set(row.relObj, relObj);
+      try {
+        let relObj = currentRelMap.get(row.relObj);
+        if (!relObj) {
+          relObj = {
+            id: row.relObj,
+            label: row.label,
+            score: parseFloat(row.score),
+            relRelObjs: []
+          };
+          currentRelMap.set(row.relObj, relObj);
+        }
+        relObj.relRelObjs.push({
+          id: row.relObj2,
+          label: row.label2,
+          score: parseFloat(row.score2)
+        });
+      } catch (e) {
+        console.warn(`Could not add ${row} to relations map.`);
+        continue;
       }
-      relObj.relRelObjs.push({
-        id: row.relObj2,
-        label: row.label2,
-        score: parseFloat(row.score2)
-      });
     }
   }
 
@@ -164,31 +198,46 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
   
   if(!cy) {
     // BUILD BRAND NEW DEx
-    initCy([...nodes, ...edges]); 
+    if (!initCy([...nodes, ...edges])) {
+      console.error("Failed to create DEx from scratch");
+      return false;
+    }
   } else if (focusNodeId && focusNodeLabel) {
     // UPDATE DEx AROUND NEW FOCUS NODE
-    let clickedNode = cy.getElementById(focusNodeId);
-    cy.elements().not(clickedNode).remove();
-    clickedNode.animate({
-      position: {x: cy.width()/2, y: cy.height()/2},
-      duration: 500,
-      complete: () => {
-        clickedNode.data({level: 5});
-        const newElements = cy.add([...nodes.filter(n => n.data.id !== focusNodeId), ...edges]);
-        newElements.style('opacity', 0);
-        newElements.animate({
-          style: {opacity: 1},
-          duration: 500
-        });
-        cy.layout(cyLayout).run();
-      } 
-    });
+    try {
+      let clickedNode = cy.getElementById(focusNodeId);
+      cy.elements().not(clickedNode).remove();
+      clickedNode.animate({
+        position: {x: cy.width()/2, y: cy.height()/2},
+        duration: 500,
+        complete: () => {
+          clickedNode.data({level: 5});
+          const newElements = cy.add([...nodes.filter(n => n.data.id !== focusNodeId), ...edges]);
+          newElements.style('opacity', 0);
+          newElements.animate({
+            style: {opacity: 1},
+            duration: 500
+          });
+          cy.layout(cyLayout).run();
+        }
+      });
+    } catch (e) {
+      console.error(`Failed to recenter view around ${focusNodeId}\n${e}`);
+      return false;
+    }
   } else {
     // UPDATE DEx RELATED COUNT ONLY
-    cy.elements().remove();
-    cy.add([...nodes, ...edges]);
-    cy.layout(cyLayout).run();
+    try {
+      cy.elements().remove();
+      cy.add([...nodes, ...edges]);
+      cy.layout(cyLayout).run();
+    } catch (e) {
+      console.error(`Failed to update view around ${focusObj[0]}\n${e}`);
+      return false;
+    }
   }
+
+  return true;
 }
 
 async function generateNewTagGraph() {
@@ -302,17 +351,31 @@ async function editorUnlocked() {
 
 async function init() {
 
-  // TODO: THIS IS NOT WORKING AS EXPECTED
-  // DELETE USER'S GRAPH IF NEW TAB
-  if (performance.getEntriesByType("navigation")[0].type === "navigate") {
+  if (performance.getEntriesByType("navigation")[0]?.type !== "reload") {
+    // FULL RESET
+    cy = null;
+    hubObj = null;
+    focusObj = null;
+    prevObj = null;
+    currentRelMap = null;
+
+    // RETURNS 400 CODE IF NO GRAPH TO DELETE, BUT NOT AN ERROR
     await fetch("/delete_user_graph", { method: "DELETE" });
   }
   
   // INITIALIZE CYTOSCAPE VIEW
   
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
+  if (!hubObjData || !hubObjData.ok) {
+    console.error("Failed to get hub object. Empty DEx!!");
+    return;
+  }
+
   hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
-  newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1]);
+  if (!newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1])) {
+    console.error(`Failed to run view. Empty DEx!!`);
+    return;
+  }
 
   // INITIALIZE QUERY BOX
 

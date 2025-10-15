@@ -81,7 +81,7 @@ def create_user_tag_graph():
     else:
         USER_TAG_GRAPHS[user_id] = new_graph
 
-    return jsonify({"message": "User tagology graph created."}), 200
+    return jsonify({"status": "User tagology graph created."}), 200
 
 @app.route("/tagology_graph", methods=["POST"])
 def query_tag_graph():
@@ -99,6 +99,7 @@ def query_tag_graph():
     if len(tag_graph) == 0:
         return jsonify({"error": "Empty tagology graph. Nothing to query."}), 500
     
+    print(f"[STATUS] Query being run for {user_id}'s tag graph:\n{query}")
     try:
         with GRAPH_LOCK:
             results = tag_graph.query(query)
@@ -123,11 +124,11 @@ def welcome_page():
 def delete_user_graph():
     user_id = session.get("user_id")
     if user_id not in USER_TAG_GRAPHS:
-        return jsonify({"error": "No tagology graph to delete."}), 400
+        return jsonify({"warning": "No tagology graph to delete."}), 400
     with GRAPH_LOCK:
         del USER_TAG_GRAPHS[user_id]
         
-    return jsonify({"message": f"tagology graph for user {user_id} deleted."}), 200
+    return jsonify({"status": f"tagology graph for user {user_id} deleted."}), 200
 
 @app.route("/verify_editor_key", methods=["POST"])
 def verify_editor_key():

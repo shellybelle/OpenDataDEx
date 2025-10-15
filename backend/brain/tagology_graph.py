@@ -11,14 +11,14 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     try:
         obj_graph = get_object_graph(source_query, source_endpoint)
     except Exception as e:
-        print(f"[ERROR] Could not create rdflib Graph from source. Returning empty Graph.\n{e}")
+        print(f"[ERROR] Failed to create rdflib Graph from source. Returning empty Graph.\n{e}")
         return Graph()
 
     print(f"[STATUS] Graph initialized with {len(obj_graph)} triples. Creating context.")    
     try:
         obj_context = get_object_context(obj_graph)
     except Exception as e:
-        print(f"[ERROR] Could not create concepts Context from obj_graph\n{e}")
+        print(f"[ERROR] Failed to create concepts Context from obj_graph\n{e}")
         return Graph()
 
     print("[STATUS] Context created. Adding related object triples.")
