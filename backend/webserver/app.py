@@ -97,7 +97,7 @@ def query_tag_graph():
     tag_graph = USER_TAG_GRAPHS.get(user_id, GLOBAL_TAG_GRAPH)
     
     if len(tag_graph) == 0:
-        return jsonify({"error": "Empty tagology graph. Nothing to query."}), 500
+        return jsonify({"warning": "Empty tagology graph. Nothing to query."}), 400
     
     print(f"[STATUS] Query being run for {user_id}'s tag graph:\n{query}")
     try:

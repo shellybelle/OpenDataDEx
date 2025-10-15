@@ -23,7 +23,6 @@
       </div>
       <div id="info-pane"> 
         <div id="query-box" class="DEx-right">
-          <h3>The DEx: Data Explorer for Open Data across the web</h3>
           <div id="query-columns">
             <div id="query-left">
               <label for="endpoint-select">sparql endpoint(s):</label>
@@ -31,8 +30,8 @@
                 <option value="wikidata">Wikidata</option>
                 <option value="custom">Custom...</option>
               </select>
-              <textarea id="endpoint-editor" spellcheck="false" readonly></textarea>
-              <button id="generate-btn" disabled>Generate new DEx</button>
+              <textarea id="endpoint-editor" spellcheck="false"></textarea>
+              <button id="generate-btn">Generate new DEx</button>
             </div>
             <div id="query-right">
               <label for="query-select">sparql query:</label>
@@ -43,12 +42,12 @@
                 <option value="custom">Custom...</option>
               </select>
               <textarea id="query-construct" spellcheck="false" readonly></textarea>
-              <textarea id="query-editor" spellcheck="false" readonly></textarea>
+              <textarea id="query-editor" spellcheck="false"></textarea>
               <textarea id="query-limit" spellcheck="false" readonly></textarea>
             </div>
           </div>
         </div>
-        <iframe id="obj-display" class="DEx-right" src="{{url_for('welcome_page')}}"></iframe>
+        <iframe id="obj-display" class="DEx-right"></iframe>
       </div>
     </div>
   </body>

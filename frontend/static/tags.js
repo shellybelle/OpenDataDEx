@@ -36,7 +36,13 @@ export async function displayTags(clickedEdge) {
     queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('source'))),
     queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('target')))
   ]);
-  
+ 
+  if (!sourceTagsData || !sourceTagsData.ok ||
+      !targetTagsData || !targetTagsData.ok) {
+    console.error(`Failed to retrieve all tags data for ${clickedEdge.data('id')}. Abort displaying tags page.`);
+    return false;
+  }
+
   const matches = [];
   const sourceDiffs = [];
   const targetDiffs = [];
@@ -44,49 +50,59 @@ export async function displayTags(clickedEdge) {
   const targetOnly = [];
 
   sourceTagsData.forEach(({prop: sProp, propLabel: sPropLbl, val: sVal, valLabel: sValLbl}) => {
-    if (sValLbl == "None") {sValLbl = sVal;}
-    if (targetTagsData.some(t => t.prop === sProp && t.val === sVal)) {
-      matches.push({
-        prop: sProp,
-        propLbl: sPropLbl,
-        val: sVal,
-        valLbl: sValLbl
-      })
-    } else if (targetTagsData.some(t => t.prop === sProp)) {
-      sourceDiffs.push({
-        prop: sProp,
-        propLbl: sPropLbl,
-        val: sVal,
-        valLbl: sValLbl,
-      });
-    } else {
-      sourceOnly.push({
-        prop: sProp,
-        propLbl: sPropLbl,
-        val: sVal,
-        valLbl: sValLbl
-      });
+    try {
+      if (sValLbl == "None") {sValLbl = sVal;}
+      if (targetTagsData.some(t => t.prop === sProp && t.val === sVal)) {
+        matches.push({
+          prop: sProp,
+          propLbl: sPropLbl,
+          val: sVal,
+          valLbl: sValLbl
+        })
+      } else if (targetTagsData.some(t => t.prop === sProp)) {
+        sourceDiffs.push({
+          prop: sProp,
+          propLbl: sPropLbl,
+          val: sVal,
+          valLbl: sValLbl,
+        });
+      } else {
+        sourceOnly.push({
+          prop: sProp,
+          propLbl: sPropLbl,
+          val: sVal,
+          valLbl: sValLbl
+        });
+      }
+    } catch (e) {
+      console.warn(`Could not add tag ${sProp} : ${sVal}\n${e}`);
+      continue;
     }
   });
 
   targetTagsData.forEach(({prop: tProp, propLabel: tPropLbl, val: tVal, valLabel: tValLbl}) => {
-    if (tValLbl == "None") {tValLbl = tVal;}
-    if (sourceTagsData.some(s => s.prop === tProp && s.val === tVal)) {
-      // ALREADY ADDED TO MATCHES
-    } else if (sourceTagsData.some(s => s.prop === tProp)) {
-      targetDiffs.push({
-        prop: tProp,
-        propLbl: tPropLbl,
-        val: tVal,
-        valLbl: tValLbl
-      });
-    } else {
-      targetOnly.push({
-        prop: tProp,
-        propLbl: tPropLbl,
-        val: tVal,
-        valLbl: tValLbl
-      });
+    try {
+      if (tValLbl == "None") {tValLbl = tVal;}
+      if (sourceTagsData.some(s => s.prop === tProp && s.val === tVal)) {
+        // ALREADY ADDED TO MATCHES
+      } else if (sourceTagsData.some(s => s.prop === tProp)) {
+        targetDiffs.push({
+          prop: tProp,
+          propLbl: tPropLbl,
+          val: tVal,
+          valLbl: tValLbl
+        });
+      } else {
+        targetOnly.push({
+          prop: tProp,
+          propLbl: tPropLbl,
+          val: tVal,
+          valLbl: tValLbl
+        });
+      }
+    } catch (e) {
+      console.warn(`Could not add tag ${tProp} : ${tVal}\n${e}`);
+      continue;
     }
   });
 
@@ -94,42 +110,49 @@ export async function displayTags(clickedEdge) {
   targetDiffs.sort((a, b) => a.propLbl.localeCompare(b.propLbl));
 
   const tagsView = document.getElementById('obj-display');
-  tagsView.src = "/tags";
   tagsView.onload = () => {
-    const tagsHtml = tagsView.contentWindow.document;
+    try {
+      const tagsHtml = tagsView.contentWindow.document;
 
-    const sourceLabel = clickedEdge.source().data('label');
-    const targetLabel = clickedEdge.target().data('label');
+      const sourceLabel = clickedEdge.source().data('label');
+      const targetLabel = clickedEdge.target().data('label');
 
-    tagsHtml.getElementById('shared-title').textContent = `tags shared by ${sourceLabel} and ${targetLabel}`;
-    tagsHtml.getElementById('similar-src-title').textContent = sourceLabel;
-    tagsHtml.getElementById('similar-tgt-title').textContent = targetLabel;
-    tagsHtml.getElementById('unique-src-title').textContent = sourceLabel;
-    tagsHtml.getElementById('unique-tgt-title').textContent = targetLabel;
+      tagsHtml.getElementById('shared-title').textContent = `tags shared by ${sourceLabel} and ${targetLabel}`;
+      tagsHtml.getElementById('similar-src-title').textContent = sourceLabel;
+      tagsHtml.getElementById('similar-tgt-title').textContent = targetLabel;
+      tagsHtml.getElementById('unique-src-title').textContent = sourceLabel;
+      tagsHtml.getElementById('unique-tgt-title').textContent = targetLabel;
 
-    const sharedDiv = tagsHtml.getElementById('shared');
-    matches.forEach(({prop, propLbl, val, valLbl}) => {
-      sharedDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
-    });
+      const sharedDiv = tagsHtml.getElementById('shared');
+      matches.forEach(({prop, propLbl, val, valLbl}) => {
+        sharedDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
+      });
 
-    // TODO: PUT DIFFS IN A TABLE TO GROUP BY PROPERTY
-    const similarSrcDiv = tagsHtml.getElementById('similar-src');
-    sourceDiffs.forEach(({prop, propLbl, val, valLbl}) => {
-      similarSrcDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
-    });
-    const similarTgtDiv = tagsHtml.getElementById('similar-tgt');
-    targetDiffs.forEach(({prop, propLbl, val, valLbl}) => {
-      similarTgtDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
-    });
+      // TODO: PUT DIFFS IN A TABLE TO GROUP BY PROPERTY
+      const similarSrcDiv = tagsHtml.getElementById('similar-src');
+      sourceDiffs.forEach(({prop, propLbl, val, valLbl}) => {
+        similarSrcDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
+      });
+      const similarTgtDiv = tagsHtml.getElementById('similar-tgt');
+      targetDiffs.forEach(({prop, propLbl, val, valLbl}) => {
+        similarTgtDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
+      });
 
-    const uniqueSrcDiv = tagsHtml.getElementById('unique-src');
-    sourceOnly.forEach(({prop, propLbl, val, valLbl}) => {
-      uniqueSrcDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
-    });
+      const uniqueSrcDiv = tagsHtml.getElementById('unique-src');
+      sourceOnly.forEach(({prop, propLbl, val, valLbl}) => {
+        uniqueSrcDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
+      });
 
-    const uniqueTgtDiv = tagsHtml.getElementById('unique-tgt');
-    targetOnly.forEach(({prop, propLbl, val, valLbl}) => {
-      uniqueTgtDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
-    });
+      const uniqueTgtDiv = tagsHtml.getElementById('unique-tgt');
+      targetOnly.forEach(({prop, propLbl, val, valLbl}) => {
+        uniqueTgtDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
+      });
+    } catch (e) {
+      console.error(`Failed to load tags data. Empty tags page!!`\n${e});
+      return false;
+    }
+    tagsView.src = "/tags";
   };
+
+  return true;
 }

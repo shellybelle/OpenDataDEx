@@ -1,6 +1,7 @@
 import {sourceEndpoints, sourceQueries, tagGraphQueries} from './queries.js';
 import {cyStyle, cyLayout} from './cyOptions.js';
 import {queryTagGraph} from './utils.js';
+import {displayWelcome} from './welcome.js';
 import {displayTags} from './tags.js';
 
 const DEFAULT_RELATED_COUNT = 6;
@@ -34,7 +35,7 @@ function initCy(elements) {
       elements 
     });
   } catch (e) {
-    console.error(`Failed to create cytoscape object. Empty DEx!!`\n${e});
+    console.error(`Failed to create cytoscape object. Empty DEx!!\n${e}`);
     return false;
   }
 
@@ -53,17 +54,14 @@ function initCy(elements) {
     if (clickedNode.data('level') !== 5) {
       prevObj = [...focusObj];
       const relatedCount = parseInt(document.getElementById('related-count').textContent);
-      if (!newDExView(relatedCount, clickedNode.data('id'), clickedNode.data('label'))) {
+      if (!updateDExView(relatedCount, clickedNode.data('id'), clickedNode.data('label'))) {
         console.error(`Failed to recenter view around ${clickedNode.data('id')}`)    
       }
     }
   });
 
   cy.on('tap', 'edge', async function (evt) {
-    if (!displayTags(evt.target)) {
-      console.error(`Failed to display tags for edge ${evt.target.data('id')}. Reverting to welcome page.`);
-      displayWelcome();
-    }
+    displayTags(evt.target);
   });
 
   cy.on('mouseover', 'node', (e) => {
@@ -109,7 +107,7 @@ function initCy(elements) {
   return true;
 }
 
-async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = null) {
+async function updateDExView(relatedCount, focusNodeId = null, focusNodeLabel = null) {
   
   if (focusNodeId && focusNodeLabel) {
     // UPDATE CURRENT VIEW GLOBAL VARIABLES
@@ -222,7 +220,7 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
         }
       });
     } catch (e) {
-      console.error(`Failed to recenter view around ${focusNodeId}\n${e}`);
+      console.error(`Failed to rerun cytoscape layout around ${focusNodeId}\n${e}`);
       return false;
     }
   } else {
@@ -232,7 +230,7 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
       cy.add([...nodes, ...edges]);
       cy.layout(cyLayout).run();
     } catch (e) {
-      console.error(`Failed to update view around ${focusObj[0]}\n${e}`);
+      console.error(`Failed to rerun cytoscape layout around ${focusObj[0]}\n${e}`);
       return false;
     }
   }
@@ -240,26 +238,64 @@ async function newDExView(relatedCount, focusNodeId = null, focusNodeLabel = nul
   return true;
 }
 
+function setNewDExState() {
+  displayWelcome();
+
+  document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
+  
+  const genButton = document.getElementById('generate-btn');
+  genButton.textContent = "Generate new DEx";
+  genButton.disabled = true;
+  
+  const endpointSelect = document.getElementById('endpoint-select');
+  endpointSelect.value = sessionStorage.getItem("currentEndpoint");
+  
+  const endpointEditor = document.getElementById('endpoint-editor');
+  if (endpointSelect.value === "custom") {
+    endpointEditor.value = sessionStorage.getItem("customEndpoint");
+    endpointEditor.setAttribute("readonly", false);
+  } else {
+    endpointEditor.value = sourceEndpoints[endpointSelect.value];
+    endpointEditor.setAttribute("readonly", true);
+  }
+  
+  const querySelect = document.getElementById('query-select');
+  querySelect.value = sessionStorage.getItem("currentQuery");
+  
+  const queryConstruct = document.getElementById('query-construct');
+  queryConstruct.value = sourceQueries["construct"];
+  
+  const queryEditor = document.getElementById('query-editor');
+  if (querySelect.value === "custom") {
+    queryEditor.value = sessionStorage.getItem("customQuery");
+    queryEditor.setAttribute("readonly", false);
+  } else {
+    queryEditor.value = sourceQueries[querySelect.value];
+    queryEditor.setAttribute("readonly", true);
+  }
+  
+  const queryLimit = document.getElementById('query-limit');
+  queryLimit.value = sourceQueries["limit"];
+}
+
 async function generateNewTagGraph() {
   
+  // DISABLE BUTTON
   const genButton = document.getElementById('generate-btn');
   genButton.disabled = true;
   genButton.textContent = "Generating..."
 
-  // USE QUERY BOX DATA
-
+  // BUILD QUERY USING QUERY BOX DATA
   const endpointSelect = document.getElementById('endpoint-select');
   const endpointEditor = document.getElementById('endpoint-editor');
   const querySelect = document.getElementById('query-select');
   const queryEditor = document.getElementById('query-editor');
-
   let endpoint;
   if (endpointSelect.value === "custom") {
     endpoint = endpointEditor.value.trim();
   } else if (endpointSelect.value === "wikidata") {
     endpoint = sourceEndpoints[endpointSelect.value];
   }
-
   let query;
   if (querySelect.value === "custom") {
     query =
@@ -273,52 +309,47 @@ async function generateNewTagGraph() {
       sourceQueries["limit"];
   }
 
-  console.log(query);
-  await fetch("/new_tag_graph", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({endpoint, query})
-  });
+  const resp;
+  try {
+    resp = await fetch("/new_tag_graph", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({endpoint, query})
+    });
+  } catch (e) {
+    console.error(`Failed to request new user tag graph from webserver\n${e}. Aborting.`);
+    return false;
+  }
 
-  // REFRESH DEx
+  if (!resp.ok) {
+    console.error("Failed to create new tag graph for user. Aborting.");
+    return false;
+  }
 
+  const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
+  if (!hubObjData || !hubObjData.ok) {
+    console.error("Failed to get hub object data. Deleting the newly created graph.");
+    await fetch("/delete_user_graph", { method: "DELETE" });
+    return false;
+  }
+
+  // RECREATE THE DEx
+
+  hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
   prevObj = null;
+  
   if (cy) {
     cy.destroy();
     cy = null;
   }
-  
-  const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
-  newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1]);
 
-  document.getElementById('related-count').textContent = DEFAULT_RELATED_COUNT;
-
-  genButton.disabled = true;
-  genButton.textContent = "Generate new DEx";
-
-  sessionStorage.setItem("currentEndpoint", endpointSelect.value);
-  sessionStorage.setItem("currentQuery", querySelect.value);
-  if (endpointSelect.value === "custom") {
-    sessionStorage.setItem("customEndpoint", endpoint);
-    endpointEditor.addEventListener('change', () => {
-      genButton.disabled = false;
-    });
-  } else {
-    sessionStorage.setItem("customEndpoint", '');
+  if (!updateDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1])) {
+    console.error("Failed to create new DEx view. Deleting the newly created graph.")
+    await fetch("/delete_user_graph", { method: "DELETE" });
+    return false;
   }
-  if (querySelect.value === "custom") {
-    sessionStorage.setItem("customQuery", query);
-    queryEditor.addEventListener('change', () => {
-      genButton.disabled = false;
-    });
-  } else {
-    sessionStorage.setItem("customQuery", '');
-  }
-  
-  const welcomeView = document.getElementById('obj-display');
-  welcomeView.onload = null;
-  welcomeView.src = "/welcome";
+
+  return true;
 }
 
 async function searchLabels(searchText) {
@@ -331,10 +362,10 @@ async function searchLabels(searchText) {
       }
       
       const relatedCount = parseInt(document.getElementById('related-count').textContent);
-      newDExView(relatedCount, matchObjData[0].matchObj, matchObjData[0].label);
+      updateDExView(relatedCount, matchObjData[0].matchObj, matchObjData[0].label);
     
       const frame = document.getElementById('obj-display');
-      frame.onload = null;
+       frame.onload = null;
       frame.src = matchObjData[0].matchObj;
   }
 }
@@ -350,7 +381,6 @@ async function editorUnlocked() {
 }
 
 async function init() {
-
   if (performance.getEntriesByType("navigation")[0]?.type !== "reload") {
     // FULL RESET
     cy = null;
@@ -358,10 +388,21 @@ async function init() {
     focusObj = null;
     prevObj = null;
     currentRelMap = null;
+    sessionStorage.clear();
 
     // RETURNS 400 CODE IF NO GRAPH TO DELETE, BUT NOT AN ERROR
     await fetch("/delete_user_graph", { method: "DELETE" });
   }
+
+  if (!sessionStorage.getItem("currentEndpoint")) {
+    sessionStorage.setItem("currentEndpoint", "wikidata");
+  }
+
+  if (!sessionStorage.getItem("currentQuery")) {
+    sessionStorage.setItem("currentQuery", "wiki-space");
+  }
+  
+  setNewDExState();
   
   // INITIALIZE CYTOSCAPE VIEW
   
@@ -372,82 +413,13 @@ async function init() {
   }
 
   hubObj = [hubObjData[0].hubObj, hubObjData[0].label];
-  if (!newDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1])) {
+  if (!updateDExView(DEFAULT_RELATED_COUNT, hubObj[0], hubObj[1])) {
     console.error(`Failed to run view. Empty DEx!!`);
     return;
   }
 
-  // INITIALIZE QUERY BOX
-
-  const genButton = document.getElementById('generate-btn');
-  genButton.disabled = true;
-  genButton.addEventListener('click', generateNewTagGraph);
-
-  if (!sessionStorage.getItem("currentEndpoint")) {
-    sessionStorage.setItem("currentEndpoint", "wikidata");
-  }
-  if (!sessionStorage.getItem("currentQuery")) {
-    sessionStorage.setItem("currentQuery", "wiki-space");
-  }
-
-  const endpointSelect = document.getElementById('endpoint-select');
-  const endpointEditor = document.getElementById('endpoint-editor');
-  const querySelect = document.getElementById('query-select');
-  const queryConstruct = document.getElementById('query-construct');
-  const queryEditor = document.getElementById('query-editor');
-  const queryLimit = document.getElementById('query-limit');
-  
-  endpointSelect.value = sessionStorage.getItem("currentEndpoint");
-  if (endpointSelect.value === "custom") {
-    endpointEditor.value = sessionStorage.getItem("customEndpoint");
-  } else {
-    endpointEditor.value = sourceEndpoints[endpointSelect.value];
-  }
-  endpointEditor.setAttribute("readonly", true);
-  
-  querySelect.value = sessionStorage.getItem("currentQuery");
-  queryConstruct.value = sourceQueries["construct"];
-  if (querySelect.value === "custom") {
-    queryEditor.value = sessionStorage.getItem("customQuery");
-  } else {
-    queryEditor.value = sourceQueries[querySelect.value];
-  }
-  queryEditor.setAttribute("readonly", true);
-  queryLimit.value = sourceQueries["limit"];
-
-  endpointSelect.addEventListener('change', async () => {
-    if (endpointSelect.value === "custom") {
-      if (await editorUnlocked()) {
-        alert(customEndpointNotes);
-        endpointEditor.removeAttribute("readonly");
-      } else {
-        alert("Correct key required to edit endpoint.");
-        endpointSelect.value = sessionStorage.getItem("currentEndpoint");
-      }
-    } else {
-      endpointEditor.setAttribute("readonly", true);
-      endpointEditor.value = sourceEndpoints[endpointSelect.value];
-    }
-    genButton.disabled = false;
-  });
-
-  querySelect.addEventListener('change', async () => {
-    if (querySelect.value === "custom") {
-      if (await editorUnlocked()) {
-        alert(customQueryNotes);
-        queryEditor.removeAttribute("readonly");
-      } else {
-        alert("Correct key required to edit query.");
-        querySelect.value = sessionStorage.getItem("currentQuery");
-      }
-    } else {
-      queryEditor.setAttribute("readonly", true);
-      queryEditor.value = sourceQueries[querySelect.value];
-    }
-    genButton.disabled = false;
-  });
-
-  // INITIALIZE NAV BUTTONS & SEARCH
+  // ADD EVENT LISTENERS
+  const relatedCount = document.getElementById('related-count');
 
   document.getElementById('hub-btn').addEventListener('click', () => {
     if (focusObj?.[0] !== hubObj?.[0]) {
@@ -455,17 +427,31 @@ async function init() {
       if (cy) {
         cy.destroy();
         cy = null;
+      }      
+      if(await updateDExView(parseInt(relatedCount.textContent), hubObj[0], hubObj[1])) {
+        displayWelcome();
       }
-      
-      const relatedCount = parseInt(document.getElementById('related-count').textContent);
-      newDExView(relatedCount, hubObj[0], hubObj[1]);
-      
-      const welcomeView = document.getElementById('obj-display');
-      welcomeView.onload = null;
-      welcomeView.src = "/welcome";
     };
   });
 
+  document.getElementById('decrease-related').addEventListener('click', () => {
+    let relatedCountVal = parseInt(relatedCount.textContent);
+    if (relatedCountVal > 1) {
+      relatedCountVal--;
+      relatedCount.textContent = relatedCountVal;
+      updateDExView(relatedCountVal);
+    }
+  });
+  
+  document.getElementById('increase-related').addEventListener('click', () => {
+    let relatedCountVal = parseInt(relatedCount.textContent);
+    if (relatedCountVal < 12) {
+      relatedCountVal++;
+      relatedCount.textContent = relatedCountVal;
+      updateDExView(relatedCountVal);
+    }
+  });
+  
   document.getElementById('back-btn').addEventListener('click', () => {
     if (prevObj?.[0] && prevObj?.[1]) {
       if (cy) {
@@ -473,8 +459,7 @@ async function init() {
         cy = null;
       }
       
-      const relatedCount = parseInt(document.getElementById('related-count').textContent);
-      newDExView(relatedCount, prevObj[0], prevObj[1]);
+      updateDExView(parseInt(relatedCount.textContent), prevObj[0], prevObj[1]);
     
       const frame = document.getElementById('obj-display');
       frame.onload = null;
@@ -496,27 +481,65 @@ async function init() {
     }
   });
 
-  // INITIALIZE RELATED COUNT CONTROLS
-
-  const countDisplay = document.getElementById('related-count');
-  countDisplay.textContent = DEFAULT_RELATED_COUNT;
-
-  document.getElementById('decrease-related').addEventListener('click', () => {
-    let relatedCount = parseInt(countDisplay.textContent);
-    if (relatedCount > 1) {
-      relatedCount--;
-      countDisplay.textContent = relatedCount;
-      newDExView(relatedCount);
+  const endpointSelect = document.getElementById('endpoint-select');
+  const endpointEditor = document.getElementById('endpoint-editor');
+  endpointSelect.addEventListener('change', async () => {
+    if (endpointSelect.value === "custom") {
+      if (await editorUnlocked()) {
+        alert(customEndpointNotes);
+        endpointEditor.removeAttribute("readonly");
+      } else {
+        alert("Correct key required to edit endpoint.");
+        endpointSelect.value = sessionStorage.getItem("currentEndpoint");
+      }
+    } else {
+      endpointEditor.setAttribute("readonly", true);
+      endpointEditor.value = sourceEndpoints[endpointSelect.value];
+      genButton.disabled = false;
     }
   });
   
-  document.getElementById('increase-related').addEventListener('click', () => {
-    let relatedCount = parseInt(countDisplay.textContent);
-    if (relatedCount < 12) {
-      relatedCount++;
-      countDisplay.textContent = relatedCount;
-      newDExView(relatedCount);
+  endpointEditor.addEventListener('input', () => {
+    genButton.disabled = false;
+  });
+
+  const querySelect = document.getElementById('query-select');
+  const queryEditor = document.getElementById('query-editor');
+  querySelect.addEventListener('change', async () => {
+    if (querySelect.value === "custom") {
+      if (await editorUnlocked()) {
+        alert(customQueryNotes);
+        queryEditor.removeAttribute("readonly");
+      } else {
+        alert("Correct key required to edit query.");
+        querySelect.value = sessionStorage.getItem("currentQuery");
+      }
+    } else {
+      queryEditor.setAttribute("readonly", true);
+      queryEditor.value = sourceQueries[querySelect.value];
+      genButton.disabled = false;
     }
+  });
+  
+  queryEditor.addEventListener('input', () => {
+    genButton.disabled = false;
+  });
+
+  const genButton = document.getElementById('generate-btn');
+  genButton.addEventListener('click', async () => {
+    if (!await generateNewTagGraph()) {
+      alert("Could not create new tagology graph. Please verify the endpoint and query.");  
+    } else {
+      sessionStorage.setItem("currentEndpoint", endpointSelect.value);
+      sessionStorage.setItem("currentQuery", querySelect.value);
+      if (endpointSelect.value == "custom") {
+        sessionStorage.setItem("customEndpoint", endpointEditor.value);
+      }
+      if (querySelect.value == "custom") {
+        sessionStorage.setItem("customQuery", queryEditor.value);
+      }
+    }
+    setNewDExState();
   });
 }
 

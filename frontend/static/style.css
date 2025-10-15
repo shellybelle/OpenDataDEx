@@ -8,26 +8,20 @@ html, body {
   width: 100%;
 }
 
-h1 {
+h1, img {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-h1 img {
+img {
   max-height: 2em;
   height: auto;
   width: auto;
-  margin-left: 0.25em;
-  margin-right: 5em;
 }
 
 h2 {
   margin-top: 2rem;
-}
-
-h3 {
-  margin-top: 0;
 }
 
 textarea {

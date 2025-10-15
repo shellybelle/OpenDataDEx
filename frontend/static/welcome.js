@@ -1,16 +1,30 @@
 import {tagGraphQueries} from './queries.js';
 import {queryTagGraph} from './utils.js';
 
-async function loadStats() {
+export async function displayWelcome() {
   const [objsData, tagsData] = await Promise.all([
     queryTagGraph(tagGraphQueries.getTotalObjects()),
     queryTagGraph(tagGraphQueries.getTotalTags())
   ]);
 
-  document.getElementById('total-objs').textContent = objsData[0].totalObjs;
-  document.getElementById('total-tags').textContent = tagsData[0].totalTags;
-}
+  try {
+    const welcomeView = document.getElementById('obj-display');
+    welcomeView.onload = () => {
+      const welcomeHtml = welcomeView.contentWindow.document;
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadStats();
-});
+      if (objsData && objsData.ok) {
+        welcomeHtml.getElementById('total-objs').textContent = objsData[0].totalObjs;
+      }
+      
+      if (tagsData && tagsData.ok) {
+        welcomeHtml.getElementById('total-tags').textContent = tagsData[0].totalTags;
+      }
+    }
+    welcomeView.src = "/welcome";
+  } catch (e) {
+    console.error("Failed to display welcome page!");
+    return false;
+  }
+
+  return true;
+}

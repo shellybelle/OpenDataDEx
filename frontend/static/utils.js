@@ -6,7 +6,7 @@ export async function queryTagGraph(query) {
       body: JSON.stringify({query})
     });
   } catch (e) {
-    console.error(`Failed to query tagology graph. sparql query:\n${query}\n${e}`)
+    console.error(`Failed to query tagology graph from webserver. sparql query:\n${query}\n${e}`)
     return null;
   }
   return result.json();
