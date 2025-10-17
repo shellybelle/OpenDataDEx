@@ -2,27 +2,42 @@ import {tagGraphQueries} from './queries.js';
 import {queryTagGraph} from './utils.js';
 
 export async function displayWelcome() {
-  const [objsData, tagsData] = await Promise.all([
-    queryTagGraph(tagGraphQueries.getTotalObjects()),
-    queryTagGraph(tagGraphQueries.getTotalTags())
-  ]);
-
   try {
-    const welcomeView = document.getElementById('obj-display');
-    welcomeView.onload = () => {
-      const welcomeHtml = welcomeView.contentWindow.document;
+    const [objsData, tagsData] = await Promise.all([
+      queryTagGraph(tagGraphQueries.getTotalObjects()),
+      queryTagGraph(tagGraphQueries.getTotalTags())
+    ]);
 
-      if (objsData && objsData.ok) {
-        welcomeHtml.getElementById('total-objs').textContent = objsData[0].totalObjs;
-      }
-      
-      if (tagsData && tagsData.ok) {
-        welcomeHtml.getElementById('total-tags').textContent = tagsData[0].totalTags;
+    let totalObjs, totalTags;
+    if (!objsData) {
+      console.error("Could not get total objects");
+      totalObjs = "UNAVAILABLE";
+    } else {
+      totalObjs = objsData[0].totalObjs;
+    }
+    if (!tagsData) {
+      console.error("Could not get total tags");
+      totalTags = "UNAVAILABLE";
+    } else {
+      totalTags = tagsData[0].totalTags;
+    }
+
+    const welcomeView = document.getElementById('obj-display');
+    
+    welcomeView.onload = null;
+    welcomeView.onload = () => {
+      try {
+        const welcomeHtml = welcomeView.contentWindow.document;
+        welcomeHtml.getElementById('total-objs').textContent = totalObjs;
+        welcomeHtml.getElementById('total-tags').textContent = totalTags;
+      } catch (e) {
+        console.error(`Failed to update welcome page on load\n${e}`);
       }
     }
+
     welcomeView.src = "/welcome";
   } catch (e) {
-    console.error("Failed to display welcome page!");
+    console.error(`Failed to display welcome page\n${e}`);
     return false;
   }
 

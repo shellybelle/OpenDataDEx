@@ -61,7 +61,10 @@ function initCy(elements) {
   });
 
   cy.on('tap', 'edge', async function (evt) {
-    displayTags(evt.target);
+    if (!displayTags(evt.target)) {
+      console.error("Failed to display tags page. Reverting to welcome page.");
+      displayWelcome();
+    }
   });
 
   cy.on('mouseover', 'node', (e) => {
@@ -113,7 +116,7 @@ async function updateDExView(relatedCount, focusNodeId = null, focusNodeLabel = 
     // UPDATE CURRENT VIEW GLOBAL VARIABLES
 
     const relRelObjsData = await queryTagGraph(tagGraphQueries.getRelRelObjs(focusNodeId));
-    if (!relRelObjsData || !relRelObjsData.ok) {
+    if (!relRelObjsData) {
       console.error(`Failed to get related objects for ${focusNodeId}. View not updated.`)
       return false;
     }
@@ -327,7 +330,7 @@ async function generateNewTagGraph() {
   }
 
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  if (!hubObjData || !hubObjData.ok) {
+  if (!hubObjData) {
     console.error("Failed to get hub object data. Deleting the newly created graph.");
     await fetch("/delete_user_graph", { method: "DELETE" });
     return false;
@@ -353,8 +356,16 @@ async function generateNewTagGraph() {
 }
 
 async function searchLabels(searchText) {
-  const matchObjData = await queryTagGraph(tagGraphQueries.getMatchObj(searchText.trim()));
-  if (matchObjData.length !== 0) {
+  try {
+    const matchObjData = await queryTagGraph(tagGraphQueries.getMatchObj(searchText.trim()));
+    if (!matchObjData) {
+      console.error(`Failed to get match object data using search text "${searchText}"`);
+      return false;
+    }
+
+    if (matchObjData.length !== 0) {
+      // MATCH FOUND - UPDATE DEX VIEW
+
       prevObj = [...focusObj];
       if (cy) {
         cy.destroy();
@@ -362,12 +373,22 @@ async function searchLabels(searchText) {
       }
       
       const relatedCount = parseInt(document.getElementById('related-count').textContent);
-      updateDExView(relatedCount, matchObjData[0].matchObj, matchObjData[0].label);
-    
-      const frame = document.getElementById('obj-display');
-       frame.onload = null;
-      frame.src = matchObjData[0].matchObj;
+      updateDExView(relatedCount, matchObjData[0].matchObj, matchObjData[0].label); 
+      
+      try {
+        const frame = document.getElementById('obj-display');
+        frame.onload = null;
+        frame.src = matchObjData[0].matchObj;
+      } catch (e) {
+        console.error(`Failed to load found object URI. Reverting to welcome page.\n${e}`);
+        displayWelcome();
+      }
+    }
+  } catch (e) {
+    console.error(`Failed to search object labels\n${e}`);
+    return false;
   }
+  return true;
 }
 
 async function editorUnlocked() {
@@ -381,8 +402,9 @@ async function editorUnlocked() {
 }
 
 async function init() {
+  
+  // FULL RESET IF NEW SESSION
   if (performance.getEntriesByType("navigation")[0]?.type !== "reload") {
-    // FULL RESET
     cy = null;
     hubObj = null;
     focusObj = null;
@@ -392,22 +414,18 @@ async function init() {
 
     // RETURNS 400 CODE IF NO GRAPH TO DELETE, BUT NOT AN ERROR
     await fetch("/delete_user_graph", { method: "DELETE" });
-  }
-
-  if (!sessionStorage.getItem("currentEndpoint")) {
+    
     sessionStorage.setItem("currentEndpoint", "wikidata");
-  }
-
-  if (!sessionStorage.getItem("currentQuery")) {
     sessionStorage.setItem("currentQuery", "wiki-space");
   }
-  
+
+  // USES sessionStorage DATA IN CASE PAGE WAS REFRESHED
   setNewDExState();
   
   // INITIALIZE CYTOSCAPE VIEW
   
   const hubObjData = await queryTagGraph(tagGraphQueries.getHubObj());
-  if (!hubObjData || !hubObjData.ok) {
+  if (!hubObjData) {
     console.error("Failed to get hub object. Empty DEx!!");
     return;
   }
