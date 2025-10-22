@@ -1,4 +1,5 @@
-export const cyStyle = [
+export const cyStyles = {
+  graph: [
     {
       selector: 'node',
       style: {
@@ -58,10 +59,27 @@ export const cyStyle = [
         'font-size': 10
       }
     }, {
-      selector: '#ghostLevel2, #ghostLevel4',
+      selector: '#ghost2, #ghost4',
       style: {'display': 'none'}
     }
-]
+  ],
+  nodeHover: {
+    'border-width': 2,
+    'border-style': 'solid',
+    'border-color': 'lightcyan'
+  },
+  edgeHover: {
+    'label': "click to\nsee tags",
+    'line-color': 'lightcyan',
+    'target-arrow-color': 'lightcyan',
+    'arrow-scale': 1,
+    'width': 2,
+    'color': 'lightcyan',
+    'font-size': 10,
+    'text-rotation': 'autorotate',
+    'text-wrap': 'wrap'
+  }
+}
 
 export const cyLayout = {
   name: 'concentric',

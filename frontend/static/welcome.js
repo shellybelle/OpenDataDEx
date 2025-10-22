@@ -1,5 +1,4 @@
-import {tagGraphQueries} from './queries.js';
-import {queryTagGraph} from './utils.js';
+import {queryTagGraph, tagGraphQueries} from './utils.js';
 
 export async function displayWelcome() {
   try {
@@ -9,13 +8,13 @@ export async function displayWelcome() {
     ]);
 
     let totalObjs, totalTags;
-    if (!objsData) {
+    if(!objsData) {
       console.error("Could not get total objects");
       totalObjs = "UNAVAILABLE";
     } else {
       totalObjs = objsData[0].totalObjs;
     }
-    if (!tagsData) {
+    if(!tagsData) {
       console.error("Could not get total tags");
       totalTags = "UNAVAILABLE";
     } else {
@@ -30,16 +29,13 @@ export async function displayWelcome() {
         const welcomeHtml = welcomeView.contentWindow.document;
         welcomeHtml.getElementById('total-objs').textContent = totalObjs;
         welcomeHtml.getElementById('total-tags').textContent = totalTags;
-      } catch (e) {
+      } catch(e) {
         console.error(`Failed to update welcome page on load\n${e}`);
       }
     }
 
     welcomeView.src = "/welcome";
-  } catch (e) {
-    console.error(`Failed to display welcome page\n${e}`);
-    return false;
+  } catch(e) {
+    console.warn(`Failed to load welcome page:\n${e}`);
   }
-
-  return true;
 }

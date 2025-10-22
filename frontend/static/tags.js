@@ -1,5 +1,5 @@
-import {queryTagGraph} from './utils.js';
-import {tagGraphQueries} from './queries.js';
+import {queryTagGraph, tagGraphQueries} from './utils.js';
+import {displayWelcome} from './welcome.js';
 
 function createTagElement(doc, prop, propLbl, val, valLbl) {
   const p = doc.createElement('p');
@@ -13,7 +13,7 @@ function createTagElement(doc, prop, propLbl, val, valLbl) {
 
     const isValUri = /^https?:\/\//.test(val);
     const valSpan = doc.createElement('span');
-    if (isValUri) {
+    if(isValUri) {
       const valLink = doc.createElement('a');
       valLink.href = val;
       valLink.target = '_blank';
@@ -28,7 +28,7 @@ function createTagElement(doc, prop, propLbl, val, valLbl) {
     p.append(` : `);
     p.appendChild(valSpan);
     p.append(` ]`);
-  } catch (e) {
+  } catch(e) {
     console.error(`Failed to create tag element for [ ${prop} : ${val} ]\n${e}`);
     return p; // EMPTY: <p></p>
   }
@@ -43,9 +43,8 @@ export async function displayTags(clickedEdge) {
       queryTagGraph(tagGraphQueries.getTags(clickedEdge.data('target')))
     ]);
    
-    if (!sourceTagsData || !targetTagsData) {
-      console.error(`Failed to retrieve all tags data for ${clickedEdge.data('id')}. Abort displaying tags page.`);
-      return false;
+    if(!sourceTagsData || !targetTagsData) {
+      throw new Error(`tagology graph query failed to return complete tags data for ${clickedEdge.data('id')}`);
     }
 
     const matches = [];
@@ -55,15 +54,15 @@ export async function displayTags(clickedEdge) {
     const targetOnly = [];
 
     sourceTagsData.forEach(({prop: sProp, propLabel: sPropLbl, val: sVal, valLabel: sValLbl}) => {
-      if (sValLbl == "None") {sValLbl = sVal;}
-      if (targetTagsData.some(t => t.prop === sProp && t.val === sVal)) {
+      if(sValLbl == "None") {sValLbl = sVal;}
+      if(targetTagsData.some(t => t.prop === sProp && t.val === sVal)) {
         matches.push({
           prop: sProp,
           propLbl: sPropLbl,
           val: sVal,
           valLbl: sValLbl
         })
-      } else if (targetTagsData.some(t => t.prop === sProp)) {
+      } else if(targetTagsData.some(t => t.prop === sProp)) {
         sourceDiffs.push({
           prop: sProp,
           propLbl: sPropLbl,
@@ -81,10 +80,10 @@ export async function displayTags(clickedEdge) {
     });
 
     targetTagsData.forEach(({prop: tProp, propLabel: tPropLbl, val: tVal, valLabel: tValLbl}) => {
-      if (tValLbl == "None") {tValLbl = tVal;}
-      if (sourceTagsData.some(s => s.prop === tProp && s.val === tVal)) {
+      if(tValLbl == "None") {tValLbl = tVal;}
+      if(sourceTagsData.some(s => s.prop === tProp && s.val === tVal)) {
         // ALREADY ADDED TO MATCHES
-      } else if (sourceTagsData.some(s => s.prop === tProp)) {
+      } else if(sourceTagsData.some(s => s.prop === tProp)) {
         targetDiffs.push({
           prop: tProp,
           propLbl: tPropLbl,
@@ -144,16 +143,14 @@ export async function displayTags(clickedEdge) {
           uniqueTgtDiv.appendChild(createTagElement(tagsHtml, prop, propLbl, val, valLbl));
         });
       
-      } catch (e) {
+      } catch(e) {
         console.error(`Failed to update tags page on load\n${e}`);
       }
     };
     
     tagsView.src = "/tags";
-  } catch (e) {
-    console.error(`Failed to display tags page\n${e}`);
-    return false;
+  } catch(e) {
+    console.error(`Failed to display tags page. Displaying welcome page instead...\n${e}`);
+    displayWelcome();
   }
-
-  return true;
 }
