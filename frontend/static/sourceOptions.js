@@ -17,7 +17,7 @@ CONSTRUCT {
 `LIMIT 50000`
   ,
 
-  wiki-space:
+  wiki_space:
 `    ?object schema:about ?item .
 }
 WHERE {
@@ -34,7 +34,7 @@ WHERE {
 }`
   ,
   
-  wiki-dogs:
+  wiki_dogs:
 `    ?object schema:about ?item .
 }
 WHERE {
@@ -51,7 +51,7 @@ WHERE {
 }`
   ,
   
-  wiki-cats:
+  wiki_cats:
 `    ?object schema:about ?item .
 }
 WHERE {

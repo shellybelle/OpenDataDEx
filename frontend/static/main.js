@@ -6,7 +6,7 @@ import {displayTags} from './tags.js';
 
 const DEFAULT_RELATED_COUNT = 6;
 const DEFAULT_ENDPOINT = 'wikidata';
-const DEFAULT_QUERY = 'wiki-space';
+const DEFAULT_QUERY = 'wiki_space';
 const ENDPOINT_NOTES = 
   "Endpoint Editor Notes:\n\n" +
   "Only single sparql endpoints queriable at this time.\n\n" +
@@ -154,17 +154,16 @@ async function updateCyto(focusObj = null) {
     newFocusObj = currFocusObj;
   }
 
+  if(!relatedMap) {
+    throw new Error("No related objects map for cytoscape view update");
+  }
   if(!newFocusObj) {
     throw new Error("No focus object for cytoscape view update");
   }
 
-  if(!relatedMap) {
-    throw new Error("No related objects map for cytoscape view update");
-  }
-
   // GET NEW SUBSET OF RELATED OBJECTS
   const relatedCount = parseInt(document.getElementById('related-count').textContent);
-  const nodes = [];
+  const nodes = [{data: {id: newFocusObj.id, label: newFocusObj.label, level: 5}}];
   const edges = [];
 
   const subsetRelObjs = [...relatedMap.values()]
@@ -213,16 +212,16 @@ async function updateCyto(focusObj = null) {
   nodes.push({data: {id: 'ghost4', label: '', level: 4}});
 
   if(focusObj) {
-    nodes.push({data: {id: focusObj.id, label: focusObj.label, level: 5}});
-
     if(!cy) {
-      initCyto([...nodes, ...edges]);
+      await initCyto([...nodes, ...edges]);
+      cy.layout(cyLayout).run();
     } else {
       const focusNode = cy.getElementById(focusObj.id);
       
       if(focusNode.empty()) {
         // NODE NOT IN CURRENT GRAPH. WILL NEED TO REINITIALIZE.
-        initCyto([...nodes, ...edges]);
+        await initCyto([...nodes, ...edges]);
+        cy.layout(cyLayout).run();
       } else {
         // FOCUS NODE MOVES TO CENTER. NEW ELEMENTS APPEAR AROUND IT.
         cy.elements().not(focusNode).remove();
@@ -241,6 +240,7 @@ async function updateCyto(focusObj = null) {
                 style: {opacity: 1},
                 duration: 500
               });
+              cy.layout(cyLayout).run();
             } catch(e) {
               console.error(`Failed to display elements around animated node ${focusNode.id()}:\n${e}`);
               return;
@@ -251,16 +251,14 @@ async function updateCyto(focusObj = null) {
     }
   } else {
     // UPDATE RELATED COUNT ONLY
-    
     if(!cy) {
       throw new Error("cytoscape graph should but does not exist");
     }
 
-    cy.elements().not(`#${currFocusObj.id}`).remove();
+    cy.elements().not(`[level = 5]`).remove();
     cy.add([...nodes, ...edges]);
+    cy.layout(cyLayout).run();
   }
-
-  cy.layout(cyLayout).run();
 }
 
 async function setNewDExState() { 
@@ -319,7 +317,7 @@ async function useDefaultGraph() {
   sessionStorage.removeItem('customQuery'); // IF EXISTS
 }
 
-function generateNewTagGraph() {
+async function generateNewTagGraph() {
   // DISABLE BUTTON
   const genButton = document.getElementById('generate-btn');
   genButton.disabled = true;
