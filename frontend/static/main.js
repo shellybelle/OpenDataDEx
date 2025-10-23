@@ -16,10 +16,10 @@ const ENDPOINT_NOTES =
 const QUERY_NOTES =
   "Query Editor Notes:\n\n" +
   "The primary data to query (as required by the CONSTRUCT) are triples [?object ?property ?value]," +
-  " where the the ?object is the main navigational and clickable URI.\n" +
+  " where the the ?object is the main navigational and clickable URI.\n\n" +
   "Additionally, a single tag:objLabel, tag:propLabel, or tag:valLabel triple is expected for every URI." +
-  " Use bindings when necessary. If no label is provided, the URI will be displayed in the DEx.\n" +
-  "CONSTRUCT is left open so custom ?object triples can be added if desired. Don't forget to close.\n" +
+  " Use bindings when necessary. If no label is provided, the URI will be displayed in the DEx.\n\n" +
+  "CONSTRUCT is left open so custom ?object triples can be added if desired. Don't forget to close.\n\n" +
   "The full query is submitted AS IS to the endpoint, which is expected to handle errors and timeouts." +
   " Please use caution and test queries directly before using to generate a DEx."
  
