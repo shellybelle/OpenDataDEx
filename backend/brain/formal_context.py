@@ -34,7 +34,7 @@ def get_object_context(obj_graph: Graph) -> Context:
     '''onePercent = len(objs)*0.01
     sparse_props = context_data.columns[(context_data == True).sum(axis=0) < onePercent].tolist()
     dense_props = context_data.columns[(context_data == False).sum(axis=0) < onePercent].tolist()
-    print(f"dropping {len(sparse_props)} sparse and {len(dense_props)} dense of {len(props)} total properties")
+    print(f"drop {len(sparse_props)} sparse & {len(dense_props)} dense of {len(props)} properties")
     context_data.drop(sparse_props, axis=1, inplace=True)
     context_data.drop(dense_props, axis=1, inplace=True)'''
 
@@ -47,7 +47,8 @@ def add_related_objects(obj: URIRef,
                         obj_graph: Graph,
                         obj_context: Context,
                         incomplete_objs: list,
-                        prop_val_cache: dict,
+                        tags: dict,
+                        prop_freq: dict,
                         threshold: int):
     
     obj_extent, obj_intent = obj_context[str(obj),]
@@ -77,12 +78,13 @@ def add_related_objects(obj: URIRef,
     # REMOVES OBJ ITSELF
     related_objs = [URIRef(o) for o in related_objs_str if URIRef(o) != obj]
 
-    _add_related_triples(obj, obj_graph, related_objs, prop_val_cache, threshold)
+    _add_related_triples(obj, obj_graph, related_objs, tags, prop_freq, threshold)
 
 def _add_related_triples(obj: URIRef,
                          obj_graph: Graph,
                          related_objs: list,
-                         prop_val_cache: dict,
+                         tags: dict,
+                         prop_freq: dict,
                          threshold: int):
     if len(related_objs) == 0:
         print(f"[ERROR] Empty related cluster for {obj}. No related triples added.")
@@ -91,7 +93,12 @@ def _add_related_triples(obj: URIRef,
         print(f"[WARNING] Related cluster for {obj} smaller than {threshold}")
 
     try:
-        scored_related_objs = _score_threshold_related(obj, obj_graph, related_objs, prop_val_cache, threshold)
+        scored_related_objs = _score_threshold_related(obj,
+                                                       obj_graph,
+                                                       related_objs,
+                                                       tags,
+                                                       prop_freq,
+                                                       threshold)
     except Exception as e:
         print(f"[ERROR] Failed to score related objects for {obj}. No related triples added.\n{e}")
         return
@@ -113,7 +120,8 @@ def _add_related_triples(obj: URIRef,
 
 def complete_incomplete_objs(obj_graph: Graph,
                              incomplete_objs: list,
-                             prop_val_cache: dict,
+                             tags: dict,
+                             prop_freq: dict,
                              threshold: int):
 
     q = f"""PREFIX tag: <http://example.org/tagology/>
@@ -136,11 +144,11 @@ LIMIT {threshold}"""
                 related_objs.append(ho)
                 to_add -= 1
 
-        _add_related_triples(obj, obj_graph, related_objs, prop_val_cache, threshold)
+        _add_related_triples(obj, obj_graph, related_objs, tags, prop_freq, threshold)
     
     incomplete_objs.clear()
 
-def get_propvals(obj: URIRef, obj_graph: Graph):
+def get_tags(obj: URIRef, obj_graph: Graph):
     try:
         return {(prop, val)
                 for prop, val in obj_graph.predicate_objects(obj)
@@ -152,33 +160,22 @@ def get_propvals(obj: URIRef, obj_graph: Graph):
 def _score_threshold_related(obj: URIRef,
                              obj_graph: Graph,
                              related_objs: list,
-                             prop_val_cache: dict,
+                             tags: dict,
+                             prop_freq: dict,
                              threshold: int) -> list[tuple[float, URIRef]]:
-
-    # TODO: BENCHMARK QUERY ALTERNATIVE
-    '''def get_propvals(o):
-    q = f"""
-    PREFIX tag: <{TAG}>
-    SELECT ?p ?v WHERE {{
-      <{o}> ?p ?v .
-      ?p tag:propLabel ?pl .
-    }}
-    """
-    return {(row.p, row.v) for row in obj_graph.query(q)}
-    '''
-
-    if obj not in prop_val_cache:
-        print(f"[ERROR] {obj} not in property:value cache! Returning empty scored array.")
-        return []
-
     scored = []
+    
+    if obj not in tags:
+        print(f"[ERROR] {obj} not in property:value cache! Returning empty scored array.")
+        return scored
+
     for ro in related_objs:
         try:
-            if ro not in prop_val_cache:
+            if ro not in tags:
                 raise KeyError(f"{ro} not in the property:value cache")
 
-            union = prop_val_cache[obj] | prop_val_cache[ro]
-            simScore = len(prop_val_cache[obj] & prop_val_cache[ro]) / len(union) if union else 0.0
+            matches = tags[obj] & tags[ro]
+            simScore = sum(1.0 / prop_freq.get(p, 1.0) for p, _ in matches)
             scored.append((simScore, ro))
         except Exception as e:
             print(f"[ERROR] Failed to score {obj} relatedness to {ro}\n{e}")
