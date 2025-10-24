@@ -47,6 +47,7 @@ def add_related_objects(obj: URIRef,
                         obj_graph: Graph,
                         obj_context: Context,
                         incomplete_objs: list,
+                        prop_val_cache: dict,
                         threshold: int):
     
     obj_extent, obj_intent = obj_context[str(obj),]
@@ -76,22 +77,21 @@ def add_related_objects(obj: URIRef,
     # REMOVES OBJ ITSELF
     related_objs = [URIRef(o) for o in related_objs_str if URIRef(o) != obj]
 
-    _add_related_triples(obj, obj_graph, related_objs, threshold)
+    _add_related_triples(obj, obj_graph, related_objs, prop_val_cache, threshold)
 
-def _add_related_triples(obj: URIRef, obj_graph: Graph, related_objs: list, threshold: int):
+def _add_related_triples(obj: URIRef,
+                         obj_graph: Graph,
+                         related_objs: list,
+                         prop_val_cache: dict,
+                         threshold: int):
     if len(related_objs) == 0:
         print(f"[ERROR] Empty related cluster for {obj}. No related triples added.")
         return
     if len(related_objs) < threshold:
         print(f"[WARNING] Related cluster for {obj} smaller than {threshold}")
 
-    obj_propvals = _get_propvals(obj, obj_graph)
-    if len(obj_propvals) == 0:
-        print(f"[WARNING] Empty set of properties and values for {obj}. No related triples added.")
-        return
-
     try:
-        scored_related_objs = _score_threshold_related(obj, obj_propvals, obj_graph, related_objs, threshold)
+        scored_related_objs = _score_threshold_related(obj, obj_graph, related_objs, prop_val_cache, threshold)
     except Exception as e:
         print(f"[ERROR] Failed to score related objects for {obj}. No related triples added.\n{e}")
         return
@@ -111,7 +111,10 @@ def _add_related_triples(obj: URIRef, obj_graph: Graph, related_objs: list, thre
             print(f"[ERROR] Failed to add triples for {obj} related to {ro}\n{e}")
             continue
 
-def complete_incomplete_objs(obj_graph: Graph, incomplete_objs: list, threshold: int):
+def complete_incomplete_objs(obj_graph: Graph,
+                             incomplete_objs: list,
+                             prop_val_cache: dict,
+                             threshold: int):
 
     q = f"""PREFIX tag: <http://example.org/tagology/>
 SELECT ?hubObj
@@ -133,11 +136,11 @@ LIMIT {threshold}"""
                 related_objs.append(ho)
                 to_add -= 1
 
-        _add_related_triples(obj, obj_graph, related_objs, threshold)
+        _add_related_triples(obj, obj_graph, related_objs, prop_val_cache, threshold)
     
     incomplete_objs.clear()
 
-def _get_propvals(obj: URIRef, obj_graph: Graph):
+def get_propvals(obj: URIRef, obj_graph: Graph):
     try:
         return {(prop, val)
                 for prop, val in obj_graph.predicate_objects(obj)
@@ -147,12 +150,12 @@ def _get_propvals(obj: URIRef, obj_graph: Graph):
         return set()
 
 def _score_threshold_related(obj: URIRef,
-                             obj_propvals: set,
                              obj_graph: Graph,
                              related_objs: list,
+                             prop_val_cache: dict,
                              threshold: int) -> list[tuple[float, URIRef]]:
 
-    # TODO: BENCHMARK QUERY VS FOR+IF VERSION
+    # TODO: BENCHMARK QUERY ALTERNATIVE
     '''def get_propvals(o):
     q = f"""
     PREFIX tag: <{TAG}>
@@ -164,12 +167,18 @@ def _score_threshold_related(obj: URIRef,
     return {(row.p, row.v) for row in obj_graph.query(q)}
     '''
 
+    if obj not in prop_val_cache:
+        print(f"[ERROR] {obj} not in property:value cache! Returning empty scored array.")
+        return []
+
     scored = []
     for ro in related_objs:
         try:
-            ro_propvals = _get_propvals(ro, obj_graph)
-            union = obj_propvals | ro_propvals
-            simScore = len(obj_propvals & ro_propvals) / len(union) if union else 0.0
+            if ro not in prop_val_cache:
+                raise KeyError(f"{ro} not in the property:value cache")
+
+            union = prop_val_cache[obj] | prop_val_cache[ro]
+            simScore = len(prop_val_cache[obj] & prop_val_cache[ro]) / len(union) if union else 0.0
             scored.append((simScore, ro))
         except Exception as e:
             print(f"[ERROR] Failed to score {obj} relatedness to {ro}\n{e}")

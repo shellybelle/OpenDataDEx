@@ -1,5 +1,5 @@
 from brain.source_graph import get_object_graph
-from brain.formal_context import get_object_context, add_related_objects, complete_incomplete_objs
+from brain.formal_context import get_object_context, add_related_objects, get_propvals, complete_incomplete_objs
 from brain.namespaces import TAG
 from rdflib import Graph
 
@@ -25,18 +25,24 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         print(f"[ERROR] Failed to create concepts Context from obj_graph\n{e}")
         return Graph()
 
-    incomplete_objs = []
-
     print("[STATUS] Context created. Adding related object triples.")
-    for obj in obj_graph.subjects(predicate=TAG.objLabel):
+
+    objs = list(obj_graph.subjects(predicate=TAG.objLabel))
+
+    prop_val_cache = {}
+    for obj in objs:
+        prop_val_cache[obj] = get_propvals(obj, obj_graph)
+
+    incomplete_objs = []
+    for obj in objs:
         try:
-            add_related_objects(obj, obj_graph, obj_context, incomplete_objs, RELATED_OBJ_THRESHOLD)
+            add_related_objects(obj, obj_graph, obj_context, incomplete_objs, prop_val_cache, RELATED_OBJ_THRESHOLD)
         except Exception as e:
             print(f"[WARNING] Failed to add related objects for {obj}\n{e}")
             continue
 
     try:
-        complete_incomplete_objs(obj_graph, incomplete_objs, RELATED_OBJ_THRESHOLD)
+        complete_incomplete_objs(obj_graph, incomplete_objs, prop_val_cache, RELATED_OBJ_THRESHOLD)
     except Exception as e:
         print(f"[WARNING] Failed to fill in and score incomplete objects\n{e}")
 
