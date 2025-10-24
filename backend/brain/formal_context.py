@@ -43,7 +43,11 @@ def get_object_context(obj_graph: Graph) -> Context:
                    context_data.values.tolist())
 
 # TODO: BENCHMARK OBJECT FIRST VS CONCEPT FIRST ITERATION
-def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, threshold: int):
+def add_related_objects(obj: URIRef,
+                        obj_graph: Graph,
+                        obj_context: Context,
+                        incomplete_objs: list,
+                        threshold: int):
     
     obj_extent, obj_intent = obj_context[str(obj),]
     if not obj_extent or len(obj_extent) == 0:
@@ -54,9 +58,13 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
     upper_concepts = obj_context.neighbors(obj_extent)
     while len(related_objs_str) <= threshold: # ASSUMES OBJ ITSELF IN RELATED_OBJS_STR
         if not upper_concepts:
-            print(f"[WARNING] Related cluster for {obj} reached supremum concept. All objects added.")
-            related_objs_str.update(obj_context.objects)
-            break
+            print(f"[WARNING] Related cluster for {obj} reached supremum concept.")
+
+            # REMOVES OBJ ITSELF
+            related_objs = [URIRef(o) for o in related_objs_str if URIRef(o) != obj]
+            
+            incomplete_objs.append((obj, related_objs))
+            return
         else:
             upper_upper_concepts = set()
             for extent, i in upper_concepts:
@@ -64,14 +72,17 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
                 for n in obj_context.neighbors(extent):
                     upper_upper_concepts.add(n)
             upper_concepts = upper_upper_concepts
-    
-    # REMOVE OBJECT ITSELF FROM CLUSTER OF RELATED OBJECTS
-    related_objs_str.discard(str(obj))
 
-    if len(related_objs_str) == 0:
+    # REMOVES OBJ ITSELF
+    related_objs = [URIRef(o) for o in related_objs_str if URIRef(o) != obj]
+
+    _add_related_triples(obj, obj_graph, related_objs, threshold)
+
+def _add_related_triples(obj: URIRef, obj_graph: Graph, related_objs: list, threshold: int):
+    if len(related_objs) == 0:
         print(f"[ERROR] Empty related cluster for {obj}. No related triples added.")
         return
-    if len(related_objs_str) < threshold:
+    if len(related_objs) < threshold:
         print(f"[WARNING] Related cluster for {obj} smaller than {threshold}")
 
     obj_propvals = _get_propvals(obj, obj_graph)
@@ -80,7 +91,7 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
         return
 
     try:
-        scored_related_objs = _score_threshold_related(obj, obj_propvals, obj_graph, related_objs_str, threshold)
+        scored_related_objs = _score_threshold_related(obj, obj_propvals, obj_graph, related_objs, threshold)
     except Exception as e:
         print(f"[ERROR] Failed to score related objects for {obj}. No related triples added.\n{e}")
         return
@@ -100,6 +111,32 @@ def add_related_objects(obj: URIRef, obj_graph: Graph, obj_context: Context, thr
             print(f"[ERROR] Failed to add triples for {obj} related to {ro}\n{e}")
             continue
 
+def complete_incomplete_objs(obj_graph: Graph, incomplete_objs: list, threshold: int):
+
+    q = f"""PREFIX tag: <http://example.org/tagology/>
+SELECT ?hubObj
+WHERE {{
+    ?o tag:related ?hubObj .
+}}
+GROUP BY ?hubObj
+ORDER BY DESC(COUNT(?o))
+LIMIT {threshold}"""
+    hub_objs = [h.hubObj for h in obj_graph.query(q)]
+
+    for (obj, related_objs) in incomplete_objs:
+        to_add = threshold - len(related_objs)
+    
+        for ho in hub_objs:
+            if to_add == 0 :
+                break
+            if ho != obj and ho not in related_objs:
+                related_objs.append(ho)
+                to_add -= 1
+
+        _add_related_triples(obj, obj_graph, related_objs, threshold)
+    
+    incomplete_objs.clear()
+
 def _get_propvals(obj: URIRef, obj_graph: Graph):
     try:
         return {(prop, val)
@@ -112,7 +149,7 @@ def _get_propvals(obj: URIRef, obj_graph: Graph):
 def _score_threshold_related(obj: URIRef,
                              obj_propvals: set,
                              obj_graph: Graph,
-                             related_objs_str: set,
+                             related_objs: list,
                              threshold: int) -> list[tuple[float, URIRef]]:
 
     # TODO: BENCHMARK QUERY VS FOR+IF VERSION
@@ -128,13 +165,12 @@ def _score_threshold_related(obj: URIRef,
     '''
 
     scored = []
-    for ro in related_objs_str:
+    for ro in related_objs:
         try:
-            ro_uri = URIRef(ro)
-            ro_propvals = _get_propvals(ro_uri, obj_graph)
+            ro_propvals = _get_propvals(ro, obj_graph)
             union = obj_propvals | ro_propvals
             simScore = len(obj_propvals & ro_propvals) / len(union) if union else 0.0
-            scored.append((simScore, ro_uri))
+            scored.append((simScore, ro))
         except Exception as e:
             print(f"[ERROR] Failed to score {obj} relatedness to {ro}\n{e}")
             continue
