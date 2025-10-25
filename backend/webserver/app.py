@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify, session, render_template
 from rdflib import Graph
 from brain.tagology_graph import create_tagology_graph
-from threading import Lock
-import os, uuid
+from threading import Lock, Thread
+from datetime import datetime, timedelta, UTC
+import os, uuid, time
 
-GLOBAL_TAG_GRAPH = Graph()
+EDITOR_KEY = 'ariadne'
+GRAPH_EXP_MIN = 30
 GRAPH_LOCK = Lock()
-EDITOR_KEY = "ariadne"
+GLOBAL_TAG_GRAPH = Graph()
 
 # key: session[graph_id] (uuid)
 # value: a tagology_graph (rdflib.Graph)
@@ -42,66 +44,88 @@ app = Flask(
     template_folder=os.path.join(BASE_DIR, '../../frontend/template'),
     static_folder=os.path.join(BASE_DIR, '../../frontend/static')
 )
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24)) 
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', os.urandom(24)) 
 
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+def graph_cleanup_worker():
+    while True:
+        try:
+            now = datetime.now(UTC) 
+            expired = [graph_id
+                       for graph_id, data in USER_TAG_GRAPHS.items()
+                       if (now - data['last_used']) > timedelta(minutes=GRAPH_EXP_MIN)]
+            for graph_id in expired:
+                print(f"[STATUS] Graph {graph_id} expired. Deleting...")
+                with GRAPH_LOCK:
+                    del USER_TAG_GRAPHS[graph_id]
+        except Exception as e:
+            print(f"[ERROR] Graph cleanup worker failed:\n{e}")
+        finally:
+            time.sleep(GRAPH_EXP_MIN * 60)
+
+if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
     try:
         GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
+        Thread(target=graph_cleanup_worker, daemon=True).start()
     except Exception as e:
         print(f"[ERROR] Global tagology graph creation failed. Default is empty!\n{e}")
 
 @app.after_request
 def add_no_cache_headers(response):
     if response.content_type.startswith("application/json"):
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
+        response.headers['Cache-Control'] = "no-store, no-cache, must-revalidate, private"
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     return response
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/new_tag_graph", methods=["POST"])
+@app.route("/new_tag_graph", methods=['POST'])
 def create_user_tag_graph():
     try:
-        source_endpoint = request.json.get("endpoint")
-        source_query = request.json.get("query")
+        source_endpoint = request.json.get('endpoint')
+        source_query = request.json.get('query')
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({'error': str(e)}), 400
 
     if not source_endpoint or not source_query:
-        return jsonify({"error": "Missing required 'endpoint' and/or 'query'"}), 400
+        return jsonify({'error': "Missing required 'endpoint' and/or 'query'"}), 400
 
     try:
         new_graph = create_tagology_graph(source_endpoint, source_query)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
     if len(new_graph) == 0:
-        return jsonify({"error": "CONSTRUCT returned an empty graph. Reverting to default."}), 400
+        return jsonify({'error': "CONSTRUCT returned an empty graph. Reverting to default."}), 400
     else:
-        if "graph_id" not in session:
-            session["graph_id"] = str(uuid.uuid4())
-        USER_TAG_GRAPHS[session["graph_id"]] = new_graph
+        if 'graph_id' not in session:
+            session['graph_id'] = str(uuid.uuid4())
+        USER_TAG_GRAPHS[session['graph_id']] = {'graph': new_graph,
+                                                'last_used': datetime.now(UTC)}
 
-    return jsonify({"status": "User tagology graph created."}), 200
+    return jsonify({'status': "User tagology graph created."}), 200
 
-@app.route("/tagology_graph", methods=["POST"])
+@app.route("/tagology_graph", methods=['POST'])
 def query_tag_graph():
     try:
-        query = request.json.get("query")
+        query = request.json.get('query')
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({'error': str(e)}), 400
 
     if not query:
-        return jsonify({"error": "Missing required 'query'"}), 400
+        return jsonify({'error': "Missing required 'query'"}), 400
 
-    graph_id = session.get("graph_id")
-    tag_graph = USER_TAG_GRAPHS.get(graph_id, GLOBAL_TAG_GRAPH)
+    graph_id = session.get('graph_id')
+    if graph_id in USER_TAG_GRAPHS:
+        tag_graph = USER_TAG_GRAPHS[graph_id]['graph']
+        USER_TAG_GRAPHS[graph_id]['last_used'] = datetime.now(UTC) 
+    else:
+        tag_graph = GLOBAL_TAG_GRAPH
 
     if len(tag_graph) == 0:
-        return jsonify({"warning": "Empty tagology graph. Nothing to query."}), 400
+        return jsonify({'warning': "Empty tagology graph. Nothing to query."}), 400
 
     print(f"[STATUS] Query being run for tag graph {graph_id}:\n{query}")
     try:
@@ -112,7 +136,7 @@ def query_tag_graph():
             for row in results
         ]
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
     return jsonify(json_results), 200
 
@@ -124,24 +148,24 @@ def tags_page():
 def welcome_page():
     return render_template("welcome.html")
 
-@app.route("/delete_user_graph", methods=["DELETE"])
+@app.route("/delete_user_graph", methods=['DELETE'])
 def delete_user_graph():
-    graph_id = session.get("graph_id")
+    graph_id = session.get('graph_id')
     if graph_id not in USER_TAG_GRAPHS:
-        return jsonify({"warning": "No tagology graph to delete."}), 400
+        return jsonify({'warning': "No tagology graph to delete."}), 400
     with GRAPH_LOCK:
         del USER_TAG_GRAPHS[graph_id]
 
-    return jsonify({"status": f"tagology graph {graph_id} deleted."}), 200
+    return jsonify({'status': f"tagology graph {graph_id} deleted."}), 200
 
-@app.route("/verify_editor_key", methods=["POST"])
+@app.route("/verify_editor_key", methods=['POST'])
 def verify_editor_key():
     try:
-        key = request.get_json().get("key")
+        key = request.get_json().get('key')
     except Exception as e:
         return jsonify(False), 400
 
     return jsonify(key == EDITOR_KEY), 200
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
