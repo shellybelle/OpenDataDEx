@@ -4,10 +4,7 @@ from concepts import Context
 from pandas import DataFrame
 from brain.namespaces import TAG
 
-def get_object_context(obj_graph: Graph) -> Context:
-    
-    objs = list(obj_graph.subjects(predicate=TAG.objLabel, unique=True))
-    props = list(obj_graph.subjects(predicate=TAG.propLabel, unique=True))
+def get_object_context(obj_graph: Graph, objs: list, props: list) -> Context:
 
     if len(objs) == 0:
         print("[ERROR] Object Graph contains zero valid objects. Returning empty context.")
@@ -22,6 +19,7 @@ def get_object_context(obj_graph: Graph) -> Context:
         rows.append(row)
 
     try:
+        # TODO: PASS LISTS INTEAD OF DATAFRAME
         context_data = DataFrame(rows,
                                  index=[str(s) for s in objs],
                                  columns=[str(p) for p in props],
@@ -42,7 +40,6 @@ def get_object_context(obj_graph: Graph) -> Context:
                    context_data.columns.tolist(),
                    context_data.values.tolist())
 
-# TODO: BENCHMARK OBJECT FIRST VS CONCEPT FIRST ITERATION
 def add_related_objects(obj: URIRef,
                         obj_graph: Graph,
                         obj_context: Context,
@@ -50,33 +47,31 @@ def add_related_objects(obj: URIRef,
                         tags: dict,
                         prop_freq: dict,
                         threshold: int):
-    
-    obj_extent, obj_intent = obj_context[str(obj),]
-    if not obj_extent or len(obj_extent) == 0:
-        print(f"Failed to get smallest concept for {obj}. No related triples added.")
-        return
 
     related_objs_str = set()
-    upper_concepts = obj_context.neighbors(obj_extent)
-    while len(related_objs_str) <= threshold: # ASSUMES OBJ ITSELF IN RELATED_OBJS_STR
-        if not upper_concepts:
-            print(f"[WARNING] Related cluster for {obj} reached supremum concept.")
+    obj_str = str(obj)
+    obj_extent, i = obj_context[obj_str,]
+    add_extents = [obj_extent]
 
-            # REMOVES OBJ ITSELF
-            related_objs = [URIRef(o) for o in related_objs_str if URIRef(o) != obj]
-            
-            incomplete_objs.append((obj, related_objs))
-            return
+    # TODO: CACHE VISITED CONCEPTS
+    while add_extents: # ASSUMES OBJ ITSELF IN RELATED_OBJS_STR
+        for extent in add_extents:
+            related_objs_str.update(extent)
+        if len(related_objs_str) > threshold: # ACCOUNTS FOR OBJECT ITSELF
+            break
         else:
-            upper_upper_concepts = set()
-            for extent, i in upper_concepts:
-                related_objs_str.update(extent)
-                for n in obj_context.neighbors(extent):
-                    upper_upper_concepts.add(n)
-            upper_concepts = upper_upper_concepts
+            upper_extents = set()
+            for extent in add_extents:
+                for u_extent, u_i in obj_context.neighbors(extent):
+                    upper_extents.add(u_extent)
+            add_extents = upper_extents
 
     # REMOVES OBJ ITSELF
-    related_objs = [URIRef(o) for o in related_objs_str if URIRef(o) != obj]
+    related_objs = [URIRef(o) for o in related_objs_str if o != obj_str]
+
+    if len(related_objs) < threshold:
+        print(f"[STATUS] {obj} reached supremum before getting complete candidate pool")
+        incomplete_objs.append((obj, related_objs))
 
     _add_related_triples(obj, obj_graph, related_objs, tags, prop_freq, threshold)
 
@@ -136,7 +131,7 @@ LIMIT {threshold}"""
 
     for (obj, related_objs) in incomplete_objs:
         to_add = threshold - len(related_objs)
-    
+
         for ho in hub_objs:
             if to_add == 0 :
                 break
@@ -145,7 +140,7 @@ LIMIT {threshold}"""
                 to_add -= 1
 
         _add_related_triples(obj, obj_graph, related_objs, tags, prop_freq, threshold)
-    
+
     incomplete_objs.clear()
 
 def get_tags(obj: URIRef, obj_graph: Graph):
@@ -164,7 +159,7 @@ def _score_threshold_related(obj: URIRef,
                              prop_freq: dict,
                              threshold: int) -> list[tuple[float, URIRef]]:
     scored = []
-    
+
     if obj not in tags:
         print(f"[ERROR] {obj} not in property:value cache! Returning empty scored array.")
         return scored
@@ -174,8 +169,11 @@ def _score_threshold_related(obj: URIRef,
             if ro not in tags:
                 raise KeyError(f"{ro} not in the property:value cache")
 
-            matches = tags[obj] & tags[ro]
-            simScore = sum(1.0 / prop_freq.get(p, 1.0) for p, _ in matches)
+            tag_matches = tags[obj] & tags[ro]
+            simScore = sum(1.0 / prop_freq.get(p, 1.0) for p, _ in tag_matches)
+
+            # TODO: TWEAK SIMSCORE LOGIC FOR BEST CONNECTEDNESS
+
             scored.append((simScore, ro))
         except Exception as e:
             print(f"[ERROR] Failed to score {obj} relatedness to {ro}\n{e}")

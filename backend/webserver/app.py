@@ -34,7 +34,7 @@ WHERE {
                              ?value rdfs:label ?valueLabel .
                            }
 }
-LIMIT 5000"""
+LIMIT 10000"""
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
@@ -99,10 +99,10 @@ def query_tag_graph():
 
     graph_id = session.get("graph_id")
     tag_graph = USER_TAG_GRAPHS.get(graph_id, GLOBAL_TAG_GRAPH)
-    
+
     if len(tag_graph) == 0:
         return jsonify({"warning": "Empty tagology graph. Nothing to query."}), 400
-    
+
     print(f"[STATUS] Query being run for tag graph {graph_id}:\n{query}")
     try:
         with GRAPH_LOCK:
@@ -113,7 +113,7 @@ def query_tag_graph():
         ]
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
     return jsonify(json_results), 200
 
 @app.route("/tags")
@@ -131,7 +131,7 @@ def delete_user_graph():
         return jsonify({"warning": "No tagology graph to delete."}), 400
     with GRAPH_LOCK:
         del USER_TAG_GRAPHS[graph_id]
-        
+
     return jsonify({"status": f"tagology graph {graph_id} deleted."}), 200
 
 @app.route("/verify_editor_key", methods=["POST"])
@@ -140,7 +140,7 @@ def verify_editor_key():
         key = request.get_json().get("key")
     except Exception as e:
         return jsonify(False), 400
-    
+
     return jsonify(key == EDITOR_KEY), 200
 
 if __name__ == "__main__":

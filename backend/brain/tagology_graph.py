@@ -9,7 +9,7 @@ from brain.formal_context import (get_object_context,
 RELATED_OBJ_THRESHOLD = 12
 
 def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
-    
+
     print(f"[STATUS] Sending query to {source_endpoint}:\n{source_query}")
     try:
         obj_graph = get_object_graph(source_query, source_endpoint)
@@ -21,16 +21,17 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         print("[ERROR] Empty source graph. Aborting and returning an empty Graph.")
         return Graph()
 
-    print(f"[STATUS] Graph initialized with {len(obj_graph)} triples. Creating context.")    
+    objs = list(obj_graph.subjects(predicate=TAG.objLabel, unique=True))
+    props = list(obj_graph.subjects(predicate=TAG.propLabel, unique=True))
+
+    print(f"[STATUS] Graph initialized with {len(obj_graph)} triples. Creating context.")
     try:
-        obj_context = get_object_context(obj_graph)
+        obj_context = get_object_context(obj_graph, objs, props)
     except Exception as e:
         print(f"[ERROR] Failed to create concepts Context from obj_graph\n{e}")
         return Graph()
 
     print("[STATUS] Context created. Adding related object triples.")
-
-    objs = list(obj_graph.subjects(predicate=TAG.objLabel))
 
     tags = {}
     for obj in objs:

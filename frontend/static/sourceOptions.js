@@ -14,7 +14,7 @@ CONSTRUCT {
   ,
 
   limit:
-`LIMIT 50000`
+`LIMIT 10000`
   ,
 
   wiki_space:
