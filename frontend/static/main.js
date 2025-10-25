@@ -419,8 +419,8 @@ function setEventListeners() {
         return;
       } 
       prevObj = {id: oldFocusObj?.id, label: oldFocusObj?.label};
-      displayWelcome();
     }
+    displayWelcome();
   });
 
   // ABLE TO DECREASE RELATED COUNT VIEW TO MIN: 1
