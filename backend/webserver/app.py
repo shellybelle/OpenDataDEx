@@ -64,7 +64,10 @@ def graph_cleanup_worker():
 
 if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
     try:
+        start = time.perf_counter()
         GLOBAL_TAG_GRAPH = create_tagology_graph(DEFAULT_ENDPOINT, DEFAULT_QUERY)
+        duration = (time.perf_counter() - start) / 60
+        print(f"[PERFORMANCE] Graph creation took {duration:.2f} minutes")
         Thread(target=graph_cleanup_worker, daemon=True).start()
     except Exception as e:
         print(f"[ERROR] Global tagology graph creation failed. Default is empty!\n{e}")
