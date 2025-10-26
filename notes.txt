@@ -1,7 +1,0 @@
-Git
-	Setup
-		Get repo:
-			git clone git@github.com:shellybelle/tagology.git
-	Working:
-		Work on dev:
-			git checkout dev
