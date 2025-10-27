@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, session, render_template
 from rdflib import Graph
-from ..brain.tagology_graph import create_tagology_graph
+from brain.tagology_graph import create_tagology_graph
 from threading import Lock, Thread
 from datetime import datetime, timedelta, UTC
 import os, uuid, time
