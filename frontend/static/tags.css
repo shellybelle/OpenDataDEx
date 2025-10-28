@@ -1,0 +1,17 @@
+h2 {
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+h3 {
+  text-align: center;
+}
+
+p {
+  overflow-wrap: anywhere;
+}
+
+.side-by-side {
+  display: flex;
+  gap: 1rem;
+}

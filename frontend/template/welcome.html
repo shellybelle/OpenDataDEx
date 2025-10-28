@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Welcome</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-  <script src="{{url_for('static', filename='welcome.js')}}" type="module"></script>
-</head>
-<body class="DEx-right">
-  <div id="welcome-container">
-    <h1>
-      Welcome to the Open Data Explorer
-    </h1>
-    <h3>
-      a project of The Knowledge Commons
-    </h3>
-    <p>
-      Currently navigating [
-      <span id="total-objs">loading...</span>
-      ] objects using [
-      <span id="total-tags">loading...</span>
-      ] tags.
-    </p>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='pages.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='welcome.css')}}">
+    <script src="{{url_for('static', filename='welcome.js')}}" type="module"></script>
+  </head>
+  <body>
+    <div id="page">
+      <h1>
+        Welcome to the Open Data Explorer
+      </h1>
+      <h3>
+        a project of <a href="theknowledgecommons.org">The Knowledge Commons</a>
+      </h3>
+      <p>
+        Currently navigating [
+        <span id="total-objs">loading...</span>
+        ] objects using [
+        <span id="total-tags">loading...</span>
+        ] tags.
+      </p>
+    </div>
+  </body>
 </html>
