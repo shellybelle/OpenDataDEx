@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Tags</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-</head>
-<body class="DEx-right">
-  <h2 id="shared-title"></h2>
-  <div id="shared"></div>
-  <h2>Similar tags</h2>
-  <div class="side-by-side">
-    <div id="similar-src"><h3 id="similar-src-title"></h3></div>
-    <div id="similar-tgt"><h3 id="similar-tgt-title"></h3></div>
-  </div>
-  <h2>Unique tags</h2>
-  <div class="side-by-side">
-    <div id="unique-src"><h3 id="unique-src-title"></h3></div>
-    <div id="unique-tgt"><h3 id="unique-tgt-title"></h3></div>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tags</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='pages.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='tags.css')}}">
+  </head>
+  <body>
+    <div id="page">
+      <h2 id="shared-title"></h2>
+      <div id="shared"></div>
+      <h2>Similar tags</h2>
+      <div class="side-by-side">
+        <div id="similar-src"><h3 id="similar-src-title"></h3></div>
+        <div id="similar-tgt"><h3 id="similar-tgt-title"></h3></div>
+      </div>
+      <h2>Unique tags</h2>
+      <div class="side-by-side">
+        <div id="unique-src"><h3 id="unique-src-title"></h3></div>
+        <div id="unique-tgt"><h3 id="unique-tgt-title"></h3></div>
+      </div>
+    </div>
+  </body>
 </html>

@@ -22,30 +22,28 @@
         <input id="label-search" type="text" placeholder="Search objects...">
       </div>
       <div id="info-pane"> 
-        <div id="query-box" class="DEx-right">
-          <div id="query-columns">
-            <div id="query-left">
-              <label for="endpoint-select">sparql endpoint(s):</label>
-              <select id="endpoint-select">
-                <option value="wikidata">Wikidata</option>
-                <option value="custom">Custom...</option>
-              </select>
-              <textarea id="endpoint-editor" spellcheck="false"></textarea>
-              <button id="generate-btn">Generate new DEx</button>
-            </div>
-            <div id="query-right">
-              <label for="query-select">sparql query:</label>
-              <select id="query-select">
-                <option value="wiki_space">Wikipedia pages for items in the Unified Astronomy Thesaurus</option>
-                <option value="custom">Custom...</option>
-              </select>
-              <textarea id="query-construct" spellcheck="false" readonly></textarea>
-              <textarea id="query-editor" spellcheck="false"></textarea>
-              <textarea id="query-limit" spellcheck="false" readonly></textarea>
-            </div>
+        <div id="query-box">
+          <div id="query-left">
+            <label for="endpoint-select">sparql endpoint(s):</label>
+            <select id="endpoint-select">
+              <option value="wikidata">Wikidata</option>
+              <option value="custom">Custom...</option>
+            </select>
+            <textarea id="endpoint-editor" spellcheck="false"></textarea>
+            <button id="generate-btn">Generate new DEx</button>
+          </div>
+          <div id="query-right">
+            <label for="query-select">sparql query:</label>
+            <select id="query-select">
+              <option value="wiki_space">Wikipedia pages for items in the Unified Astronomy Thesaurus</option>
+              <option value="custom">Custom...</option>
+            </select>
+            <textarea id="query-construct" spellcheck="false" readonly></textarea>
+            <textarea id="query-editor" spellcheck="false"></textarea>
+            <textarea id="query-limit" spellcheck="false" readonly></textarea>
           </div>
         </div>
-        <iframe id="obj-display" class="DEx-right"></iframe>
+        <iframe id="obj-display"></iframe>
       </div>
     </div>
   </body>
