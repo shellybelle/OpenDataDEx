@@ -2,7 +2,7 @@ from rdflib import Graph, URIRef, Literal, BNode
 from rdflib.namespace import XSD
 from concepts import Context
 from pandas import DataFrame
-from brain.namespaces import TAG
+from brain.namespaces import ODD 
 
 def get_object_context(obj_graph: Graph, objs: list, props: list) -> Context:
 
@@ -104,11 +104,11 @@ def _add_related_triples(obj: URIRef,
 
     for simScore, ro in scored_related_objs:
         try:
-            obj_graph.add((obj, TAG.related, ro))
+            obj_graph.add((obj, ODD.related, ro))
             edge = BNode()
-            obj_graph.add((obj, TAG.relatedEdge, edge))
-            obj_graph.add((edge, TAG.target, ro))
-            obj_graph.add((edge, TAG.score, Literal(simScore, datatype=XSD.float)))
+            obj_graph.add((obj, ODD.relatedEdge, edge))
+            obj_graph.add((edge, ODD.target, ro))
+            obj_graph.add((edge, ODD.score, Literal(simScore, datatype=XSD.float)))
         except Exception as e:
             print(f"[ERROR] Failed to add triples for {obj} related to {ro}\n{e}")
             continue
@@ -119,10 +119,10 @@ def complete_incomplete_objs(obj_graph: Graph,
                              prop_freq: dict,
                              threshold: int):
 
-    q = f"""PREFIX tag: <http://example.org/tagology/>
+    q = f"""PREFIX odd: <https://theknowledgecommons.org/ns/odd/>
 SELECT ?hubObj
 WHERE {{
-    ?o tag:related ?hubObj .
+    ?o odd:related ?hubObj .
 }}
 GROUP BY ?hubObj
 ORDER BY DESC(COUNT(?o))
@@ -147,7 +147,7 @@ def get_tags(obj: URIRef, obj_graph: Graph):
     try:
         return {(prop, val)
                 for prop, val in obj_graph.predicate_objects(obj)
-                if (prop, TAG.propLabel, None) in obj_graph}
+                if (prop, ODD.propLabel, None) in obj_graph}
     except Exception as e:
         print(f"[ERROR] Failed to get set of properties and values for {obj}\n{e}")
         return set()

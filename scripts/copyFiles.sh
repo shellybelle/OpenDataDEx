@@ -10,5 +10,10 @@ for file in ../frontend/template/*.html; do
   cat "$file" >> ../../html.txt
   echo -e "\n\n" >> ../../html.txt
 done
-cp ../frontend/static/style.css ../../style.css
+> ../../css.txt
+for file in ../frontend/static/*.css; do
+  echo "// ==== $file ====" >> ../../css.txt
+  cat "$file" >> ../../css.txt
+  echo -e "\n\n" >> ../../css.txt
+done
 cp ../backend/webserver/app.py ../../app.py

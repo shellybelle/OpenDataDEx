@@ -17,15 +17,15 @@ const QUERY_NOTES =
   "Query Editor Notes:\n\n" +
   "The primary data to query (as required by the CONSTRUCT) are triples [?object ?property ?value]," +
   " where the the ?object is the main navigational and clickable URI.\n\n" +
-  "Additionally, a single tag:objLabel, tag:propLabel, or tag:valLabel triple is expected for every URI." +
+  "Additionally, a single odd:objLabel, odd:propLabel, or odd:valLabel triple is expected for every URI." +
   " Use bindings when necessary. If no label is provided, the URI will be displayed in the DEx.\n\n" +
   "CONSTRUCT is left open so custom ?object triples can be added if desired. Don't forget to close.\n\n" +
   "The full query is submitted AS IS to the endpoint, which is expected to handle errors and timeouts." +
   " Please use caution and test queries directly before using to generate a DEx."
  
 let cy;
-let hubObj; // {id: (object's uri), label: (object's tag:label)}
-let prevObj; // {id: (object's uri), label: (object's tag:label)}}
+let hubObj; // {id: (object's uri), label: (object's odd:label)}
+let prevObj; // {id: (object's uri), label: (object's odd:label)}}
 let relatedMap; // focus node's 12 related objs and each of their 12 related objs
 
 function getFocusObj() {
@@ -106,7 +106,7 @@ function initCyto(elements) {
   cy.on('mouseout', 'edge', (e) => {e.target.removeStyle();});
 }
 
-// focusObj MUST BE OBJECT {id: (object's uri), label: (object's tag:label)}
+// focusObj MUST BE OBJECT {id: (object's uri), label: (object's odd:label)}
 // IF NO PASSED FOCUS OBJECT OR ALREADY THE FOCUS OBJECT, GRAPH WILL ONLY UPDATE RELATED COUNT
 // IF PASSED FOCUS OBJECT IN CURRENT GRAPH, WILL ANIMATE TO CENTER
 async function updateCyto(focusObj = null) {

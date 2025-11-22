@@ -2,12 +2,12 @@ import sys
 from brain.tagology_graph import create_tagology_graph
 
 DEFAULT_ENDPOINT = "https://query.wikidata.org/sparql"
-DEFAULT_QUERY = """PREFIX tag: <http://example.org/tagology/>
+DEFAULT_QUERY = """PREFIX odd: <https://theknowledgecommons.org/ns/odd/>
 CONSTRUCT {
     ?object ?property ?value .
-    ?object tag:objLabel ?objectLabel .
-    ?property tag:propLabel ?propertyLabel .
-    ?value tag:valLabel ?valueLabel .
+    ?object odd:objLabel ?objectLabel .
+    ?property odd:propLabel ?propertyLabel .
+    ?value odd:valLabel ?valueLabel .
     ?object schema:about ?item .
 }
 WHERE {
