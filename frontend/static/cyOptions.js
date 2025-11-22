@@ -10,7 +10,6 @@ export const cyStyles = {
         'text-halign': 'center',
         'text-wrap': 'wrap',
         'text-outline-width': 1.5,
-        'border-style': 'dashed',
         'border-width': '1'
       }
     }, {
