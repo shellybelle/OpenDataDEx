@@ -114,7 +114,7 @@ textarea[readonly] {
   display: flex;
   flex-direction: column;
   min-width: 30rem;
-  overflow: auto;
+  overflow: visible;
 }
 
 #query-box {
@@ -122,7 +122,6 @@ textarea[readonly] {
   gap: 1rem;
   padding: 5px;
   display: flex;
-  overflow: visible;
 }
 
 #query-box label {
@@ -176,5 +175,19 @@ textarea[readonly] {
 #obj-display {
   flex: 1;
   border: none;
-  overflow: visible;
+}
+
+@media screen and (max-aspect-ratio: 1/1) {
+  #DEx {
+    flex-direction: column;
+  }
+
+  #query-box {
+    background: linear-gradient(to bottom right, black, black 50%, midnightblue);
+  }
+
+  #obj-display {
+    flex: none;
+    min-height: 100vw;
+  }
 }

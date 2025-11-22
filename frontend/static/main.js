@@ -401,6 +401,13 @@ async function searchLabels(searchInput) {
 
 function setEventListeners() {
   
+  window.addEventListener('resize', () => {
+    if (!cy) return;
+
+    cy.resize();
+    cy.layout(cyLayout).run();
+  });
+
   // RETURN TO HUB OBJECT AS FOCUS NODE
   document.getElementById('hub-btn').addEventListener('click', async () => {
     if(!hubObj?.id) {
