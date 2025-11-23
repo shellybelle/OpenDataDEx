@@ -191,3 +191,13 @@ textarea[readonly] {
     min-height: 100vw;
   }
 }
+
+@media (pointer: coarse) and (orientation: portrait) {
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 1.5rem;
+    padding: 0.25rem;
+  }
+}
