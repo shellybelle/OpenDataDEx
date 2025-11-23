@@ -1,5 +1,5 @@
 from rdflib import Graph
-from brain.namespaces import TAG
+from brain.namespaces import ODD
 from brain.source_graph import get_object_graph
 from brain.formal_context import (get_object_context,
                                   add_related_objects,
@@ -21,8 +21,8 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
         print("[ERROR] Empty source graph. Aborting and returning an empty Graph.")
         return Graph()
 
-    objs = list(obj_graph.subjects(predicate=TAG.objLabel, unique=True))
-    props = list(obj_graph.subjects(predicate=TAG.propLabel, unique=True))
+    objs = list(obj_graph.subjects(predicate=ODD.objLabel, unique=True))
+    props = list(obj_graph.subjects(predicate=ODD.propLabel, unique=True))
 
     print(f"[STATUS] Graph initialized with {len(obj_graph)} triples. Creating context.")
     try:
@@ -64,13 +64,13 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
 
     # TODO: FINAL SANITY CHECKS ON THE TAGOLOGY GRAPH
     # TODO: FIGURE OUT WHAT TO DO ABOUT DETACHED OBJECTS
-    '''PREFIX tag: <http://example.org/tagology/>
+    '''PREFIX odd: <https://theknowledgecommons.org/ns/odd/>
     SELECT ?relObj ?label
     WHERE {
-        FILTER NOT EXISTS {?obj tag:related ?relObj}
-        ?relObj tag:objLabel ?label
+        FILTER NOT EXISTS {?obj odd:related ?relObj}
+        ?relObj odd:objLabel ?label
     }'''
 
     print(f"[STATUS] tagology graph created with {len(obj_graph)} total triples")
-    obj_graph.bind("tag", TAG)
+    obj_graph.bind("odd", ODD)
     return obj_graph

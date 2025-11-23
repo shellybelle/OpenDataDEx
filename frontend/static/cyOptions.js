@@ -10,7 +10,6 @@ export const cyStyles = {
         'text-halign': 'center',
         'text-wrap': 'wrap',
         'text-outline-width': 1.5,
-        'border-style': 'dashed',
         'border-width': '1'
       }
     }, {
@@ -69,7 +68,7 @@ export const cyStyles = {
     'border-color': 'lightcyan'
   },
   edgeHover: {
-    'label': "click to\nsee tags",
+    'label': "view\ntags",
     'line-color': 'lightcyan',
     'target-arrow-color': 'lightcyan',
     'arrow-scale': 1,

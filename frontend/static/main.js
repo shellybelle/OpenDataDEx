@@ -17,15 +17,15 @@ const QUERY_NOTES =
   "Query Editor Notes:\n\n" +
   "The primary data to query (as required by the CONSTRUCT) are triples [?object ?property ?value]," +
   " where the the ?object is the main navigational and clickable URI.\n\n" +
-  "Additionally, a single tag:objLabel, tag:propLabel, or tag:valLabel triple is expected for every URI." +
+  "Additionally, a single odd:objLabel, odd:propLabel, or odd:valLabel triple is expected for every URI." +
   " Use bindings when necessary. If no label is provided, the URI will be displayed in the DEx.\n\n" +
   "CONSTRUCT is left open so custom ?object triples can be added if desired. Don't forget to close.\n\n" +
   "The full query is submitted AS IS to the endpoint, which is expected to handle errors and timeouts." +
   " Please use caution and test queries directly before using to generate a DEx."
  
 let cy;
-let hubObj; // {id: (object's uri), label: (object's tag:label)}
-let prevObj; // {id: (object's uri), label: (object's tag:label)}}
+let hubObj; // {id: (object's uri), label: (object's odd:label)}
+let prevObj; // {id: (object's uri), label: (object's odd:label)}}
 let relatedMap; // focus node's 12 related objs and each of their 12 related objs
 
 function getFocusObj() {
@@ -106,7 +106,7 @@ function initCyto(elements) {
   cy.on('mouseout', 'edge', (e) => {e.target.removeStyle();});
 }
 
-// focusObj MUST BE OBJECT {id: (object's uri), label: (object's tag:label)}
+// focusObj MUST BE OBJECT {id: (object's uri), label: (object's odd:label)}
 // IF NO PASSED FOCUS OBJECT OR ALREADY THE FOCUS OBJECT, GRAPH WILL ONLY UPDATE RELATED COUNT
 // IF PASSED FOCUS OBJECT IN CURRENT GRAPH, WILL ANIMATE TO CENTER
 async function updateCyto(focusObj = null) {
@@ -325,8 +325,10 @@ async function generateNewTagGraph() {
 
   let endpoint;
   const endpointSelect = document.getElementById('endpoint-select');
+  endpointSelect.disabled = true;
   const endpointEditor = document.getElementById('endpoint-editor');
   if(endpointSelect.value === 'custom') {
+    endpointEditor.disabled = true;
     endpoint = endpointEditor.value.trim()
   } else {
     endpoint = sourceEndpoints[endpointSelect.value];
@@ -334,8 +336,10 @@ async function generateNewTagGraph() {
 
   let queryBody;
   const querySelect = document.getElementById('query-select');
+  querySelect.disabled = true;
   const queryEditor = document.getElementById('query-editor');
   if(querySelect.value === 'custom') {
+    queryEditor.disabled = true;
     queryBody = queryEditor.value.trim();
   } else {
     queryBody = sourceQueries[querySelect.value];
@@ -356,15 +360,20 @@ async function generateNewTagGraph() {
     throw new Error(`Failed to create tagology graph using query ${query} at endpoint ${endpoint}`);
   }
 
-  // SUCCESS - SAVE SESSION VARIABLES
+  // SUCCESS - ENABLE QUERY BOX AND SAVE SESSION VARIABLES
+  endpointSelect.disabled = false;
+  querySelect.disabled = false;
+  
   sessionStorage.setItem('currentEndpoint', endpointSelect.value);
   sessionStorage.setItem('currentQuery', querySelect.value);
   if(endpointSelect.value === 'custom') {
+    endpointEditor.disabled = false;
     sessionStorage.setItem('customEndpoint', endpointEditor.value);
   } else {
     sessionStorage.removeItem('customEndpoint'); // IF EXISTS
   }
   if(querySelect.value === 'custom') {
+    queryEditor.disabled = false;
     sessionStorage.setItem('customQuery', queryEditor.value);
   } else {
     sessionStorage.removeItem('customQuery'); // IF EXISTS
@@ -401,6 +410,13 @@ async function searchLabels(searchInput) {
 
 function setEventListeners() {
   
+  window.addEventListener('resize', () => {
+    if (!cy) return;
+
+    cy.resize();
+    cy.layout(cyLayout).run();
+  });
+
   // RETURN TO HUB OBJECT AS FOCUS NODE
   document.getElementById('hub-btn').addEventListener('click', async () => {
     if(!hubObj?.id) {

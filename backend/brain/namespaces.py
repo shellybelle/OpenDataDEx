@@ -1,2 +1,2 @@
 from rdflib import Namespace
-TAG = Namespace("http://example.org/tagology/")
+ODD = Namespace("https://theknowledgecommons.org/ns/odd/")

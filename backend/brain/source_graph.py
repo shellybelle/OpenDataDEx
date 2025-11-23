@@ -1,6 +1,6 @@
 from SPARQLWrapper import SPARQLWrapper
 from rdflib import Graph, Literal
-from brain.namespaces import TAG
+from brain.namespaces import ODD
 
 # wikidata has some BC dates which python can't handle
 from rdflib.term import _toPythonMapping
@@ -26,40 +26,40 @@ def get_object_graph(source_query, source_endpoint) -> Graph:
         print(f"[ERROR] SPARQL endpoint query failed.\n{e}")
         return Graph()
 
-    # ENSURE EVERY OBJECT HAS A SINGLE tag:objLabel
+    # ENSURE EVERY OBJECT HAS A SINGLE odd:objLabel
     for subj in initialGraph.subjects(unique=True):
-        if ((subj, TAG.propLabel, None) not in initialGraph and
-            (subj, TAG.valLabel, None) not in initialGraph):
+        if ((subj, ODD.propLabel, None) not in initialGraph and
+            (subj, ODD.valLabel, None) not in initialGraph):
             # ASSUME AN OBJECT
-            objLabels = list(initialGraph.objects(subject=subj, predicate=TAG.objLabel))
+            objLabels = list(initialGraph.objects(subject=subj, predicate=ODD.objLabel))
             if len(objLabels) == 0:
-                initialGraph.add((subj, TAG.objLabel, Literal(subj)))
+                initialGraph.add((subj, ODD.objLabel, Literal(subj)))
             elif len(objLabels) > 1:
                 for lbl in objLabels[1:]:
-                    initialGraph.remove((subj, TAG.objLabel, lbl))
+                    initialGraph.remove((subj, ODD.objLabel, lbl))
 
-    # ENSURE EVERY PROPERTY HAS A SINGLE tag:propLabel
+    # ENSURE EVERY PROPERTY HAS A SINGLE odd:propLabel
     for pred in initialGraph.predicates(unique=True):
-        if pred not in (TAG.objLabel, TAG.propLabel, TAG.valLabel):
+        if pred not in (ODD.objLabel, ODD.propLabel, ODD.valLabel):
             # ASSUME AN OBJECT'S PROPERTY
-            propLabels = list(initialGraph.objects(subject=pred, predicate=TAG.propLabel))
+            propLabels = list(initialGraph.objects(subject=pred, predicate=ODD.propLabel))
             if len(propLabels) == 0:
-                initialGraph.add((pred, TAG.propLabel, Literal(pred)))
+                initialGraph.add((pred, ODD.propLabel, Literal(pred)))
             elif len(propLabels) > 1:
                 for lbl in propLabels[1:]:
-                    initialGraph.remove((pred, TAG.propLabel, lbl))
+                    initialGraph.remove((pred, ODD.propLabel, lbl))
 
-    # ENSURE EVERY URI VALUE HAS A SINGLE tag:valLabel
+    # ENSURE EVERY URI VALUE HAS A SINGLE odd:valLabel
     for o in initialGraph.objects(unique=True):
         if (not isinstance(o, Literal) and
-            (None, TAG.propLabel, o) not in initialGraph and
-            (None, TAG.valLabel, o) not in initialGraph):
+            (None, ODD.propLabel, o) not in initialGraph and
+            (None, ODD.valLabel, o) not in initialGraph):
             # ASSUME AN OBJECT'S VALUE
-            valLabels = list(initialGraph.objects(subject=o, predicate=TAG.valLabel))
+            valLabels = list(initialGraph.objects(subject=o, predicate=ODD.valLabel))
             if len(valLabels) == 0:
-                initialGraph.add((o, TAG.valLabel, Literal(o)))
+                initialGraph.add((o, ODD.valLabel, Literal(o)))
             elif len(valLabels) > 1:
                 for lbl in valLabels[1:]:
-                    initialGraph.remove((o, TAG.valLabel, lbl))
+                    initialGraph.remove((o, ODD.valLabel, lbl))
 
     return initialGraph
