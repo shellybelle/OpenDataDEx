@@ -68,7 +68,7 @@ export const cyStyles = {
     'border-color': 'lightcyan'
   },
   edgeHover: {
-    'label': "click to\nsee tags",
+    'label': "view\ntags",
     'line-color': 'lightcyan',
     'target-arrow-color': 'lightcyan',
     'arrow-scale': 1,

@@ -325,8 +325,10 @@ async function generateNewTagGraph() {
 
   let endpoint;
   const endpointSelect = document.getElementById('endpoint-select');
+  endpointSelect.disabled = true;
   const endpointEditor = document.getElementById('endpoint-editor');
   if(endpointSelect.value === 'custom') {
+    endpointEditor.disabled = true;
     endpoint = endpointEditor.value.trim()
   } else {
     endpoint = sourceEndpoints[endpointSelect.value];
@@ -334,8 +336,10 @@ async function generateNewTagGraph() {
 
   let queryBody;
   const querySelect = document.getElementById('query-select');
+  querySelect.disabled = true;
   const queryEditor = document.getElementById('query-editor');
   if(querySelect.value === 'custom') {
+    queryEditor.disabled = true;
     queryBody = queryEditor.value.trim();
   } else {
     queryBody = sourceQueries[querySelect.value];
@@ -356,15 +360,20 @@ async function generateNewTagGraph() {
     throw new Error(`Failed to create tagology graph using query ${query} at endpoint ${endpoint}`);
   }
 
-  // SUCCESS - SAVE SESSION VARIABLES
+  // SUCCESS - ENABLE QUERY BOX AND SAVE SESSION VARIABLES
+  endpointSelect.disabled = false;
+  querySelect.disabled = false;
+  
   sessionStorage.setItem('currentEndpoint', endpointSelect.value);
   sessionStorage.setItem('currentQuery', querySelect.value);
   if(endpointSelect.value === 'custom') {
+    endpointEditor.disabled = false;
     sessionStorage.setItem('customEndpoint', endpointEditor.value);
   } else {
     sessionStorage.removeItem('customEndpoint'); // IF EXISTS
   }
   if(querySelect.value === 'custom') {
+    queryEditor.disabled = false;
     sessionStorage.setItem('customQuery', queryEditor.value);
   } else {
     sessionStorage.removeItem('customQuery'); // IF EXISTS
