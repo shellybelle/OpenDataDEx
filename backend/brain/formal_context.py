@@ -2,7 +2,8 @@ from rdflib import Graph, URIRef, Literal, BNode
 from rdflib.namespace import XSD
 from concepts import Context
 from pandas import DataFrame
-from brain.namespaces import ODD 
+from brain.namespaces import ODD
+import math
 
 def get_object_context(obj_graph: Graph, objs: list, props: list) -> Context:
 
@@ -170,9 +171,9 @@ def _score_threshold_related(obj: URIRef,
                 raise KeyError(f"{ro} not in the property:value cache")
 
             tag_matches = tags[obj] & tags[ro]
-            simScore = sum(1.0 / prop_freq.get(p, 1.0) for p, _ in tag_matches)
 
-            # TODO: TWEAK SIMSCORE LOGIC FOR BEST CONNECTEDNESS
+            # CURRENT SCORING LOGIC: inverse square root weighting of property frequency
+            simScore = sum(1.0 / math.sqrt(prop_freq.get(p, 1.0)) for p, _ in tag_matches)
 
             scored.append((simScore, ro))
         except Exception as e:
