@@ -62,7 +62,6 @@ def create_tagology_graph(source_endpoint: str, source_query: str) -> Graph:
     except Exception as e:
         print(f"[WARNING] Failed to fill in and score incomplete objects\n{e}")
 
-    # TODO: FINAL SANITY CHECKS ON THE TAGOLOGY GRAPH
     # TODO: FIGURE OUT WHAT TO DO ABOUT DETACHED OBJECTS
     '''PREFIX odd: <https://theknowledgecommons.org/ns/odd/>
     SELECT ?relObj ?label
