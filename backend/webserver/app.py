@@ -44,7 +44,7 @@ WHERE {
                              ?value rdfs:label ?valueLabel .
                            }
 }
-LIMIT 10000"""
+LIMIT 15000"""
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
