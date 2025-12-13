@@ -30,7 +30,7 @@ WHERE {
                              ?value rdfs:label ?valueLabel .
                            }
 }
-LIMIT 10000"""
+LIMIT 15000"""
 
 def main():
     try:
