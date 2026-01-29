@@ -15,7 +15,7 @@ CONSTRUCT {
   ,
 
   limit:
-`LIMIT 15000`
+`LIMIT 20000`
   ,
 
   wiki_space:
@@ -95,6 +95,7 @@ WHERE {
 } 
 WHERE {
     ?item wdt:P54 wd:Q466586 ; # MEMBER OF SEATTLE MARINERS
+          wdt:P106 wd:Q10871364 ; # OCCUPATION BASEBALL PLAYER
           ?property ?value .  
     ?object schema:about ?item ;
             schema:isPartOf <https://en.wikipedia.org/> .
