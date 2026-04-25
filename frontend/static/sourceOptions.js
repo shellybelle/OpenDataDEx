@@ -120,7 +120,9 @@ WHERE {
 } 
 WHERE {
     ?item wdt:P3893 ?pdd ; # HAS A PUBLIC DOMAIN DATE 
-          ?property ?value .  
+          ?property ?value .
+    FILTER(?pdd < NOW())
+
     ?object schema:about ?item ;
             schema:isPartOf <https://en.wikipedia.org/> .
  
