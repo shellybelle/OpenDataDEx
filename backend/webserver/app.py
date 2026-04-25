@@ -45,7 +45,7 @@ WHERE {
                              ?value rdfs:label ?valueLabel .
                            }
 }
-LIMIT 15000"""
+LIMIT 20000"""
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
