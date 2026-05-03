@@ -46,7 +46,7 @@ WHERE {
 `    ?object schema:about ?item .
 }
 WHERE {
-    ?item wdt:P31 wd:Q144; # INSTANCE OF DOG
+    ?item wdt:P31/wdt:P279* wd:Q144; # INSTANCE OF DOG
           ?property ?value .
     ?object schema:about ?item ;
             schema:isPartOf <https://en.wikipedia.org/> .
