@@ -16,8 +16,9 @@ _toPythonMapping[XSD.dateTime] = safe_datetime_converter
 
 def get_object_graph(source_query, source_endpoint) -> Graph:
     sparqlCall = SPARQLWrapper(source_endpoint)
+    sparqlCall.setTimeout(600)
     sparqlCall.setQuery(source_query)
-    sparqlCall.addCustomHttpHeader("User-Agent", "tagology/1.0 (michelle@tagology.app)")
+    sparqlCall.addCustomHttpHeader("User-Agent", "opendatadex/1.0 (info@theknowledgecommons.org)")
 
     try:
         # ALWAYS A CONSTRUCT QUERY SO ALWAYS RETURNS AN RDFLIB GRAPH
