@@ -1,4 +1,5 @@
-from SPARQLWrapper import SPARQLWrapper
+#from SPARQLWrapper import SPARQLWrapper
+import requests
 from rdflib import Graph, Literal
 from brain.namespaces import ODD
 
@@ -15,14 +16,41 @@ def safe_datetime_converter(lexical):
 _toPythonMapping[XSD.dateTime] = safe_datetime_converter
 
 def get_object_graph(source_query, source_endpoint) -> Graph:
-    sparqlCall = SPARQLWrapper(source_endpoint)
-    sparqlCall.setTimeout(600)
-    sparqlCall.setQuery(source_query)
-    sparqlCall.addCustomHttpHeader("User-Agent", "opendatadex/1.0 (info@theknowledgecommons.org)")
+    #sparqlCall = SPARQLWrapper(source_endpoint)
+    #sparqlCall.setTimeout(600)
+    #sparqlCall.setQuery(source_query)
+    #sparqlCall.addCustomHttpHeader("User-Agent", "opendatadex/1.0 (info@theknowledgecommons.org)")
+
+    #try:
+    #    # ALWAYS A CONSTRUCT QUERY SO ALWAYS RETURNS AN RDFLIB GRAPH
+    #    initialGraph = sparqlCall.queryAndConvert()
+
+    headers = {
+        "User-Agent": "opendatadex/1.0 (info@theknowledgecommons.org)",
+        "Accept": "text/turtle",
+    }
 
     try:
-        # ALWAYS A CONSTRUCT QUERY SO ALWAYS RETURNS AN RDFLIB GRAPH
-        initialGraph = sparqlCall.queryAndConvert()
+        response = requests.get(
+            source_endpoint,
+            params={"query": source_query},
+            headers=headers,
+            timeout=600,
+        )
+
+        print(f"[STATUS] Source endpoint HTTP {response.status_code}")
+        print(f"[STATUS] Source endpoint content-type: {response.headers.get('Content-Type')}")
+
+
+        if response.status_code == 429:
+            print(f"[ERROR] SPARQL endpoint rate-limited. Retry-After={response.headers.get('Retry-After')}")
+            print(response.text[:1000])
+
+        response.raise_for_status()
+
+        initialGraph = Graph()
+        initialGraph.parse(data=response.content, format="turtle")
+
     except Exception as e:
         print(f"[ERROR] SPARQL endpoint query failed.\n{e}")
         return Graph()
