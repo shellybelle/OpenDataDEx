@@ -2,7 +2,7 @@
 
 > **Navigate Linked Data through semantic similarity instead of search.**
 
-**Application:** https://www.opendatadex.com
+**Website:** https://www.opendatadex.com
 
 OpenDataDEx is a semantic navigation platform for RDF and Linked Data.
 
@@ -16,7 +16,7 @@ Selecting any object recenters the graph around it, allowing knowledge to be exp
 
 OpenDataDEx treats RDF as a medium for navigation rather than simply a format for storing data.
 
-Objects are described by semantic tags (property–value pairs). Formal Concept Analysis is used to discover related objects, producing semantic neighborhoods that can be explored interactively without requiring manually curated relationships.
+Objects are described by semantic tags (property–value pairs). Formal Concept Analysis is used to discover candidate semantic neighborhoods, which are then ranked using a custom semantic similarity heuristic. The resulting graph can be explored interactively without requiring manually curated relationships.
 
 ```text
 SPARQL Endpoint
@@ -31,7 +31,7 @@ SPARQL Endpoint
 Formal Concept Analysis
         │
         ▼
-Semantic Similarity Graph
+Semantic Similarity Heuristic
         │
         ▼
 Interactive Knowledge Explorer
@@ -44,7 +44,8 @@ Every node is both a destination and a new starting point, allowing users to con
 ## Features
 
 - Generate semantic navigation graphs directly from SPARQL endpoints
-- Navigate RDF datasets through semantic similarity
+- Discover related objects using Formal Concept Analysis and a custom semantic similarity heuristic
+- Navigate RDF datasets through semantic similarity rather than keyword search
 - Compare shared, similar, and unique semantic tags between related objects
 - Browse linked resources directly within the application
 - Generate new navigable perspectives using custom SPARQL `CONSTRUCT` queries
@@ -68,4 +69,4 @@ Every node is both a destination and a new starting point, allowing users to con
 
 OpenDataDEx is a project of **The Knowledge Commons**, an initiative focused on helping communities publish, connect, and navigate knowledge using open semantic web technologies.
 
-The long-term goal is to make linked data more explorable by treating semantic relationships as the primary means of navigation rather than search.
+The project explores an alternative interaction model for Linked Data—one where semantic relationships become the primary means of navigation instead of search.
