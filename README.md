@@ -1,10 +1,71 @@
-What is this project?
-    1–2 sentences at the top
-How do I set it up?
-    Setup instructions: clone, venv, install
-How do I run something?
-    Example command to run basic script
-Where is the main code?
-    Simple file structure
-What’s next?
-    Roadmap (short checklist)
+# OpenDataDEx
+
+> **Navigate Linked Data through semantic similarity instead of search.**
+
+**Application:** https://www.opendatadex.com
+
+OpenDataDEx is a semantic navigation platform for RDF and Linked Data.
+
+A SPARQL `CONSTRUCT` query defines a navigable perspective over an RDF dataset, which OpenDataDEx transforms into an interactive semantic graph. Instead of searching for information, users navigate between related concepts through shared semantic descriptions.
+
+Selecting any object recenters the graph around it, allowing knowledge to be explored one relationship at a time. The same application can generate entirely different knowledge spaces—from astronomy and law to biology and public domain works—simply by changing the underlying SPARQL query.
+
+---
+
+## Design
+
+OpenDataDEx treats RDF as a medium for navigation rather than simply a format for storing data.
+
+Objects are described by semantic tags (property–value pairs). Formal Concept Analysis is used to discover related objects, producing semantic neighborhoods that can be explored interactively without requiring manually curated relationships.
+
+```text
+SPARQL Endpoint
+        │
+        ▼
+ RDF CONSTRUCT Query
+        │
+        ▼
+      RDF Graph
+        │
+        ▼
+Formal Concept Analysis
+        │
+        ▼
+Semantic Similarity Graph
+        │
+        ▼
+Interactive Knowledge Explorer
+```
+
+Every node is both a destination and a new starting point, allowing users to continuously explore a knowledge space from different perspectives.
+
+---
+
+## Features
+
+- Generate semantic navigation graphs directly from SPARQL endpoints
+- Navigate RDF datasets through semantic similarity
+- Compare shared, similar, and unique semantic tags between related objects
+- Browse linked resources directly within the application
+- Generate new navigable perspectives using custom SPARQL `CONSTRUCT` queries
+- Reuse the same application across multiple knowledge domains
+
+---
+
+## Technologies
+
+- Python
+- Flask
+- RDFLib
+- SPARQL
+- Formal Concept Analysis
+- Cytoscape.js
+- HTML / CSS / JavaScript
+
+---
+
+## About
+
+OpenDataDEx is a project of **The Knowledge Commons**, an initiative focused on helping communities publish, connect, and navigate knowledge using open semantic web technologies.
+
+The long-term goal is to make linked data more explorable by treating semantic relationships as the primary means of navigation rather than search.
