@@ -18,6 +18,74 @@ CONSTRUCT {
 `LIMIT 20000`
   ,
 
+  // TODO: TEMP - DELETE
+  wiki_soc:
+`}
+WHERE {
+    ?item wdt:P919 ?x ;
+            ?property ?value . 
+
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
+
+    BIND(STRAFTER(STR(?property), STR(wdt:)) AS ?pid)
+    BIND(IRI(CONCAT(STR(wd:), ?pid)) AS ?p)
+ 
+    BIND(IRI(REPLACE(STR(?item), "^http:", "https:")) AS ?object)
+
+    # MANUAL BINDING REQUIRED DUE TO CUSTOM LABELING
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+                             ?item rdfs:label ?objectLabel . # CUSTOM
+                             ?p rdfs:label ?propertyLabel . # CUSTOM
+                             ?value rdfs:label ?valueLabel .
+                           }
+}
+`
+  ,
+  wiki_onet:
+`}
+WHERE {
+    ?item wdt:P8734 ?x ;
+            ?property ?value . 
+
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
+
+    BIND(STRAFTER(STR(?property), STR(wdt:)) AS ?pid)
+    BIND(IRI(CONCAT(STR(wd:), ?pid)) AS ?p)
+ 
+    BIND(IRI(REPLACE(STR(?item), "^http:", "https:")) AS ?object)
+
+    # MANUAL BINDING REQUIRED DUE TO CUSTOM LABELING
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+                             ?item rdfs:label ?objectLabel . # CUSTOM
+                             ?p rdfs:label ?propertyLabel . # CUSTOM
+                             ?value rdfs:label ?valueLabel .
+                           }
+}
+`
+  ,
+  wiki_naics:
+`}
+WHERE {
+    ?item wdt:P3224 ?x ;
+            ?property ?value .
+
+    FILTER(STRSTARTS(STR(?property), STR(wdt:))) # TRUTHY PROPERTIES ONLY
+
+    BIND(STRAFTER(STR(?property), STR(wdt:)) AS ?pid)
+    BIND(IRI(CONCAT(STR(wd:), ?pid)) AS ?p)
+  
+    BIND(IRI(REPLACE(STR(?item), "^http:", "https:")) AS ?object)
+
+    # MANUAL BINDING REQUIRED DUE TO CUSTOM LABELING
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+                             ?item rdfs:label ?objectLabel . # CUSTOM
+                             ?p rdfs:label ?propertyLabel . # CUSTOM
+                             ?value rdfs:label ?valueLabel .
+                           }
+}
+`
+  ,
+
   wiki_space:
 `    ?object schema:about ?item .
 }

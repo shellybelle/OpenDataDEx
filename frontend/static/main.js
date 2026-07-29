@@ -282,7 +282,7 @@ async function setNewDExState() {
   if(endpointSelect.value === 'custom') {
     endpointEditor.value = sessionStorage.getItem('customEndpoint');
     // CAN ASSUME EDITOR WAS PREVIOUSLY UNLOCKED
-    endpointEditor.setAttribute('readonly', false);
+    endpointEditor.removeAttribute("readonly");
   } else {
     endpointEditor.value = sourceEndpoints[endpointSelect.value];
     endpointEditor.setAttribute('readonly', true);
@@ -295,7 +295,7 @@ async function setNewDExState() {
   if(querySelect.value === 'custom') {
     queryEditor.value = sessionStorage.getItem('customQuery');
     // CAN ASSUME EDITOR WAS PREVIOUSLY UNLOCKED
-    queryEditor.setAttribute('readonly', false);
+    queryEditor.removeAttribute("readonly");
   } else {
     queryEditor.value = sourceQueries[querySelect.value];
     queryEditor.setAttribute('readonly', true);
